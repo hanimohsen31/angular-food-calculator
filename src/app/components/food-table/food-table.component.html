@@ -1,0 +1,179 @@
+<mat-form-field class="w-100 pe-auto">
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let element">{{element.name}}</td>
+  </ng-container>
+
+  <!-- translated Column -->
+  <ng-container matColumnDef="translated">
+    <th mat-header-cell *matHeaderCellDef>Translated</th>
+    <td mat-cell *matCellDef="let element">{{element.translated}}</td>
+  </ng-container>
+
+  <!-- quantity Column -->
+  <ng-container matColumnDef="quantity">
+    <th mat-header-cell *matHeaderCellDef>Quantity</th>
+    <td mat-cell *matCellDef="let element">{{element.quantity}}</td>
+  </ng-container>
+
+  <!-- servingDetails Column -->
+  <ng-container matColumnDef="servingDetails">
+    <th mat-header-cell *matHeaderCellDef>servingDetails</th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="element.servingQuantity && element.servingMeasure">
+        {{element.servingQuantity + "-" +
+        element.servingMeasure}}
+      </span>
+      <span class="text-center" *ngIf="!element.servingQuantity || !element.servingMeasure">______</span>
+    </td>
+  </ng-container>
+
+  <!-- calories Column -->
+  <ng-container matColumnDef="calories">
+    <th mat-header-cell *matHeaderCellDef>Calories</th>
+    <td mat-cell *matCellDef="let element">{{element.calories | toFixed}}</td>
+  </ng-container>
+
+  <!-- fats Column -->
+  <ng-container matColumnDef="fats">
+    <th mat-header-cell *matHeaderCellDef>Fats</th>
+    <td mat-cell *matCellDef="let element">{{element.fats | toFixed}}</td>
+  </ng-container>
+
+  <!-- carbs Column -->
+  <ng-container matColumnDef="carbs">
+    <th mat-header-cell *matHeaderCellDef>Carbs</th>
+    <td mat-cell *matCellDef="let element">{{element.carbs | toFixed}}</td>
+  </ng-container>
+
+  <!-- protein Column -->
+  <ng-container matColumnDef="protein">
+    <th mat-header-cell *matHeaderCellDef>Protein</th>
+    <td mat-cell *matCellDef="let element">{{element.protein | toFixed}}</td>
+  </ng-container>
+
+  <!-- measure Column -->
+  <ng-container matColumnDef="measure">
+    <th mat-header-cell *matHeaderCellDef>Measure</th>
+    <td mat-cell *matCellDef="let element">{{element.measure}}</td>
+  </ng-container>
+
+  <!-- menue Column -->
+  <ng-container matColumnDef="menue">
+    <th mat-header-cell *matHeaderCellDef>Add</th>
+    <td mat-cell *matCellDef="let element ; let i = index">
+      <button (click)="handleAdd(i , element)" class="btn btn-outline-primary">Add</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  <!-- Row shown when there is no matching data. -->
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+  </tr>
+</table>
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+</mat-paginator>
+
+<table class="table my-4 w-100" *ngIf="toSumArray.length > 0">
+  <thead>
+    <tr>
+      <!-- <th scope="col">ID</th> -->
+      <th scope="col">Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col" class="d-none d-md-table-cell">Standard</th>
+      <th scope="col" class="d-none d-md-table-cell">Measure</th>
+      <th scope="col" class="d-none d-md-table-cell">Calories</th>
+      <th scope="col" class="d-none d-md-table-cell">Fats</th>
+      <th scope="col" class="d-none d-md-table-cell">Carbs</th>
+      <th scope="col" class="d-none d-md-table-cell">Protein</th>
+      <th scope="col">Remove</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let elm of toSumArray ; let i = index">
+      <tr [class]="'xyz' + i" class="bg-light">
+        <td>{{elm?.name}}</td>
+        <td><input type="number" class="form-control" [(ngModel)]="+elm.quantity"
+            (change)="handleChange(i,+elm.quantity)" /></td>
+        <td class="d-none d-md-table-cell">
+          <span *ngIf="elm?.servingQuantity && elm?.servingMeasure">
+            {{elm?.servingQuantity + "-" +
+            elm?.servingMeasure}}
+          </span>
+          <span class="text-center" *ngIf="!elm?.servingQuantity || !elm?.servingMeasure">______</span>
+        </td>
+        <td class="d-none d-md-table-cell">{{elm?.measure}}</td>
+        <td class="d-none d-md-table-cell">{{+elm?.calories * +elm?.quantity | toFixed}}</td>
+        <td class="d-none d-md-table-cell">{{+elm?.fats * +elm?.quantity | toFixed}}</td>
+        <td class="d-none d-md-table-cell">{{+elm?.carbs * +elm?.quantity | toFixed}}</td>
+        <td class="d-none d-md-table-cell">{{+elm?.protein * +elm?.quantity | toFixed}}</td>
+        <td><button (click)="handleRemove(i)" class="btn btn-outline-danger">Remove</button></td>
+      </tr>
+      <tr class="result-smxx">
+        <td colspan="8" class="d-table-cell d-md-none">
+          <div class="d-flex justify-content-center px-2">
+
+            <div class="card p-1 m-1 col-3">
+              <span>Cal:</span>
+              <span>{{+elm?.calories * +elm?.quantity | toFixed}}</span>
+            </div>
+
+            <div class="card p-1 m-1 col-3">
+              <span>Fats:</span>
+              <span>{{+elm?.fats * +elm?.quantity | toFixed}}</span>
+            </div>
+
+            <div class="card p-1 m-1 col-3">
+              <span>Carb:</span>
+              <span>{{+elm?.carbs * +elm?.quantity | toFixed}}</span>
+            </div>
+
+            <div class="card p-1 m-1 col-3 d-flex flex-column">
+              <span>Protein:</span>
+              <span>{{+elm?.protein * +elm?.quantity | toFixed}}</span>
+            </div>
+
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+
+  </tbody>
+  <tfoot>
+    <tr class="bg-light">
+      <td>Sum</td>
+      <td class="d-none d-md-table-cell"></td>
+      <td class="d-none d-md-table-cell"></td>
+      <td>
+        <button (click)="handleCheck()" class="btn btn-outline-primary px-3 mb-1">Save</button>
+      </td>
+      <td class="d-none d-md-table-cell">{{sumObject.calories | toFixed}}</td>
+      <td class="d-none d-md-table-cell">{{sumObject.fats | toFixed}}</td>
+      <td class="d-none d-md-table-cell">{{sumObject.carbs | toFixed}}</td>
+      <td class="d-none d-md-table-cell">{{sumObject.protein | toFixed}}</td>
+      <td>
+        <button (click)="handleClear()" class="btn btn-outline-danger px-4">Clear</button>
+      </td>
+    </tr>
+    <tr class="result-sm">
+      <td colspan="5" class="d-table-cell d-md-none">
+        <div class="d-flex flex-wrap justify-content-center">
+          <span class="card p-2 m-2 col-5">Cal: {{sumObject.calories | toFixed}}</span>
+          <span class="card p-2 m-2 col-5">Fats: {{sumObject.fats | toFixed}}</span>
+          <span class="card p-2 m-2 col-5">Carb: {{sumObject.carbs | toFixed}}</span>
+          <span class="card p-2 m-2 col-5">Protein: {{sumObject.protein | toFixed}}</span>
+        </div>
+      </td>
+    </tr>
+  </tfoot>
+</table>
