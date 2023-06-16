@@ -1,0 +1,136 @@
+<div class="w-100 d-flex justify-content-end">
+  <button
+    (click)="toggleDetails()"
+    class="btn btn-outline-primary mt-3 d-block d-md-none"
+  >
+  <span *ngIf="displayDetails == false">Show Details</span>
+  <span *ngIf="displayDetails == true">Hide Details</span>
+  </button>
+</div>
+<div class="container d-flex justify-content-center align-items-center">
+
+<table class="table my-4 w-100"  *ngIf="(finalSumObject$|async).length > 0" >
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Measure (gm)</th>
+      <th scope="col" class="d-none d-md-table-cell">Calories</th>
+      <th scope="col" class="d-none d-md-table-cell">Fats</th>
+      <th scope="col" class="d-none d-md-table-cell">Carbs</th>
+      <th scope="col" class="d-none d-md-table-cell">Protein</th>
+      <th scope="col">Remove</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let elm of sumArray$ | async; let i = index">
+      <!-- overall Preview -->
+      <tr class="bg-light">
+        <td>{{ elm?.ShortFoodName }}</td>
+        <td>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="+elm.Quantity"
+            (change)="handleChange()"
+            (blur)="handleChange()"
+          />
+        </td>
+        <td>{{ elm?.Measure }} gm</td>
+        <td class="d-none d-md-table-cell">
+          {{ +elm?.Energy * +elm.Quantity | toFixed }}
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ +elm?.Fat * +elm.Quantity | toFixed }}
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ +elm?.Carbohydrate * +elm.Quantity | toFixed }}
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ +elm?.Protein * +elm.Quantity | toFixed }}
+        </td>
+        <td>
+          <button (click)="handleRemove(i)" class="btn btn-outline-danger">
+            Remove
+          </button>
+        </td>
+      </tr>
+      <!-- mobile Preview -->
+      <tr class="result-smxx" [class.d-none]="!displayDetails">
+        <td colspan="8" class="d-table-cell d-md-none">
+          <div class="d-flex justify-content-center px-2">
+            <div class="card p-1 m-1 col-3">
+              <span>Cal:</span>
+              <span>{{ +elm?.Energy * +elm.Quantity | toFixed }}</span>
+            </div>
+            <div class="card p-1 m-1 col-3">
+              <span>Fats:</span>
+              <span>{{ +elm?.Fat * +elm.Quantity | toFixed }}</span>
+            </div>
+            <div class="card p-1 m-1 col-3">
+              <span>Carb:</span>
+              <span>{{ +elm?.Carbohydrate * +elm.Quantity | toFixed }}</span>
+            </div>
+            <div class="card p-1 m-1 col-3 d-flex flex-column">
+              <span>Protein:</span>
+              <span>{{ +elm?.Protein * +elm.Quantity | toFixed }}</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+  <tfoot>
+    <ng-container *ngFor="let final of finalSumObject$ |async" >
+      <tr class="bg-light">
+        <td>Sum</td>
+        <td></td>
+        <td>
+          <!-- <button
+            (click)="handleChange()"
+            class="btn btn-outline-primary px-3 mb-1"
+          >
+            Calc.
+          </button> -->
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ final.Energy | toFixed }}
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ final.Fat | toFixed }}
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ final.Carbohydrate | toFixed }}
+        </td>
+        <td class="d-none d-md-table-cell">
+          {{ final.Protein | toFixed }}
+        </td>
+        <td>
+          <button (click)="handleClear()" class="btn btn-outline-danger px-4">
+            Clear
+          </button>
+        </td>
+      </tr>
+      <!-- mobile Preview -->
+      <tr class="result-sm">
+        <td colspan="5" class="d-table-cell d-md-none">
+          <div class="d-flex flex-wrap justify-content-center">
+            <span class="card p-2 m-2 col-5">
+              Cal: {{ final.Energy | toFixed }}</span
+            >
+            <span class="card p-2 m-2 col-5">
+              Fats: {{ final.Fat | toFixed }}</span
+            >
+            <span class="card p-2 m-2 col-5">
+              Carb: {{ final.Carbohydrate | toFixed }}</span
+            >
+            <span class="card p-2 m-2 col-5">
+              Protein: {{ final.Protein | toFixed }}</span
+            >
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tfoot>
+</table>
+</div>
