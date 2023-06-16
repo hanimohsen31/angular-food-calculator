@@ -14,7 +14,7 @@
     <tr>
       <th scope="col">Name</th>
       <th scope="col">Quantity</th>
-      <th scope="col">Measure (gm)</th>
+      <th scope="col">Measure</th>
       <th scope="col" class="d-none d-md-table-cell">Calories</th>
       <th scope="col" class="d-none d-md-table-cell">Fats</th>
       <th scope="col" class="d-none d-md-table-cell">Carbs</th>
@@ -36,7 +36,7 @@
             (blur)="handleChange()"
           />
         </td>
-        <td>{{ elm?.Measure }} gm</td>
+        <td>{{ elm?.Measure }} {{ elm?.MeasureUnit }}</td>
         <td class="d-none d-md-table-cell">
           {{ +elm?.Energy * +elm.Quantity | toFixed }}
         </td>
