@@ -4,7 +4,7 @@ import { CalculatorPageComponent } from './pages/calculator-page/calculator-page
 import { AddNewPageComponent } from './pages/add-new-page/add-new-page.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LoginComponent } from './components/login/login.component';
-import { AuthGuard } from './services/auth.guard';
+
 import {
   AngularFireAuthGuard,
   redirectUnauthorizedTo,
