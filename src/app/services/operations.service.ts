@@ -1,45 +1,51 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { Product } from './product';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OperationsService {
-  initialProduct = {};
-
+  initialProduct = {
+    FoodID: '',
+    ShortFoodName: '',
+    Translation: '',
+    Measure: 0,
+    Energy: 0,
+    Protein: 0,
+    Fat: 0,
+    Carbohydrate: 0,
+    Quantity: 1,
+  };
+  // user
+  user = localStorage.getItem('user') || '';
+  userId = JSON.parse(this.user).uid;
+  url = `${environment.database.url}/users/${this.userId}.json`;
+  // sumArray
   sumArray = new BehaviorSubject<any[]>([]);
   sumArrayAction$ = this.sumArray.asObservable();
-
+  // finalSum[{}]
   finalSum = new BehaviorSubject<any>([]);
   finalSumAction$ = this.finalSum.asObservable();
 
-  constructor() {
-    let sumArrayScoped: any = localStorage.getItem('sumArray');
-    let finalSumScoped: any = localStorage.getItem('finalSum');
-    if (sumArrayScoped) {
-      this.sumArray.next(JSON.parse(sumArrayScoped));
-      this.finalSum.next(JSON.parse(finalSumScoped));
-      this.initialProduct = JSON.parse(finalSumScoped)[0];
-    } else {
-      this.sumArray.next([]);
-      this.finalSum.next([]);
-      this.initialProduct = {
-        FoodID: '',
-        ShortFoodName: '',
-        Translation: '',
-        Measure: 0,
-        Energy: 0,
-        Protein: 0,
-        Fat: 0,
-        Carbohydrate: 0,
-        Quantity: 1,
-      };
-    }
+  constructor(private _HttpClient: HttpClient) {
+    let userData: any = this.handleCloude('get').subscribe((res: any) => {
+      userData = res;
+      if (userData) {
+        this.sumArray.next(res.sumArray);
+        this.finalSum.next(res.finalSum);
+      } else {
+        this.sumArray.next([]);
+        this.finalSum.next([]);
+      }
+    });
   }
 
   handleChange() {
     let getterArr = this.sumArray.getValue();
+    console.log(getterArr);
     let finalSumContainer: any = this.initialProduct;
     getterArr.map((elm: any) => {
       finalSumContainer = {
@@ -56,8 +62,24 @@ export class OperationsService {
       };
     });
     this.finalSum.next([finalSumContainer]);
-    localStorage.setItem('sumArray', JSON.stringify(this.sumArray.getValue()));
-    localStorage.setItem('finalSum', JSON.stringify(this.finalSum.getValue()));
+    this.handleCloude('put', {
+      sumArray: this.sumArray.getValue(),
+      finalSum: this.finalSum.getValue(),
+    }).subscribe();
+  }
+
+  handleCloude(method: string, data?: any): Observable<any> {
+    if (method === 'get') {
+      return this._HttpClient.get(this.url);
+    } else if (method === 'post') {
+      return this._HttpClient.post(this.url, data);
+    } else if (method === 'put') {
+      return this._HttpClient.put(this.url, data);
+    } else if (method === 'delete') {
+      return this._HttpClient.delete(this.url);
+    } else {
+      return EMPTY;
+    }
   }
 
   // handle add
@@ -71,17 +93,18 @@ export class OperationsService {
   // handle remove
   handleRemove(index: any) {
     let getterArr = this.sumArray.getValue();
+    console.log(getterArr);
     getterArr.splice(index, 1);
     this.sumArray.next(getterArr);
     this.handleChange();
-    this.sumArray.getValue().length === 0 ? this.handleClear() : true
+    this.sumArray.getValue().length === 0 ? this.handleClear() : true;
   }
 
   // handle clear
   handleClear() {
-    localStorage.removeItem('sumArray');
-    localStorage.removeItem('finalSum');
-    this.sumArray.next([]);
-    this.finalSum.next([]);
+    this.handleCloude('delete').subscribe((res) => {
+      this.sumArray.next([]);
+      this.finalSum.next([]);
+    });
   }
 }

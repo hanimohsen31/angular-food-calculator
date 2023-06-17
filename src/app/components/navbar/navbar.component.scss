@@ -23,3 +23,20 @@
 // #navbarSupportedContent {
 //   width: fit-content !important;
 // }
+.navx {
+  background-color: #fcb427;
+  // background-color: crimson;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+img {
+  width: 100%;
+  height: 225px;
+  object-fit: cover;
+}
