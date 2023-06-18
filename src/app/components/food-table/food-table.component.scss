@@ -35,50 +35,38 @@ tr {
 @media (max-width: 767px) {
   .mat-header-cell.cdk-header-cell.cdk-column-translated.mat-column-translated,
   .mat-cell.cdk-cell.cdk-column-translated.mat-column-translated.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-quantity.mat-column-quantity,
-  .mat-cell.cdk-cell.cdk-column-quantity.mat-column-quantity.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-measure.mat-column-measure,
-  .mat-cell.cdk-cell.cdk-column-measure.mat-column-measure.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-servingDetails.mat-column-servingDetails,
-  .mat-cell.cdk-cell.cdk-column-servingDetails.mat-column-servingDetails.ng-star-inserted {
+  .mat-header-cell.cdk-header-cell.cdk-column-calories.mat-column-calories,
+  .mat-cell.cdk-cell.cdk-column-calories.mat-column-calories.ng-star-inserted,
+  .mat-header-cell.cdk-header-cell.cdk-column-fats.mat-column-fats,
+  .mat-cell.cdk-cell.cdk-column-fats.mat-column-fats.ng-star-inserted,
+  .mat-header-cell.cdk-header-cell.cdk-column-protein.mat-column-protein,
+  .mat-cell.cdk-cell.cdk-column-protein.mat-column-protein.ng-star-inserted,
+  .mat-header-cell.cdk-header-cell.cdk-column-carbs.mat-column-carbs,
+  .mat-cell.cdk-cell.cdk-column-carbs.mat-column-carbs.ng-star-inserted {
     display: none;
   }
 
   .mat-header-cell.cdk-header-cell.cdk-column-name.mat-column-name,
   .mat-cell.cdk-cell.cdk-column-name.mat-column-name.ng-star-inserted {
-    width: 50px;
-    overflow: hidden;
+    width: 50%;
+  }
+  .mat-header-cell.cdk-header-cell.cdk-column-measure.mat-column-measure,
+  .mat-cell.cdk-cell.cdk-column-measure.mat-column-measure.ng-star-inserted {
+    text-align: center;
+    width: 25%;
   }
 
-  th.mat-header-cell:first-of-type,
-  td.mat-cell:first-of-type,
-  td.mat-footer-cell:first-of-type {
-    padding-left: 0;
+  .mat-header-cell.cdk-header-cell.cdk-column-menue.mat-column-menue {
+    text-align: center;
+    width: 25%;
   }
-  th.mat-header-cell:last-of-type,
-  td.mat-cell:last-of-type,
-  td.mat-footer-cell:last-of-type {
-    padding-right: 0;
+
+  .mat-cell.cdk-cell.cdk-column-menue.mat-column-menue.ng-star-inserted {
+    text-align: end;
+    width: 25%;
   }
-  .mat-elevation-z8 {
-    tr {
-      display: flex;
-      justify-content: space-evenly;
-      overflow: hidden;
-      height: fit-content;
-      max-height: 80px;
-    }
-    * {
-      font-size: small;
-    }
-    th,
-    .result-sm {
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-    }
-  }
-  tr.mat-header-row {
-    height: 56px !important;
+
+  .mat-form-field {
+    width: 100%;
   }
 }

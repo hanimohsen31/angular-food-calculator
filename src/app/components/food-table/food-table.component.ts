@@ -21,7 +21,7 @@ export class FoodTableComponent implements AfterViewInit {
   displayedColumns: string[] = [
     'name',
     'translated',
-    'quantity',
+    'measure',
     'calories',
     'fats',
     'carbs',

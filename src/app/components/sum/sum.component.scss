@@ -1,6 +1,7 @@
 /* Structure */
 table {
   width: 100vw;
+  margin-top: 4rem;
 }
 
 .mat-mdc-form-field {
@@ -29,6 +30,7 @@ tr {
 @media (max-width: 767px) {
   table {
     transform: scale(.85);
+    margin-top: 0;
   }
   .mat-elevation-z8 {
     * {
