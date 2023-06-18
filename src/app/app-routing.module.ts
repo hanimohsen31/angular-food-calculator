@@ -25,11 +25,18 @@ const routes: Routes = [
     data: { authGuardPipe: redirectUnauthorizedToLogin },
   },
   { path: 'login', component: LoginComponent },
+  // {
+  //   path: '**',
+  //   component: NotFoundComponent,
+  //   canActivate: [AngularFireAuthGuard],
+  //   data: { authGuardPipe: redirectUnauthorizedToLogin },
+  // },
   {
     path: '**',
-    component: NotFoundComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    // component: NotFoundComponent,
+    // canActivate: [AngularFireAuthGuard],
+    // data: { authGuardPipe: redirectUnauthorizedToLogin },
+    redirectTo: 'calculator',
   },
 ];
 
