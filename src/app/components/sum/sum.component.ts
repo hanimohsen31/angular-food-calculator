@@ -10,6 +10,7 @@ import { OperationsService } from './../../services/operations.service';
 export class SumComponent implements OnInit {
   // properties
   displayDetails = false;
+  date = new Date()
 
   sumArray$ = this._OperationsService.sumArrayAction$.pipe(
     map((response: any) => response.map((elm: any) => elm))
@@ -40,5 +41,8 @@ export class SumComponent implements OnInit {
 
   toggleDetails() {
     this.displayDetails = !this.displayDetails;
+  }
+  print(){
+    print()
   }
 }

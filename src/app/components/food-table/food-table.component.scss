@@ -23,12 +23,6 @@ tr {
   vertical-align: middle;
 }
 
-@media print {
-  .mat-elevation-z8 {
-    display: none;
-  }
-}
-
 .mat-column-name,
 .mat-column-translated {
   width: fit-content;
@@ -71,5 +65,14 @@ tr {
 
   .mat-form-field {
     width: 100%;
+  }
+}
+
+@media print {
+  table,
+  mat-form-field,
+  mat-paginator,
+  .mat-elevation-z8 {
+    display: none;
   }
 }

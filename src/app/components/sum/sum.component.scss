@@ -20,16 +20,15 @@ input {
 tr {
   vertical-align: middle;
 }
-
-@media print {
-  .mat-elevation-z8 {
-    display: none;
+.result-smxx {
+  .card {
+    opacity: 0.7;
   }
 }
 
 @media (max-width: 767px) {
   table {
-    transform: scale(.85);
+    transform: scale(0.85);
     margin-top: 0;
   }
   .mat-elevation-z8 {
@@ -47,5 +46,12 @@ tr {
       align-items: center;
       overflow: hidden;
     }
+  }
+}
+
+@media print {
+  .mat-elevation-z8,
+  button {
+    display: none !important;
   }
 }
