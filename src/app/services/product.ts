@@ -4,6 +4,9 @@ export interface Product {
   Translation: string;
   Measure: number;
   MeasureUnit: string;
+  Equavlint: string;
+  EquavlintMeasure: number;
+  EquavlintMeasureUnit: string;
   Carbohydrate: number;
   Energy: number;
   Protein: number;

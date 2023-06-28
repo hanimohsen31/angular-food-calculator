@@ -22,6 +22,7 @@ export class FoodTableComponent implements AfterViewInit {
     'name',
     'translated',
     'measure',
+    'equavlint',
     'calories',
     'fats',
     'carbs',
