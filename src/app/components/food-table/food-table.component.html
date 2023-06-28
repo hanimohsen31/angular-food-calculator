@@ -26,7 +26,7 @@
   <!-- quantity Column -->
   <ng-container matColumnDef="equavlint">
     <th mat-header-cell *matHeaderCellDef>Equavlint</th>
-    <td mat-cell *matCellDef="let element">{{ element.Equavlint }}</td>
+    <td mat-cell *matCellDef="let element">{{ element.Equavlint || "_______"}}</td>
   </ng-container>
 
   <!-- calories Column -->
