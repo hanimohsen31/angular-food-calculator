@@ -13,7 +13,12 @@ export class AddNewFoodComponent implements OnInit {
   ngOnInit(): void {}
 
   formData = {
-    FoodID: new Date().toISOString().replaceAll("-","").replaceAll(":","").replaceAll(".","").slice(11,-1),
+    FoodID: new Date()
+      .toISOString()
+      .replaceAll('-', '')
+      .replaceAll(':', '')
+      .replaceAll('.', '')
+      .slice(11, -1),
     ShortFoodName: '',
     Translation: '',
     Measure: 0,
@@ -24,6 +29,9 @@ export class AddNewFoodComponent implements OnInit {
     Fat: 0,
     Protein: 0,
     Sugars: 0,
+    Equavlint: '1item/00gm',
+    EquavlintMeasure: 0,
+    EquavlintMeasureUnit: '1 item',
     // ------------
     // Water: 0,
     // DietaryFibre: 0,
