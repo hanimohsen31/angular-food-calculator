@@ -9,6 +9,7 @@ import {
   AngularFireAuthGuard,
   redirectUnauthorizedTo,
 } from '@angular/fire/compat/auth-guard';
+import { NotesComponent } from './pages/notes/notes.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 
 const routes: Routes = [
@@ -24,18 +25,15 @@ const routes: Routes = [
     canActivate: [AngularFireAuthGuard],
     data: { authGuardPipe: redirectUnauthorizedToLogin },
   },
+  {
+    path: 'notes',
+    component: NotesComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+  },
   { path: 'login', component: LoginComponent },
-  // {
-  //   path: '**',
-  //   component: NotFoundComponent,
-  //   canActivate: [AngularFireAuthGuard],
-  //   data: { authGuardPipe: redirectUnauthorizedToLogin },
-  // },
   {
     path: '**',
-    // component: NotFoundComponent,
-    // canActivate: [AngularFireAuthGuard],
-    // data: { authGuardPipe: redirectUnauthorizedToLogin },
     redirectTo: 'calculator',
   },
 ];

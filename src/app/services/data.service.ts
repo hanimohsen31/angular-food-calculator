@@ -9,7 +9,6 @@ export class DataService {
   constructor(private _HttpClienttp: HttpClient) {}
 
   getData(): Observable<any> {
-    // const url = 'assets/Data.json';
     const url = 'https://food-calculator-300-default-rtdb.firebaseio.com/data.json';
     return this._HttpClienttp.get(url);
   }
@@ -17,5 +16,10 @@ export class DataService {
   addNewFood(formData: any) {
     let url = 'https://food-calculator-300-default-rtdb.firebaseio.com/data.json';
     return this._HttpClienttp.post(url, formData);
+  }
+
+  getNotes(): Observable<any> {
+    const url = 'https://food-calculator-300-default-rtdb.firebaseio.com/notes.json';
+    return this._HttpClienttp.get(url);
   }
 }

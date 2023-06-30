@@ -18,6 +18,7 @@ import { LoginComponent } from './components/login/login.component';
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { NotesComponent } from './pages/notes/notes.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +31,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     CalculatorPageComponent,
     LoginComponent,
     NotFoundComponent,
+    NotesComponent,
   ],
   imports: [
     BrowserModule,
