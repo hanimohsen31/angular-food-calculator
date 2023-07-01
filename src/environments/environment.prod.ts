@@ -21,4 +21,5 @@ export const environment = {
   database: {
     url: 'https://food-calculator-300-default-rtdb.firebaseio.com',
   },
+  admins: ['hanimohsen3131@gmail.com'],
 };

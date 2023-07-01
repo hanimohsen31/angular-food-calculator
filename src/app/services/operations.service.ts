@@ -45,7 +45,7 @@ export class OperationsService {
 
   handleChange() {
     let getterArr = this.sumArray.getValue();
-    console.log(getterArr);
+    // console.log(getterArr);
     let finalSumContainer: any = this.initialProduct;
     getterArr.map((elm: any) => {
       finalSumContainer = {
@@ -93,7 +93,7 @@ export class OperationsService {
   // handle remove
   handleRemove(index: any) {
     let getterArr = this.sumArray.getValue();
-    console.log(getterArr);
+    // console.log(getterArr);
     getterArr.splice(index, 1);
     this.sumArray.next(getterArr);
     this.handleChange();

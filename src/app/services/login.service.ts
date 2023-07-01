@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { GoogleAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,24 @@ export class LoginService {
   isLoggedin$ = new BehaviorSubject(false);
   isLoggedinAction$ = this.isLoggedin$.asObservable();
 
+  isAdmin$ = new BehaviorSubject(false);
+  isAdminAction$ = this.isAdmin$.asObservable();
+
+  adminsEmail: any[] = environment.admins;
+
   constructor(
     private _AngularFireAuth: AngularFireAuth,
     private _Router: Router
   ) {
-    if (localStorage.getItem('user')) {
+    let user: any = localStorage.getItem('user');
+    let email: any = JSON.parse(user)?.email;
+    if (user) {
       this.isLoggedin$.next(true);
+      this.adminsEmail.find((eml) =>
+        email === eml ? this.isAdmin$.next(true) : null
+      );
+    } else {
+      this.logOut();
     }
   }
 
@@ -32,6 +45,9 @@ export class LoginService {
         };
         localStorage.setItem('user', JSON.stringify(user));
         this.isLoggedin$.next(true);
+        this.adminsEmail.find((eml) =>
+          response.user.email === eml ? this.isAdmin$.next(true) : null
+        );
         this._Router.navigate(['calculator']);
       },
       (error) => {
