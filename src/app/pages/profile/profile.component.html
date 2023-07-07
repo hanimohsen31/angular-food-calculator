@@ -1,0 +1,19 @@
+<form>
+  <div class="mb-3">
+    <label for="Energy" class="form-label">Weight</label>
+    <input
+      required
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="personal.Weight"
+      type="number"
+      class="form-control"
+      id="Energy"
+    />
+  </div>
+  <p>Calories = 370 + (21.6 * weight KG) * ActivityFactor</p>
+  <p *ngIf="personal.Weight">Target Calories is: {{personal.Energy | toFixed}}</p>
+
+  <button type="submit" (click)="changePersonal()" class="btn btn-primary">
+    Submit
+  </button>
+</form>

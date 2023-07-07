@@ -1,6 +1,8 @@
 <ul class="list-group">
-  <li class="list-group-item d-flex align-items-center" *ngFor="let note of notes$ | async">
-    <span class="dot d-inline-flex me-2 rounded bg-black"></span>
-    {{ note }}
-  </li>
+  <ng-container *ngFor="let note of notes$ | async">
+    <li class="list-group-item d-flex align-items-center" *ngIf="note">
+      <span class="dot d-inline-flex me-2 rounded bg-black"></span>
+      {{ note }}
+    </li>
+  </ng-container>
 </ul>

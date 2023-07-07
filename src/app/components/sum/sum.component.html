@@ -1,7 +1,4 @@
 <div class="w-100 d-flex justify-content-between align-items-center mt-3">
-  <!-- <button (click)="print()" class="btn btn-outline-primary d-block d-md-none">
-    Print
-  </button> -->
   <h4 class="p-0 m-0">{{ date | date }}</h4>
   <button
     (click)="toggleDetails()"
@@ -27,7 +24,7 @@
     </thead>
     <tbody>
       <ng-container *ngFor="let elm of sumArray$ | async; let i = index">
-        <!-- overall Preview -->
+        <!-- ------------------------------ overall Preview ------------------------------ -->
         <tr class="bg-light">
           <td>{{ elm?.ShortFoodName }}</td>
           <td>
@@ -58,7 +55,7 @@
             </button>
           </td>
         </tr>
-        <!-- mobile Preview -->
+        <!-- ------------------------------ mobile Preview ------------------------------ -->
         <tr class="result-smxx" [class.d-none]="!displayDetails">
           <td colspan="8" class="d-table-cell d-md-none">
             <div class="d-flex justify-content-center px-2">
@@ -85,17 +82,11 @@
     </tbody>
     <tfoot>
       <ng-container *ngFor="let final of finalSumObject$ | async">
+        <!-- ------------------------------ Sum ------------------------------ -->
         <tr class="bg-light">
           <td>Sum</td>
           <td></td>
-          <td>
-            <!-- <button
-            (click)="handleChange()"
-            class="btn btn-outline-primary px-3 mb-1"
-          >
-            Calc.
-          </button> -->
-          </td>
+          <td></td>
           <td class="d-none d-md-table-cell">
             {{ final.Energy | toFixed }}
           </td>
@@ -114,22 +105,60 @@
             </button>
           </td>
         </tr>
-        <!-- mobile Preview -->
+        <!-- ----------------------------- target ----------------------------- -->
+        <tr class="bg-light d-none d-md-table-row">
+          <td>Target</td>
+          <td></td>
+          <td></td>
+          <td class="d-none d-md-table-cell">
+            <span>{{ targetObj?.enrgTrg }}</span>
+            <span>({{ targetObj?.enrgPer }}%)</span>
+          </td>
+          <td class="d-none d-md-table-cell">
+            <span> {{ targetObj?.fatTarg }} </span>
+            <span> ({{ targetObj?.fatPerc }}%) </span>
+          </td>
+          <td class="d-none d-md-table-cell">
+            <span> {{ targetObj?.carbTarg }} </span>
+            <span> ({{ targetObj?.carbPer }}%) </span>
+          </td>
+          <td class="d-none d-md-table-cell">
+            <span> {{ targetObj?.proTrg }} </span>
+            <span> ({{ targetObj?.proPer }}%) </span>
+          </td>
+          <td></td>
+        </tr>
+        <!-- ------------------------- mobile Preview ------------------------- -->
         <tr class="result-sm">
           <td colspan="5" class="d-table-cell d-md-none">
             <div class="d-flex flex-wrap justify-content-center">
               <span class="card p-2 m-2 col-5">
-                Cal: {{ final.Energy | toFixed }}</span
-              >
+                <span>Cal: {{ final.Energy | toFixed }}</span>
+                <span
+                  >Tar: {{ targetObj?.enrgTrg }} ({{
+                    targetObj?.enrgPer
+                  }}%)</span
+                >
+              </span>
               <span class="card p-2 m-2 col-5">
-                Fats: {{ final.Fat | toFixed }}</span
-              >
+                <span>Fats: {{ final.Fat | toFixed }}</span>
+                <span
+                  >Tar: {{ targetObj?.fatTarg }} ({{
+                    targetObj?.fatPerc
+                  }}%)</span
+                >
+                <span> </span>
+              </span>
               <span class="card p-2 m-2 col-5">
-                Carb: {{ final.Carbohydrate | toFixed }}</span
-              >
+                <span>Carb: {{ final.Carbohydrate | toFixed }}</span>
+                <span>
+                  {{ targetObj?.carbTarg }} ({{ targetObj?.carbPer }}%)</span
+                >
+              </span>
               <span class="card p-2 m-2 col-5">
-                Protein: {{ final.Protein | toFixed }}</span
-              >
+                <span>Protein: {{ final.Protein | toFixed }}</span>
+                <span>{{ targetObj?.proTrg }} ({{ targetObj?.proPer }}%)</span>
+              </span>
             </div>
           </td>
         </tr>

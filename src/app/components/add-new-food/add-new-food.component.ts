@@ -32,23 +32,6 @@ export class AddNewFoodComponent implements OnInit {
     Equavlint: '1item/00gm',
     EquavlintMeasure: 0,
     EquavlintMeasureUnit: '1 item',
-    // ------------
-    // Water: 0,
-    // DietaryFibre: 0,
-    // Cholesterol: 0,
-    // Sodium: 0,
-    // Iodine: 0,
-    // Potassium: 0,
-    // Phosphorus: 0,
-    // Calcium: 0,
-    // Iron: 0,
-    // Zinc: 0,
-    // VitaminA: 0,
-    // VitaminB6: 0,
-    // VitaminB12: 0,
-    // VitaminC: 0,
-    // VitaminD: 0,
-    // VitaminE: 0,
   };
   addNewFood() {
     this._DataService.addNewFood(this.formData).subscribe({

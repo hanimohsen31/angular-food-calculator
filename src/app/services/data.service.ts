@@ -7,21 +7,35 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class DataService {
-  constructor(private _HttpClienttp: HttpClient) {}
+  constructor(private HttpClient: HttpClient) {}
   url = environment.database.url;
+  nutritions = {
+    ActicityFactorMin: 0.8,
+    ActicityFactorMax: 0.9,
+    ActicityFactorAvr: 0.85,
+    fatCalGM: 9,
+    fatsFactorPerDayMin: 0.2,
+    fatsFactorPerDayMax: 0.35,
+    CarbCalGM: 3.7,
+    carbsFactorPerDayMin: 0.45,
+    carbsFactorPerDayMax: 0.65,
+    proteinCalGM: 4,
+    proteinFactorPerDayMin: 0.1,
+    proteinFactorPerDayMax: 0.35,
+  };
 
   getData(): Observable<any> {
     const url = `${this.url}/data.json`;
-    return this._HttpClienttp.get(url);
+    return this.HttpClient.get(url);
   }
 
   addNewFood(formData: any) {
-    let url = `${this.url}/data.json`
-    return this._HttpClienttp.post(url, formData);
+    let url = `${this.url}/data.json`;
+    return this.HttpClient.post(url, formData);
   }
 
   getNotes(): Observable<any> {
-    const url = `${this.url}/notes.json`
-    return this._HttpClienttp.get(url);
+    const url = `${this.url}/notes.json`;
+    return this.HttpClient.get(url);
   }
 }

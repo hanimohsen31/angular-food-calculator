@@ -12,7 +12,6 @@ export class NavbarComponent implements OnInit {
   isLoggedIn$ = this._LoginService.isLoggedinAction$;
   isAdmin = this._LoginService.isAdmin$
   ngOnInit(): void {
-    // console.log(this.isAdmin);
   }
 
   heroImg =

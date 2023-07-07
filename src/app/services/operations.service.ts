@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
-import { Product } from './product';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
@@ -19,16 +18,23 @@ export class OperationsService {
     Carbohydrate: 0,
     Quantity: 1,
   };
+
   // user
   user = localStorage.getItem('user') || '';
   userId = JSON.parse(this.user).uid;
   url = `${environment.database.url}/users/${this.userId}.json`;
+
   // sumArray
   sumArray = new BehaviorSubject<any[]>([]);
   sumArrayAction$ = this.sumArray.asObservable();
+
   // finalSum[{}]
   finalSum = new BehaviorSubject<any>([]);
   finalSumAction$ = this.finalSum.asObservable();
+
+  // targetEnergy
+  targetEnergy = new BehaviorSubject<any>(2000);
+  targetEnergyAction$ = this.targetEnergy.asObservable();
 
   constructor(private _HttpClient: HttpClient) {
     let userData: any = this.handleCloude('get').subscribe((res: any) => {
@@ -40,6 +46,15 @@ export class OperationsService {
         this.sumArray.next([]);
         this.finalSum.next([]);
       }
+    });
+
+    this.getTargetEnergy().subscribe({
+      next: (res) => {
+        res
+          ? this.targetEnergy.next(res?.Energy)
+          : this.targetEnergy.next(2000);
+      },
+      error: (err) => null,
     });
   }
 
@@ -106,5 +121,17 @@ export class OperationsService {
       this.sumArray.next([]);
       this.finalSum.next([]);
     });
+  }
+
+  // personal data
+  changeTargetEnergy(object: any): Observable<any> {
+    let url = `${environment.database.url}/personal/${this.userId}.json`;
+    this.targetEnergy.next(object?.Energy);
+    return this._HttpClient.put(url, object);
+  }
+
+  getTargetEnergy(): Observable<any> {
+    let url = `${environment.database.url}/personal/${this.userId}.json`;
+    return this._HttpClient.get(url);
   }
 }

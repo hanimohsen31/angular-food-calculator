@@ -19,6 +19,7 @@ import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire/compat';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotesComponent } from './pages/notes/notes.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,6 +33,7 @@ import { NotesComponent } from './pages/notes/notes.component';
     LoginComponent,
     NotFoundComponent,
     NotesComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

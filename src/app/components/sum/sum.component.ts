@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, map, tap, Observable } from 'rxjs';
+import { map, combineLatest } from 'rxjs';
 import { OperationsService } from './../../services/operations.service';
+import { DataService } from './../../services/data.service';
 
 @Component({
   selector: 'app-sum',
@@ -9,40 +10,85 @@ import { OperationsService } from './../../services/operations.service';
 })
 export class SumComponent implements OnInit {
   // properties
+  trgtEnr: any = 0;
   displayDetails = false;
-  date = new Date()
+  date = new Date();
+  nutritions = this.DataService.nutritions;
+  finsObj: any = {};
+  targetObj: any = {};
 
-  sumArray$ = this._OperationsService.sumArrayAction$.pipe(
-    map((response: any) => response.map((elm: any) => elm))
-  );
-
-  finalSumObject$ = this._OperationsService.finalSumAction$.pipe(
-    map((response: any) => response.map((elm: any) => elm))
-  );
-
-  constructor(private _OperationsService: OperationsService) {}
+  constructor(
+    private OperationsService: OperationsService,
+    private DataService: DataService
+  ) {}
 
   ngOnInit(): void {}
 
+  sumArray$ = this.OperationsService.sumArrayAction$.pipe(
+    map((response: any) => response.map((elm: any) => elm))
+  );
+
+  finalSumObject$ = this.OperationsService.finalSumAction$.pipe(
+    map((response: any) => response.map((elm: any) => elm))
+  );
+
+  percentageObjJoin$ = combineLatest([
+    this.finalSumObject$,
+    this.OperationsService.getTargetEnergy(),
+  ]).subscribe({
+    next: (res) => this.updatePercentageObj(res[0][0], res[1]?.Energy),
+    error: (err) => console.log('err'),
+  });
+
+  updatePercentageObj(finsObj: any, trgtEnr: any) {
+    let obj = {
+      enrgTrg: +trgtEnr.toFixed(),
+      enrgPer: ((+finsObj.Energy * 100) / +trgtEnr).toFixed(),
+      fatTarg: (
+        (+trgtEnr * this.nutritions.fatsFactorPerDayMin) /
+        this.nutritions.fatCalGM
+      ).toFixed(),
+      fatPerc: (
+        (finsObj.Fat * this.nutritions.fatCalGM * 100) /
+        (+trgtEnr * this.nutritions.fatsFactorPerDayMin)
+      ).toFixed(),
+      carbTarg: (
+        (+trgtEnr * this.nutritions.carbsFactorPerDayMin) /
+        this.nutritions.CarbCalGM
+      ).toFixed(),
+      carbPer: (
+        (finsObj.Carbohydrate * this.nutritions.CarbCalGM * 100) /
+        (+trgtEnr * this.nutritions.carbsFactorPerDayMin)
+      ).toFixed(),
+      proTrg: (
+        (+trgtEnr * this.nutritions.proteinFactorPerDayMax) /
+        this.nutritions.proteinCalGM
+      ).toFixed(),
+      proPer: (
+        (finsObj.Protein * this.nutritions.proteinCalGM * 100) /
+        (+trgtEnr * this.nutritions.proteinFactorPerDayMax)
+      ).toFixed(),
+    };
+    this.targetObj = obj;
+    // console.log('obj: ', obj);
+  }
+
   // handle remove
   handleRemove(index: any) {
-    this._OperationsService.handleRemove(index);
+    this.OperationsService.handleRemove(index);
   }
 
   // handle change
   handleChange() {
-    this._OperationsService.handleChange();
+    this.OperationsService.handleChange();
   }
 
   // handle clear
   handleClear() {
-    this._OperationsService.handleClear();
+    this.OperationsService.handleClear();
   }
 
   toggleDetails() {
     this.displayDetails = !this.displayDetails;
-  }
-  print(){
-    print()
   }
 }
