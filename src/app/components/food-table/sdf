@@ -4,29 +4,21 @@
 </mat-form-field>
 
 <!-- table -->
-<table
-  mat-table
-  class="mat-elevation-z8"
-  matSortActive="ShortFoodName"
-  matSortDirection="asc"
-  matSortDisableClear
-  [dataSource]="dataSource"
-  matSort
->
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
   <!-- Name Column -->
-  <ng-container matColumnDef="ShortFoodName">
+  <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
     <td mat-cell *matCellDef="let row">{{ row.ShortFoodName }}</td>
   </ng-container>
 
   <!-- translated Column -->
-  <ng-container matColumnDef="Translation">
+  <ng-container matColumnDef="translated">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Translated</th>
     <td mat-cell *matCellDef="let row">{{ row.Translation }}</td>
   </ng-container>
 
   <!-- quantity Column -->
-  <ng-container matColumnDef="MeasureUnit">
+  <ng-container matColumnDef="measure">
     <th mat-header-cell *matHeaderCellDef>Measure</th>
     <td mat-cell *matCellDef="let row">
       {{ row.Measure }} {{ row.MeasureUnit }}
@@ -34,27 +26,27 @@
   </ng-container>
 
   <!-- quantity Column -->
-  <ng-container matColumnDef="Equavlint">
+  <ng-container matColumnDef="equavlint">
     <th mat-header-cell *matHeaderCellDef>Equavlint</th>
     <td mat-cell *matCellDef="let row">
-      {{ wordBreaker(row.Equavlint)}}
+      {{ row.Equavlint || "_______" }}
     </td>
   </ng-container>
 
   <!-- calories Column -->
-  <ng-container matColumnDef="Energy">
+  <ng-container matColumnDef="calories">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Calories</th>
     <td mat-cell *matCellDef="let row">{{ row.Energy | toFixed }}</td>
   </ng-container>
 
   <!-- fats Column -->
-  <ng-container matColumnDef="Fat">
+  <ng-container matColumnDef="fats">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fats</th>
     <td mat-cell *matCellDef="let row">{{ row.Fat | toFixed }}</td>
   </ng-container>
 
   <!-- carbs Column -->
-  <ng-container matColumnDef="Carbohydrate">
+  <ng-container matColumnDef="carbs">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Carbs</th>
     <td mat-cell *matCellDef="let row">
       {{ row.Carbohydrate | toFixed }}
@@ -62,7 +54,7 @@
   </ng-container>
 
   <!-- protein Column -->
-  <ng-container matColumnDef="Protein">
+  <ng-container matColumnDef="protein">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Protein</th>
     <td mat-cell *matCellDef="let row">{{ row.Protein | toFixed }}</td>
   </ng-container>

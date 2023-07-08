@@ -23,32 +23,48 @@ tr {
   vertical-align: middle;
 }
 
-.mat-column-name,
-.mat-column-translated {
+.mat-column-ShortFoodName,
+.mat-column-Translation {
   width: fit-content;
   max-width: 200px;
 }
 
 @media (max-width: 767px) {
-  .mat-header-cell.cdk-header-cell.cdk-column-translated.mat-column-translated,
-  .mat-cell.cdk-cell.cdk-column-translated.mat-column-translated.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-calories.mat-column-calories,
-  .mat-cell.cdk-cell.cdk-column-calories.mat-column-calories.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-fats.mat-column-fats,
-  .mat-cell.cdk-cell.cdk-column-fats.mat-column-fats.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-protein.mat-column-protein,
-  .mat-cell.cdk-cell.cdk-column-protein.mat-column-protein.ng-star-inserted,
-  .mat-header-cell.cdk-header-cell.cdk-column-carbs.mat-column-carbs,
-  .mat-cell.cdk-cell.cdk-column-carbs.mat-column-carbs.ng-star-inserted {
+  .mat-header-cell.cdk-header-cell.cdk-column-Translation.mat-column-Translation,
+  .mat-cell.cdk-cell.cdk-column-Translation.mat-column-Translation.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Energy.mat-column-Energy,
+  .mat-cell.cdk-cell.cdk-column-Energy.mat-column-Energy.ng-star-inserted,
+
+  // .mat-header-cell.cdk-header-cell.cdk-column-Equavlint.mat-column-Equavlint,
+  // .mat-cell.cdk-cell.cdk-column-Equavlint.mat-column-Equavlint.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Fat.mat-column-Fat,
+  .mat-cell.cdk-cell.cdk-column-Fat.mat-column-Fat.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Protein.mat-column-Protein,
+  .mat-cell.cdk-cell.cdk-column-Protein.mat-column-Protein.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Carbohydrate.mat-column-Carbohydrate,
+  .mat-cell.cdk-cell.cdk-column-Carbohydrate.mat-column-Carbohydrate.ng-star-inserted {
     display: none;
   }
 
-  .mat-header-cell.cdk-header-cell.cdk-column-name.mat-column-name,
-  .mat-cell.cdk-cell.cdk-column-name.mat-column-name.ng-star-inserted {
+  // .mat-header-cell.cdk-header-cell.cdk-column-Equavlint.mat-column-Equavlint,
+  .mat-cell.cdk-cell.cdk-column-Equavlint.mat-column-Equavlint.ng-star-inserted {
+    font-size: 10px;
+    // word-wrap: break-word;
+    // width: 20px;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  .mat-header-cell.cdk-header-cell.cdk-column-ShortFoodName.mat-column-ShortFoodName,
+  .mat-cell.cdk-cell.cdk-column-ShortFoodName.mat-column-ShortFoodName.ng-star-inserted {
     width: 50%;
   }
-  .mat-header-cell.cdk-header-cell.cdk-column-measure.mat-column-measure,
-  .mat-cell.cdk-cell.cdk-column-measure.mat-column-measure.ng-star-inserted {
+  .mat-header-cell.cdk-header-cell.cdk-column-MeasureUnit.mat-column-MeasureUnit,
+  .mat-cell.cdk-cell.cdk-column-MeasureUnit.mat-column-MeasureUnit.ng-star-inserted {
     text-align: center;
     width: 25%;
   }

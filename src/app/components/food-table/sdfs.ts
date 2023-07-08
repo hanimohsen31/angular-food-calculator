@@ -4,7 +4,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { DataService } from './../../services/data.service';
 import { OperationsService } from './../../services/operations.service';
 import { MatSort } from '@angular/material/sort';
-import { interval, take } from 'rxjs';
 
 @Component({
   selector: 'app-food-table',
@@ -14,15 +13,15 @@ import { interval, take } from 'rxjs';
 export class FoodTableComponent implements AfterViewInit {
   // paginator
   displayedColumns: string[] = [
-    'ShortFoodName',
-    'Translation',
-    'MeasureUnit',
-    'Equavlint',
-    'Energy',
-    'Fat',
-    'Carbohydrate',
-    'Protein',
-    'menue',
+    'name',
+    // 'translated',
+    // 'measure',
+    // 'equavlint',
+    // 'calories',
+    // 'fats',
+    // 'carbs',
+    // 'protein',
+    // 'menue',
   ];
   // angular table
   dataSource = new MatTableDataSource([]);
@@ -37,7 +36,7 @@ export class FoodTableComponent implements AfterViewInit {
 
   constructor(
     private _DataService: DataService,
-    private _OperationsService: OperationsService
+    private _OperationsService: OperationsService,
   ) {
     this.getDate();
   }
@@ -66,14 +65,5 @@ export class FoodTableComponent implements AfterViewInit {
   handleAdd(element: any) {
     this._OperationsService.handleAdd(element);
     this._OperationsService.handleChange();
-  }
-
-  // word breaker
-  wordBreaker(value: String) {
-    if (value) {
-      return value.replace('/', ' ');
-    } else {
-      return '_______';
-    }
   }
 }

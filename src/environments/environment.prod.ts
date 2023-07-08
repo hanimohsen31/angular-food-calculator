@@ -22,4 +22,5 @@ export const environment = {
     url: 'https://food-calculator-300-default-rtdb.firebaseio.com',
   },
   admins: ['hanimohsen3131@gmail.com'],
+  // recaptchaEnterpriseKey:"F1EC7F2E-C880-4534-9530-6870CB44E0B0"
 };
