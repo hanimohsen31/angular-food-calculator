@@ -36,8 +36,12 @@ export class SumComponent implements OnInit {
     this.finalSumObject$,
     this.OperationsService.getTargetEnergy(),
   ]).subscribe({
-    next: (res) => this.updatePercentageObj(res[0][0], res[1]?.Energy),
-    error: (err) => console.log('err'),
+    next: (res) => {
+      res[1]?.Energy
+        ? this.updatePercentageObj(res[0][0], res[1]?.Energy)
+        : this.updatePercentageObj(res[0][0], 2000)
+    },
+    error: (err) => console.log('error in personal: ', err),
   });
 
   updatePercentageObj(finsObj: any, trgtEnr: any) {

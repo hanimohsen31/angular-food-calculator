@@ -27,13 +27,7 @@ export class DataService {
 
   getData(): Observable<any> {
     const url = `${this.url}/data.json`;
-    return this.HttpClient.get(
-      url
-      // {headers: {
-      //   'X-Firebase-AppCheck': environment.recaptchaEnterpriseKey,
-      //   'test-token': environment.recaptchaEnterpriseKey,
-      // }},
-    );
+    return this.HttpClient.get(url);
   }
 
   addNewFood(formData: any) {

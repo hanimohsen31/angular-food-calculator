@@ -1,19 +1,70 @@
-<form>
-  <div class="mb-3">
-    <label for="Energy" class="form-label">Weight</label>
-    <input
-      required
-      [ngModelOptions]="{ standalone: true }"
-      [(ngModel)]="personal.Weight"
-      type="number"
-      class="form-control"
-      id="Energy"
-    />
+<div class="ProfilePage">
+  <div class="card ProfilePageContent my-2" *ngIf="isProfilePage">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <img [src]="user.photoURL" alt="" />
+      </div>
+      <div class="col-12 col-md-6">
+        <h1 class="text-center text-md-start">{{user.name}}</h1>
+        <form>
+          <div class="mb-3">
+            <label for="Energy" class="form-label">Weight</label>
+            <input
+              required
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="personal.Weight"
+              type="number"
+              class="form-control"
+              id="Energy"
+            />
+          </div>
+          <p>Calories = 370 + (21.6 * weight KG) * ActivityFactor</p>
+          <p class="card" *ngIf="personal.Weight">
+            Target Calories is: {{ personal.Energy | toFixed }} kcal
+          </p>
+          <p class="card" *ngIf="personal.Weight">
+            Target Carbs/Day is: {{ targetCalculated.trgtCarb }} gm
+          </p>
+          <p class="card" *ngIf="personal.Weight">
+            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm
+          </p>
+          <p class="card" *ngIf="personal.Weight">
+            Target Protein/Day is: {{ targetCalculated.trgtPro }} gm
+          </p>
+          <div class="d-flex justify-content-end">
+            <button
+              type="submit"
+              (click)="changePersonal()"
+              class="btn btn-primary"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  <p>Calories = 370 + (21.6 * weight KG) * ActivityFactor</p>
-  <p *ngIf="personal.Weight">Target Calories is: {{personal.Energy | toFixed}}</p>
+</div>
 
-  <button type="submit" (click)="changePersonal()" class="btn btn-primary">
-    Submit
-  </button>
+<!-- ---------------------------------- -->
+<form *ngIf="!isProfilePage && (WeightAction$ | async) == 0">
+  <div class="row justify-content-center align-items-end mb-3">
+    <div class="col-11">
+      <label for="Energy" class="form-label">Weight</label>
+      <input
+        required
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="personal.Weight"
+        type="number"
+        class="form-control"
+        id="Energy"
+        style="width: 99%"
+      />
+    </div>
+    <div class="d-flex justify-content-end col-1">
+      <button type="submit" (click)="changePersonal()" class="btn btn-primary">
+        Submit
+      </button>
+    </div>
+  </div>
 </form>
