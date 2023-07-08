@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -22,11 +22,18 @@ export class DataService {
     proteinCalGM: 4,
     proteinFactorPerDayMin: 0.1,
     proteinFactorPerDayMax: 0.35,
+    proteinFactorPerDayAvr: 0.225,
   };
 
   getData(): Observable<any> {
     const url = `${this.url}/data.json`;
-    return this.HttpClient.get(url);
+    return this.HttpClient.get(
+      url
+      // {headers: {
+      //   'X-Firebase-AppCheck': environment.recaptchaEnterpriseKey,
+      //   'test-token': environment.recaptchaEnterpriseKey,
+      // }},
+    );
   }
 
   addNewFood(formData: any) {

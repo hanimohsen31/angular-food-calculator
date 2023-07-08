@@ -61,12 +61,12 @@ export class SumComponent implements OnInit {
         (+trgtEnr * this.nutritions.carbsFactorPerDayMin)
       ).toFixed(),
       proTrg: (
-        (+trgtEnr * this.nutritions.proteinFactorPerDayMax) /
+        (+trgtEnr * this.nutritions.proteinFactorPerDayAvr) /
         this.nutritions.proteinCalGM
       ).toFixed(),
       proPer: (
         (finsObj.Protein * this.nutritions.proteinCalGM * 100) /
-        (+trgtEnr * this.nutritions.proteinFactorPerDayMax)
+        (+trgtEnr * this.nutritions.proteinFactorPerDayAvr)
       ).toFixed(),
     };
     this.targetObj = obj;

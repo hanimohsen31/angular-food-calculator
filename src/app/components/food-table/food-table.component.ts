@@ -3,6 +3,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { DataService } from './../../services/data.service';
 import { OperationsService } from './../../services/operations.service';
+import { MatSort } from '@angular/material/sort';
+import { interval, take } from 'rxjs';
 
 @Component({
   selector: 'app-food-table',
@@ -11,26 +13,27 @@ import { OperationsService } from './../../services/operations.service';
 })
 export class FoodTableComponent implements AfterViewInit {
   // paginator
+  displayedColumns: string[] = [
+    'ShortFoodName',
+    'Translation',
+    'MeasureUnit',
+    'Equavlint',
+    'Energy',
+    'Fat',
+    'Carbohydrate',
+    'Protein',
+    'menue',
+  ];
+  // angular table
+  dataSource = new MatTableDataSource([]);
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
-
-  // angular table
-  displayedColumns: string[] = [
-    'name',
-    'translated',
-    'measure',
-    'equavlint',
-    'calories',
-    'fats',
-    'carbs',
-    'protein',
-    'menue',
-  ];
-
-  dataSource = new MatTableDataSource([]);
 
   constructor(
     private _DataService: DataService,
@@ -42,9 +45,10 @@ export class FoodTableComponent implements AfterViewInit {
   getDate() {
     this._DataService.getData().subscribe({
       next: (res) => {
-        let array :any = Object.values(res)
+        let array: any = Object.values(res);
         this.dataSource = new MatTableDataSource(array);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort
       },
     });
   }
@@ -53,11 +57,14 @@ export class FoodTableComponent implements AfterViewInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   // handle add
   handleAdd(element: any) {
-    this._OperationsService.handleAdd(element)
-    this._OperationsService.handleChange()
+    this._OperationsService.handleAdd(element);
+    this._OperationsService.handleChange();
   }
 }
