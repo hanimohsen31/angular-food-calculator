@@ -135,7 +135,7 @@
               <span class="card p-2 m-2 col-5">
                 <span>Cal: {{ final.Energy | toFixed }}</span>
                 <span
-                  >Tar: {{ targetObj?.enrgTrg }} ({{
+                  >Target: {{ targetObj?.enrgTrg }} ({{
                     targetObj?.enrgPer
                   }}%)</span
                 >
@@ -143,7 +143,7 @@
               <span class="card p-2 m-2 col-5">
                 <span>Fats: {{ final.Fat | toFixed }}</span>
                 <span
-                  >Tar: {{ targetObj?.fatTarg }} ({{
+                  >Target: {{ targetObj?.fatTarg }} ({{
                     targetObj?.fatPerc
                   }}%)</span
                 >
@@ -152,12 +152,12 @@
               <span class="card p-2 m-2 col-5">
                 <span>Carb: {{ final.Carbohydrate | toFixed }}</span>
                 <span>
-                  {{ targetObj?.carbTarg }} ({{ targetObj?.carbPer }}%)</span
+                  Target: {{ targetObj?.carbTarg }} ({{ targetObj?.carbPer }}%)</span
                 >
               </span>
               <span class="card p-2 m-2 col-5">
                 <span>Protein: {{ final.Protein | toFixed }}</span>
-                <span>{{ targetObj?.proTrg }} ({{ targetObj?.proPer }}%)</span>
+                <span>Target: {{ targetObj?.proTrg }} ({{ targetObj?.proPer }}%)</span>
               </span>
             </div>
           </td>
