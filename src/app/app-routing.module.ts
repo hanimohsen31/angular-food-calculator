@@ -4,6 +4,7 @@ import { CalculatorPageComponent } from './pages/calculator-page/calculator-page
 import { AddNewPageComponent } from './pages/add-new-page/add-new-page.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LoginComponent } from './components/login/login.component';
+import { HidePagesAfterLoginGuard } from './services/hide-pages-after-login.guard';
 
 import {
   AngularFireAuthGuard,
@@ -40,10 +41,15 @@ const routes: Routes = [
     canActivate: [AngularFireAuthGuard],
     data: { authGuardPipe: redirectUnauthorizedToLogin },
   },
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [HidePagesAfterLoginGuard],
+  },
   {
     path: 'home',
     component: LandingComponent,
+    canActivate: [HidePagesAfterLoginGuard],
   },
   {
     path: '',
