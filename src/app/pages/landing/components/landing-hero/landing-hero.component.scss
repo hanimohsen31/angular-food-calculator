@@ -1,0 +1,45 @@
+.hero {
+  position: relative;
+  img {
+    height: 50vh;
+    object-fit: cover;
+    width: 100%;
+    filter: saturate(1.5) brightness(0.7);
+  }
+  .text{
+    position: absolute;
+    z-index: 2;
+    top: 40%;
+    right: calc(50% - 460px / 2);
+    text-align: center;
+    width: 460px;
+    @media (max-width: 768px) {
+      right: calc(50% - 230px);
+      text-align: center;
+      width: 460px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    h1 {
+      color: #fff;
+      font-size: 50px;
+      font-weight: 700;
+      margin-bottom: 23px;
+      @media (max-width: 768px) {
+        font-weight: 700;
+        font-size: 28px;
+      }
+    }
+    h2{
+      color: #fff;
+      @media (max-width: 768px) {
+        font-weight: 700;
+        font-size: 20px;
+        width: 200px;
+        text-align: center;
+      }
+    }
+  }
+}

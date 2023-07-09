@@ -11,7 +11,9 @@ import {
 } from '@angular/fire/compat/auth-guard';
 import { NotesComponent } from './pages/notes/notes.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { LandingComponent } from './pages/landing/landing.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+// const redirectUnauthorizedToHome = () => redirectUnauthorizedTo(['home']);
 
 const routes: Routes = [
   {
@@ -39,6 +41,16 @@ const routes: Routes = [
     data: { authGuardPipe: redirectUnauthorizedToLogin },
   },
   { path: 'login', component: LoginComponent },
+  {
+    path: 'home',
+    component: LandingComponent,
+  },
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
+    // data: { authGuardPipe: redirectUnauthorizedToHome },
+  },
   {
     path: '**',
     redirectTo: 'calculator',

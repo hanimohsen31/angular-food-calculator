@@ -25,6 +25,14 @@ import { environment } from '../environments/environment';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotesComponent } from './pages/notes/notes.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { LandingComponent } from './pages/landing/landing.component';
+import { LandingNavComponent } from './pages/landing/components/landing-nav/landing-nav.component';
+import { LandingHeroComponent } from './pages/landing/components/landing-hero/landing-hero.component';
+import { LandingAboutComponent } from './pages/landing/components/landing-about/landing-about.component';
+import { LandingTeamComponent } from './pages/landing/components/landing-team/landing-team.component';
+import { LandingContactComponent } from './pages/landing/components/landing-contact/landing-contact.component';
+import { LandingMapComponent } from './pages/landing/components/landing-map/landing-map.component';
+import { LandingFooterComponent } from './pages/landing/components/landing-footer/landing-footer.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +48,14 @@ import { ProfileComponent } from './pages/profile/profile.component';
     NotFoundComponent,
     NotesComponent,
     ProfileComponent,
+    LandingComponent,
+    LandingNavComponent,
+    LandingHeroComponent,
+    LandingAboutComponent,
+    LandingTeamComponent,
+    LandingContactComponent,
+    LandingMapComponent,
+    LandingFooterComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,6 +72,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    // ------------------
+
   ],
   providers: [],
   bootstrap: [AppComponent],

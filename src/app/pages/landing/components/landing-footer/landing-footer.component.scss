@@ -1,0 +1,30 @@
+footer {
+  background-color: #1b262c;
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 230px;
+    padding: 60px 100px;
+    @media (max-width: 768px) {
+      padding: 60px 0;
+      text-align: center;
+    }
+    .footer-name {
+      font-size: 1.2rem;
+      @media (max-width: 768px) {
+        font-size: 1rem;
+      }
+    }
+    span {
+      color: #fff;
+      width: 100%;
+      @media (max-width: 768px) {
+        font-size: 12px;
+      }
+    }
+    .powered {
+      color: #f0c078;
+    }
+  }
+}
