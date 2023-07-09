@@ -37,11 +37,11 @@
           box-shadow: 0px 0px 20px -10px rgba(0, 0, 0, 0.42);
           border-radius: 2px;
           width: 100%;
-          height: auto;
+          height: 100%;
           object-fit: cover;
           @media (max-width: 768px) {
-            width: 250px;
-            height: 255px;
+            // width: 250px;
+            // height: 255px;
             margin-left: auto;
           }
         }

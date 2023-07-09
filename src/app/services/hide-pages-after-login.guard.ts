@@ -30,11 +30,11 @@ export class HidePagesAfterLoginGuard implements CanActivate {
     | boolean
     | UrlTree {
     if (this.isLoggedIn.getValue()) {
-      console.log("Auth logged = true")
+      // console.log("Auth logged = true")
       this.Router.navigate(['/calculator']);
       return false;
     } else {
-      console.log("Auth logged = false")
+      // console.log("Auth logged = false")
       return true;
     }
   }

@@ -19,7 +19,7 @@ export class LoginService {
 
   constructor(
     private _AngularFireAuth: AngularFireAuth,
-    private _Router: Router
+    private Router: Router
   ) {
     let user: any = localStorage.getItem('user');
     let email: any = JSON.parse(user)?.email;
@@ -48,7 +48,7 @@ export class LoginService {
         this.adminsEmail.find((eml) =>
           response.user.email === eml ? this.isAdmin$.next(true) : null
         );
-        this._Router.navigate(['calculator']);
+        this.Router.navigate(['calculator']);
       },
       (error) => {
         console.log(error);
@@ -60,5 +60,6 @@ export class LoginService {
     this.isLoggedin$.next(false);
     localStorage.removeItem('user');
     this._AngularFireAuth.signOut();
+    this.Router.navigate(['/home']);
   }
 }
