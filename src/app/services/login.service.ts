@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { GoogleAuthProvider } from '@angular/fire/auth';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -19,7 +19,8 @@ export class LoginService {
 
   constructor(
     private _AngularFireAuth: AngularFireAuth,
-    private Router: Router
+    private Router: Router,
+    private ActivatedRoute:ActivatedRoute
   ) {
     let user: any = localStorage.getItem('user');
     let email: any = JSON.parse(user)?.email;
@@ -61,5 +62,9 @@ export class LoginService {
     localStorage.removeItem('user');
     this._AngularFireAuth.signOut();
     this.Router.navigate(['/home']);
+  }
+
+  getCurruntUrl(){
+    console.log(this.ActivatedRoute.snapshot)
   }
 }

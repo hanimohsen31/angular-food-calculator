@@ -1,97 +1,104 @@
-<mat-form-field>
-  <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input />
-</mat-form-field>
+<div class="container pt-3 pb-4">
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input
+      matInput
+      (keyup)="applyFilter($event)"
+      placeholder="Ex. ium"
+      #input
+    />
+  </mat-form-field>
 
-<!-- table -->
-<table
-  mat-table
-  class="mat-elevation-z8"
-  matSortActive="ShortFoodName"
-  matSortDirection="asc"
-  matSortDisableClear
-  [dataSource]="dataSource"
-  matSort
->
-  <!-- Name Column -->
-  <ng-container matColumnDef="ShortFoodName">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-    <td mat-cell *matCellDef="let row">{{ row.ShortFoodName }}</td>
-  </ng-container>
+  <!-- table -->
+  <table
+    mat-table
+    class="mat-elevation-z8"
+    matSortActive="ShortFoodName"
+    matSortDirection="asc"
+    matSortDisableClear
+    [dataSource]="dataSource"
+    matSort
+  >
+    <!-- Name Column -->
+    <ng-container matColumnDef="ShortFoodName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row">{{ row.ShortFoodName }}</td>
+    </ng-container>
 
-  <!-- translated Column -->
-  <ng-container matColumnDef="Translation">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Translated</th>
-    <td mat-cell *matCellDef="let row">{{ row.Translation }}</td>
-  </ng-container>
+    <!-- translated Column -->
+    <ng-container matColumnDef="Translation">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Translated</th>
+      <td mat-cell *matCellDef="let row">{{ row.Translation }}</td>
+    </ng-container>
 
-  <!-- quantity Column -->
-  <ng-container matColumnDef="MeasureUnit">
-    <th mat-header-cell *matHeaderCellDef>Measure</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.Measure }} {{ row.MeasureUnit }}
-    </td>
-  </ng-container>
+    <!-- quantity Column -->
+    <ng-container matColumnDef="MeasureUnit">
+      <th mat-header-cell *matHeaderCellDef>Measure</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.Measure }} {{ row.MeasureUnit }}
+      </td>
+    </ng-container>
 
-  <!-- quantity Column -->
-  <ng-container matColumnDef="Equavlint">
-    <th mat-header-cell *matHeaderCellDef>Equavlint</th>
-    <td mat-cell *matCellDef="let row">
-      {{ wordBreaker(row.Equavlint)}}
-    </td>
-  </ng-container>
+    <!-- quantity Column -->
+    <ng-container matColumnDef="Equavlint">
+      <th mat-header-cell *matHeaderCellDef>Equavlint</th>
+      <td mat-cell *matCellDef="let row">
+        {{ wordBreaker(row.Equavlint) }}
+      </td>
+    </ng-container>
 
-  <!-- calories Column -->
-  <ng-container matColumnDef="Energy">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Calories</th>
-    <td mat-cell *matCellDef="let row">{{ row.Energy | toFixed }}</td>
-  </ng-container>
+    <!-- calories Column -->
+    <ng-container matColumnDef="Energy">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Calories</th>
+      <td mat-cell *matCellDef="let row">{{ row.Energy | toFixed }}</td>
+    </ng-container>
 
-  <!-- fats Column -->
-  <ng-container matColumnDef="Fat">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fats</th>
-    <td mat-cell *matCellDef="let row">{{ row.Fat | toFixed }}</td>
-  </ng-container>
+    <!-- fats Column -->
+    <ng-container matColumnDef="Fat">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fats</th>
+      <td mat-cell *matCellDef="let row">{{ row.Fat | toFixed }}</td>
+    </ng-container>
 
-  <!-- carbs Column -->
-  <ng-container matColumnDef="Carbohydrate">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Carbs</th>
-    <td mat-cell *matCellDef="let row">
-      {{ row.Carbohydrate | toFixed }}
-    </td>
-  </ng-container>
+    <!-- carbs Column -->
+    <ng-container matColumnDef="Carbohydrate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Carbs</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.Carbohydrate | toFixed }}
+      </td>
+    </ng-container>
 
-  <!-- protein Column -->
-  <ng-container matColumnDef="Protein">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Protein</th>
-    <td mat-cell *matCellDef="let row">{{ row.Protein | toFixed }}</td>
-  </ng-container>
+    <!-- protein Column -->
+    <ng-container matColumnDef="Protein">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Protein</th>
+      <td mat-cell *matCellDef="let row">{{ row.Protein | toFixed }}</td>
+    </ng-container>
 
-  <!-- menue Column -->
-  <ng-container matColumnDef="menue">
-    <th mat-header-cell *matHeaderCellDef>Add</th>
-    <td mat-cell *matCellDef="let row; let i = index">
-      <button (click)="handleAdd(row)" class="btn btn-outline-primary">
-        Add
-      </button>
-    </td>
-  </ng-container>
+    <!-- menue Column -->
+    <ng-container matColumnDef="menue">
+      <th mat-header-cell *matHeaderCellDef>Add</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        <button (click)="handleAdd(row)" class="btn btn-outline-primary">
+          Add
+        </button>
+      </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-  <!-- Row shown when there is no matching data. -->
-  <tr class="mat-row" *matNoDataRow>
-    <td class="mat-cell" colspan="4">
-      No data matching the filter "{{ input.value }}"
-    </td>
-  </tr>
-</table>
+    <!-- Row shown when there is no matching data. -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">
+        No data matching the filter "{{ input.value }}"
+      </td>
+    </tr>
+  </table>
 
-<!-- paginator -->
-<mat-paginator
-  [pageSizeOptions]="[5, 10, 20, 100]"
-  showFirstLastButtons
-  aria-label="Select page of periodic rows"
->
-</mat-paginator>
+  <!-- paginator -->
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20, 100]"
+    showFirstLastButtons
+    aria-label="Select page of periodic rows"
+  >
+  </mat-paginator>
+</div>

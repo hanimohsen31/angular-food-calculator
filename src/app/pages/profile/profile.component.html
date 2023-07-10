@@ -1,3 +1,6 @@
+<app-navbar *ngIf="isProfilePage"></app-navbar>
+<div class="container pt-3 pb-4">
+
 <div class="ProfilePage">
   <div class="card ProfilePageContent my-2" *ngIf="isProfilePage">
     <div class="row">
@@ -47,8 +50,10 @@
 </div>
 
 <!-- ---------------------------------- -->
+<ng-container *ngIf="showInputAction$|async">
+
 <form *ngIf="!isProfilePage && (WeightAction$ | async) == 0">
-  <div class="row justify-content-center align-items-end mb-3">
+  <div class="row justify-content-center align-items-end">
     <div class="col-11">
       <label for="Energy" class="form-label">Weight</label>
       <input
@@ -68,3 +73,6 @@
     </div>
   </div>
 </form>
+</ng-container>
+
+</div>

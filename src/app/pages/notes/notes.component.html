@@ -1,3 +1,5 @@
+<app-navbar></app-navbar>
+<div class="container pt-3 pb-4">
 <ul class="list-group">
   <ng-container *ngFor="let note of notes$ | async">
     <li class="list-group-item d-flex align-items-center" *ngIf="note">
@@ -6,3 +8,4 @@
     </li>
   </ng-container>
 </ul>
+</div>

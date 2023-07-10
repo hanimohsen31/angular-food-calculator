@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from 'src/app/services/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -7,9 +8,12 @@ import { LoginService } from 'src/app/services/login.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  constructor(private _LoginService: LoginService) {}
+  constructor(private LoginService: LoginService, private Router: Router) {}
 
   logInWithGoogle() {
-    this._LoginService.logInWithGoogle();
+    this.LoginService.logInWithGoogle();
+  }
+  goBack() {
+    this.Router.navigate(['/home']);
   }
 }
