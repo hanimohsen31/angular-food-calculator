@@ -26,13 +26,13 @@
             Target Calories is: {{ personal.Energy | toFixed }} kcal
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Carbs/Day is: {{ targetCalculated.trgtCarb }} gm
+            Target Carbs/Day is: {{ targetCalculated.trgtCarb }} gm min
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm
+            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm min
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Protein/Day is: {{ targetCalculated.trgtPro }} gm
+            Target Protein/Day is: {{ targetCalculated.trgtPro }} gm avr
           </p>
           <div class="d-flex justify-content-end">
             <button
