@@ -23,16 +23,16 @@
           </div>
           <p>Calories = 370 + (21.6 * weight KG) * ActivityFactor</p>
           <p class="card" *ngIf="personal.Weight">
-            Target Calories is: {{ personal.Energy | toFixed }} kcal
+            Target Calories is: {{ personal.Energy | toFixed }} kcal(avr)
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Carbs/Day is: {{ targetCalculated.trgtCarb }} gm min
+            Target Carbs/Day is: {{ targetCalculated.trgtCarb }} gm(min)
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm min
+            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm(min)
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Protein/Day is: {{ targetCalculated.trgtPro }} gm avr
+            Target Protein/Day is: {{ targetCalculated.trgtPro }} gm(avr)
           </p>
           <div class="d-flex justify-content-end">
             <button
