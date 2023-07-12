@@ -39,7 +39,7 @@ export class SumComponent implements OnInit {
     next: (res) => {
       res[1]?.Energy
         ? this.updatePercentageObj(res[0][0], res[1]?.Energy)
-        : this.updatePercentageObj(res[0][0], 2000)
+        : this.updatePercentageObj(res[0][0], 2000);
     },
     error: (err) => console.log('error in personal: ', err),
   });
@@ -94,5 +94,9 @@ export class SumComponent implements OnInit {
 
   toggleDetails() {
     this.displayDetails = !this.displayDetails;
+  }
+
+  print() {
+    print();
   }
 }

@@ -1,4 +1,4 @@
-<div class="container pt-3 pb-4">
+<div id="Sum" class="container Sum pt-3 pb-4">
   <div class="w-100 d-flex justify-content-between align-items-center mt-3">
     <h4 class="p-0 m-0">{{ date | date }}</h4>
     <button
@@ -132,7 +132,9 @@
               <span> {{ targetObj?.proTrg }} </span>
               <span> ({{ targetObj?.proPer }}%) </span>
             </td>
-            <td></td>
+            <td>
+              <!-- <button class="btn btn-outline-primary px-4" (click)="print()">Print</button>  -->
+            </td>
           </tr>
           <!-- ------------------------- mobile Preview ------------------------- -->
           <tr class="result-sm">

@@ -51,6 +51,12 @@ tr {
 }
 
 @media print {
+  // *{
+  //   display: none;
+  // }
+  // .sum{
+  //   display: flex !important;
+  // }
   .mat-elevation-z8,
   button {
     display: none !important;
