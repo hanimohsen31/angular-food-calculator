@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit {
   showInputAction$ = this.showInput.asObservable();
 
   user: any = JSON.parse(localStorage.getItem('user') || '');
+  img =this.user.photoURL || "assets/images/ma.png"
 
   constructor(
     private OperationsService: OperationsService,
