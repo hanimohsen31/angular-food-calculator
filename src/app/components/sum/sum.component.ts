@@ -10,10 +10,19 @@ import { DataService } from './../../services/data.service';
 })
 export class SumComponent implements OnInit {
   // properties
+  nutritions = this.DataService.nutritions;
+
+  carbFactor = this.DataService.carbFactor;
+  fatFactor = this.DataService.fatFactor;
+  proteinFactor = this.DataService.proteinFactor;
+
+  fatCalGM = this.DataService.fatCalGM;
+  CarbCalGM = this.DataService.CarbCalGM;
+  proteinCalGM = this.DataService.proteinCalGM;
+
   trgtEnr: any = 0;
   displayDetails = false;
   date = new Date();
-  nutritions = this.DataService.nutritions;
   finsObj: any = {};
   targetObj: any = {};
 
@@ -48,29 +57,23 @@ export class SumComponent implements OnInit {
     let obj = {
       enrgTrg: +trgtEnr.toFixed(),
       enrgPer: ((+finsObj.Energy * 100) / +trgtEnr).toFixed(),
-      fatTarg: (
-        (+trgtEnr * this.nutritions.fatsFactorPerDayMin) /
-        this.nutritions.fatCalGM
-      ).toFixed(),
+      fatTarg: ((+trgtEnr * this.fatFactor) / this.fatCalGM).toFixed(),
       fatPerc: (
-        (finsObj.Fat * this.nutritions.fatCalGM * 100) /
-        (+trgtEnr * this.nutritions.fatsFactorPerDayMin)
+        (finsObj.Fat * this.fatCalGM * 100) /
+        (+trgtEnr * this.fatFactor)
       ).toFixed(),
-      carbTarg: (
-        (+trgtEnr * this.nutritions.carbsFactorPerDayMin) /
-        this.nutritions.CarbCalGM
-      ).toFixed(),
+      carbTarg: ((+trgtEnr * this.carbFactor) / this.CarbCalGM).toFixed(),
       carbPer: (
-        (finsObj.Carbohydrate * this.nutritions.CarbCalGM * 100) /
-        (+trgtEnr * this.nutritions.carbsFactorPerDayMin)
+        (finsObj.Carbohydrate * this.CarbCalGM * 100) /
+        (+trgtEnr * this.carbFactor)
       ).toFixed(),
       proTrg: (
-        (+trgtEnr * this.nutritions.proteinFactorPerDayAvr) /
+        (+trgtEnr * this.proteinFactor) /
         this.nutritions.proteinCalGM
       ).toFixed(),
       proPer: (
-        (finsObj.Protein * this.nutritions.proteinCalGM * 100) /
-        (+trgtEnr * this.nutritions.proteinFactorPerDayAvr)
+        (finsObj.Protein * this.proteinCalGM * 100) /
+        (+trgtEnr * this.proteinFactor)
       ).toFixed(),
     };
     this.targetObj = obj;

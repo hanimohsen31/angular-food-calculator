@@ -3,7 +3,6 @@ import { OperationsService } from '../../services/operations.service';
 import { ActivatedRoute } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { BehaviorSubject } from 'rxjs';
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -11,6 +10,15 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ProfileComponent implements OnInit {
   nutritions = this.DataService.nutritions;
+
+  carbFactor = this.DataService.carbFactor;
+  fatFactor = this.DataService.fatFactor;
+  proteinFactor = this.DataService.proteinFactor;
+
+  fatCalGM = this.DataService.fatCalGM;
+  CarbCalGM = this.DataService.CarbCalGM;
+  proteinCalGM = this.DataService.proteinCalGM;
+
   isProfilePage = true;
 
   personal: any = { Weight: 0, Energy: 0 };
@@ -23,7 +31,7 @@ export class ProfileComponent implements OnInit {
   showInputAction$ = this.showInput.asObservable();
 
   user: any = JSON.parse(localStorage.getItem('user') || '');
-  img =this.user.photoURL || "assets/images/ma.png"
+  img: any = this.user.photoURL;
 
   constructor(
     private OperationsService: OperationsService,
@@ -35,8 +43,10 @@ export class ProfileComponent implements OnInit {
     this.OperationsService.getTargetEnergy().subscribe((res) => {
       if (res) {
         this.personal = res;
-        this.personal.Energy =
-          370 + 21.6 * this.personal.Weight * this.nutritions.ActicityFactorAvr;
+        this.personal.Energy = (
+          370 +
+          21.6 * this.personal.Weight * this.nutritions.ActicityFactorAvr
+        ).toFixed();
         this.Weight.next(res?.Weight);
         this.targetCalculations();
       } else {
@@ -50,8 +60,10 @@ export class ProfileComponent implements OnInit {
   }
 
   changePersonal() {
-    this.personal.Energy =
-      370 + 21.6 * this.personal.Weight * this.nutritions.ActicityFactorAvr;
+    this.personal.Energy = (
+      370 +
+      21.6 * this.personal.Weight * this.nutritions.ActicityFactorAvr
+    ).toFixed();
     this.OperationsService.changeTargetEnergy(this.personal).subscribe(
       (res) => {
         this.OperationsService.changeTargetEnergy(this.personal);
@@ -65,16 +77,16 @@ export class ProfileComponent implements OnInit {
   targetCalculations() {
     this.targetCalculated = {
       trgtCarb: (
-        (this.personal.Energy * this.nutritions.carbsFactorPerDayMin) /
-        this.nutritions.CarbCalGM
+        (this.personal.Energy * this.carbFactor) /
+        this.CarbCalGM
       ).toFixed(),
       trgtFat: (
-        (this.personal.Energy * this.nutritions.fatsFactorPerDayMin) /
-        this.nutritions.fatCalGM
+        (this.personal.Energy * this.fatFactor) /
+        this.fatCalGM
       ).toFixed(),
       trgtPro: (
-        (this.personal.Energy * this.nutritions.proteinFactorPerDayAvr) /
-        this.nutritions.proteinCalGM
+        (this.personal.Energy * this.proteinFactor) /
+        this.proteinCalGM
       ).toFixed(),
     };
   }

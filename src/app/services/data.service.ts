@@ -16,7 +16,8 @@ export class DataService {
     fatCalGM: 9,
     fatsFactorPerDayMin: 0.2,
     fatsFactorPerDayMax: 0.35,
-    CarbCalGM: 3.7,
+    fatsFactorPerDayAvr: 0.3,
+    CarbCalGM: 4,
     carbsFactorPerDayMin: 0.45,
     carbsFactorPerDayMax: 0.65,
     proteinCalGM: 4,
@@ -25,6 +26,14 @@ export class DataService {
     proteinFactorPerDayAvr: 0.225,
   };
 
+  carbFactor = this.nutritions.carbsFactorPerDayMin;
+  fatFactor = this.nutritions.fatsFactorPerDayAvr;
+  proteinFactor = this.nutritions.proteinFactorPerDayAvr;
+
+  fatCalGM = this.nutritions.fatCalGM;
+  CarbCalGM = this.nutritions.CarbCalGM;
+  proteinCalGM = this.nutritions.proteinCalGM;
+  
   getData(): Observable<any> {
     const url = `${this.url}/data.json`;
     return this.HttpClient.get(url);

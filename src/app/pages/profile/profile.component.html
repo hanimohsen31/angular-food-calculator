@@ -5,7 +5,7 @@
   <div class="card ProfilePageContent my-2" *ngIf="isProfilePage">
     <div class="row">
       <div class="col-12 col-md-6">
-        <img [src]="img" alt="" />
+        <img [src]="img" alt="" onerror="this.src='assets/images/ma.png'" />
       </div>
       <div class="col-12 col-md-6">
         <h1 class="text-center text-md-start">{{user.name}}</h1>
@@ -23,13 +23,13 @@
           </div>
           <p>Calories = 370 + (21.6 * weight KG) * ActivityFactor</p>
           <p class="card" *ngIf="personal.Weight">
-            Target Calories is: {{ personal.Energy | toFixed }} kcal (avr)
+            Target Calories is: {{ personal.Energy }} kcal (avr)
           </p>
           <p class="card" *ngIf="personal.Weight">
             Target Carbs/Day is: {{ targetCalculated.trgtCarb }} gm (min)
           </p>
           <p class="card" *ngIf="personal.Weight">
-            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm (min)
+            Target Fats/Day is: {{ targetCalculated.trgtFat }} gm (avr)
           </p>
           <p class="card" *ngIf="personal.Weight">
             Target Protein/Day is: {{ targetCalculated.trgtPro }} gm (avr)
