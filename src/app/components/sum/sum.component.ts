@@ -37,9 +37,9 @@ export class SumComponent implements OnInit {
     map((response: any) => response.map((elm: any) => elm))
   );
 
-  finalSumObject$ = this.OperationsService.finalSumAction$.pipe(
-    map((response: any) => response.map((elm: any) => elm))
-  );
+  finalSumObject$ = this.OperationsService.finalSumAction$
+    .pipe(map((response: any) => response.map((elm: any) => elm)))
+    .pipe(map((response: any) => (this.finsObj = response)));
 
   percentageObjJoin$ = combineLatest([
     this.finalSumObject$,
@@ -97,6 +97,11 @@ export class SumComponent implements OnInit {
 
   toggleDetails() {
     this.displayDetails = !this.displayDetails;
+  }
+
+  saveData() {
+    let data = { ...this.targetObj, ...this.finsObj[0], Date: new Date() };
+    this.DataService.saveTrackingData(data).subscribe()
   }
 
   print() {

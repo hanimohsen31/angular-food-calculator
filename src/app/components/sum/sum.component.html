@@ -133,7 +133,9 @@
               <span> ({{ targetObj?.proPer }}%) </span>
             </td>
             <td>
-              <!-- <button class="btn btn-outline-primary px-4" (click)="print()">Print</button>  -->
+              <button class="btn btn-outline-primary px-4" (click)="saveData()">
+                Save
+              </button>
             </td>
           </tr>
           <!-- ------------------------- mobile Preview ------------------------- -->
@@ -172,6 +174,13 @@
                       targetObj?.proPer
                     }}%)</span
                   >
+                </span>
+                <span class="p-2 m-2 col-11">
+                    <span>
+                      <button class="btn btn-outline-primary px-4 w-100" (click)="saveData()">
+                        Save
+                      </button>
+                    </span>
                 </span>
               </div>
             </td>

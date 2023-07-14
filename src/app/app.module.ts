@@ -33,6 +33,7 @@ import { LandingTeamComponent } from './pages/landing/components/landing-team/la
 import { LandingContactComponent } from './pages/landing/components/landing-contact/landing-contact.component';
 import { LandingMapComponent } from './pages/landing/components/landing-map/landing-map.component';
 import { LandingFooterComponent } from './pages/landing/components/landing-footer/landing-footer.component';
+import { TrackingComponent } from './pages/tracking/tracking.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { LandingFooterComponent } from './pages/landing/components/landing-foote
     LandingContactComponent,
     LandingMapComponent,
     LandingFooterComponent,
+    TrackingComponent,
   ],
   imports: [
     BrowserModule,

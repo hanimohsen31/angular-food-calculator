@@ -1,0 +1,66 @@
+// /* Structure */
+// // table {
+// //   width: 100vw;
+// //   margin-top: 4rem;
+// // }
+
+// .mat-mdc-form-field {
+//   font-size: 14px;
+//   width: 100%;
+// }
+
+// .inVisible {
+//   display: none;
+// }
+
+// input {
+//   width: 100px;
+// }
+
+// tr {
+//   vertical-align: middle;
+// }
+// .result-smxx {
+//   .card {
+//     opacity: 0.7;
+//   }
+// }
+
+// @media (max-width: 767px) {
+//   table {
+//     transform: scale(0.85);
+//     // margin-top: 0;
+//     margin-top: -1.5rem;
+//   }
+//   .mat-elevation-z8 {
+//     * {
+//       font-size: small;
+//     }
+//     tr {
+//       display: flex;
+//       justify-content: space-evenly;
+//       overflow: hidden;
+//     }
+//     th,
+//     .result-sm {
+//       display: flex;
+//       align-items: center;
+//       overflow: hidden;
+//     }
+//   }
+// }
+
+// @media print {
+//   .mat-elevation-z8,
+//   button {
+//     display: none !important;
+//   }
+// }
+
+.date {
+  color: blue;
+}
+
+td {
+  vertical-align: middle;
+}
