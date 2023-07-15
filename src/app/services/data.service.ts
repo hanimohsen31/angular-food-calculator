@@ -50,24 +50,25 @@ export class DataService {
   }
 
   saveTrackingData(data: any) {
-    let id = ""
-    let date = new Date
-    let hour = date.getHours()
-    let day = date.toISOString().slice(0,10)
-    if (hour < 20 ){
-      let actualDay = +(day.slice(-2)) - 1
-      let actualDate = day.replaceAll("-","").slice(0,6) + actualDay
-      id = actualDate
-    } else{
-      id = date.toISOString().replaceAll("-","").slice(0,8)
+    let id = '';
+    let date = new Date();
+    let hour = date.getHours();
+    let day = date.toISOString().slice(0, 10);
+    if (hour < 20) {
+      let actualDay = +day.slice(-2) - 1;
+      let actualDate = day.replaceAll('-', '').slice(0, 6) + actualDay;
+      id = actualDate;
+    } else {
+      id = date.toISOString().replaceAll('-', '').slice(0, 8);
     }
     const user: any = localStorage.getItem('user');
     const uid = JSON.parse(user).uid;
     const url = `${this.url}/tracking/${uid}/${id}.json`;
+    data = { ...data, id: id };
     return this.HttpClient.put(url, data);
   }
 
-  getTrackingData(){
+  getTrackingData() {
     const user: any = localStorage.getItem('user');
     const uid = JSON.parse(user).uid;
     const url = `${this.url}/tracking/${uid}.json`;

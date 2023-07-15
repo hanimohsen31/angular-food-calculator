@@ -19,7 +19,8 @@
         <div class="d-flex flex-wrap justify-content-center p-2 p-md-2 m-1 mx-md-3 card">
 
           <div class="date w-100">
-            <span>Date: {{ item?.Date | date:'MMM d, y' }}</span>
+            <!-- <span>Date: {{ item?.Date | date:'MMM d, y' }}</span> -->
+            <span>Date: {{ dateFormat(item?.id)}}</span>
           </div>
 
           <div class="energy w-100">

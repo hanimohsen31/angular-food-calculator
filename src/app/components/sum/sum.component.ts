@@ -100,8 +100,8 @@ export class SumComponent implements OnInit {
   }
 
   saveData() {
-    let data = { ...this.targetObj, ...this.finsObj[0], Date: new Date() };
-    this.DataService.saveTrackingData(data).subscribe()
+    let data = { ...this.targetObj, ...this.finsObj[0]};
+    this.DataService.saveTrackingData(data).subscribe();
   }
 
   print() {
