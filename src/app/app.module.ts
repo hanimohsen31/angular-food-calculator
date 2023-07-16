@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialExampleModule } from './services/AngularMaterial';
+// import { PrimeNgModule } from './services/PrimeNgModules';
 import { AngularFireModule } from '@angular/fire/compat';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -75,7 +76,7 @@ import { TrackingComponent } from './pages/tracking/tracking.component';
     MatSortModule,
     MatPaginatorModule,
     // ------------------
-
+    // PrimeNgModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -25,6 +25,7 @@ export class SumComponent implements OnInit {
   date = new Date();
   finsObj: any = {};
   targetObj: any = {};
+  sumArray: any[] = [];
 
   constructor(
     private OperationsService: OperationsService,
@@ -33,9 +34,9 @@ export class SumComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  sumArray$ = this.OperationsService.sumArrayAction$.pipe(
-    map((response: any) => response.map((elm: any) => elm))
-  );
+  sumArray$ = this.OperationsService.sumArrayAction$
+    .pipe(map((response: any) => response.map((elm: any) => elm)))
+    .pipe(map((response: any) => (this.sumArray = response)));
 
   finalSumObject$ = this.OperationsService.finalSumAction$
     .pipe(map((response: any) => response.map((elm: any) => elm)))
@@ -100,11 +101,90 @@ export class SumComponent implements OnInit {
   }
 
   saveData() {
-    let data = { ...this.targetObj, ...this.finsObj[0]};
+    let container = {
+      ...this.targetObj,
+      ...this.finsObj[0],
+      Food: [...this.sumArray],
+    };
+    let data = JSON.parse(JSON.stringify(container));
+    delete data.FoodID;
+    delete data.Measure;
+    delete data.Quantity;
+    delete data.ShortFoodName;
+    delete data.Translation;
+    data.Food.map((elm: any) => {
+      delete elm.Equavlint;
+      delete elm.EquavlintMeasure;
+      delete elm.EquavlintMeasureUnit;
+      delete elm.FoodID;
+      delete elm.Measure;
+      delete elm.MeasureUnit;
+      delete elm.Quantity;
+      delete elm.Sugars;
+    });
     this.DataService.saveTrackingData(data).subscribe();
   }
 
   print() {
     print();
   }
+
+  products: any[] = [
+    {
+      id: '1002',
+      code: 'zz21cz3c1',
+      name: 'Blue Band',
+      description: 'Product Description',
+      image: 'blue-band.jpg',
+      price: 79,
+      category: 'Fitness',
+      quantity: 2,
+      inventoryStatus: 'LOWSTOCK',
+      rating: 3,
+    },
+    {
+      id: '1003',
+      code: '244wgerg2',
+      name: 'Blue T-Shirt',
+      description: 'Product Description',
+      image: 'blue-t-shirt.jpg',
+      price: 29,
+      category: 'Clothing',
+      quantity: 25,
+      inventoryStatus: 'INSTOCK',
+      rating: 5,
+    },
+
+    {
+      id: '1012',
+      code: '250vm23cc',
+      name: 'Green T-Shirt',
+      description: 'Product Description',
+      image: 'green-t-shirt.jpg',
+      price: 49,
+      category: 'Clothing',
+      quantity: 74,
+      inventoryStatus: 'INSTOCK',
+      rating: 5,
+    },
+    {
+      id: '1013',
+      code: 'fldsmn31b',
+      name: 'Grey T-Shirt',
+      description: 'Product Description',
+      image: 'grey-t-shirt.jpg',
+      price: 48,
+      category: 'Clothing',
+      quantity: 0,
+      inventoryStatus: 'OUTOFSTOCK',
+      rating: 3,
+    },
+  ];
+
+  cols: any[] = [
+    { field: 'code', header: 'Code' },
+    { field: 'name', header: 'Name' },
+    { field: 'category', header: 'Category' },
+    { field: 'quantity', header: 'Quantity' },
+  ];
 }

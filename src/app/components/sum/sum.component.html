@@ -10,7 +10,10 @@
     </button>
   </div>
   <div class="container d-flex justify-content-center align-items-center">
-    <table class="table w-100" *ngIf="(finalSumObject$ | async).length > 0">
+    <table
+      class="table w-100 table-hover"
+      *ngIf="(finalSumObject$ | async).length > 0"
+    >
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -176,11 +179,14 @@
                   >
                 </span>
                 <span class="p-2 m-2 col-11">
-                    <span>
-                      <button class="btn btn-outline-primary px-4 w-100" (click)="saveData()">
-                        Save
-                      </button>
-                    </span>
+                  <span>
+                    <button
+                      class="btn btn-outline-primary px-4 w-100"
+                      (click)="saveData()"
+                    >
+                      Save
+                    </button>
+                  </span>
                 </span>
               </div>
             </td>

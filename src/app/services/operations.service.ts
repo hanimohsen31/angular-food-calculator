@@ -50,7 +50,7 @@ export class OperationsService {
 
     this.getTargetEnergy().subscribe({
       next: (res) => {
-        res
+        res && res?.Energy
           ? this.targetEnergy.next(res?.Energy)
           : this.targetEnergy.next(2000);
       },
