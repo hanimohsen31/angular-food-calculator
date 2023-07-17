@@ -47,9 +47,13 @@ export class SumComponent implements OnInit {
     this.OperationsService.getTargetEnergy(),
   ]).subscribe({
     next: (res) => {
-      res[1]?.Energy
+      res[0].length == 0 && !res[1].Energy
+        ? this.updatePercentageObj([], 2000)
+        : res[0].length > 0 && res[1]?.Energy
         ? this.updatePercentageObj(res[0][0], res[1]?.Energy)
-        : this.updatePercentageObj(res[0][0], 2000);
+        : res[0].length > 0 && !res[1]?.Energy
+        ? this.updatePercentageObj(res[0][0], 2000)
+        : (res[0].length = 0 && res[1]?.Energy);
     },
     error: (err) => console.log('error in personal: ', err),
   });
@@ -78,7 +82,6 @@ export class SumComponent implements OnInit {
       ).toFixed(),
     };
     this.targetObj = obj;
-    // console.log('obj: ', obj);
   }
 
   // handle remove
@@ -93,6 +96,8 @@ export class SumComponent implements OnInit {
 
   // handle clear
   handleClear() {
+    this.popupContainer = !this.popupContainer;
+    this.clearPopup = !this.clearPopup;
     this.OperationsService.handleClear();
   }
 
@@ -106,6 +111,9 @@ export class SumComponent implements OnInit {
       ...this.finsObj[0],
       Food: [...this.sumArray],
     };
+    console.log(this.targetObj);
+    console.log(this.finsObj[0]);
+    console.log(this.sumArray);
     let data = JSON.parse(JSON.stringify(container));
     delete data.FoodID;
     delete data.Measure;
@@ -122,6 +130,9 @@ export class SumComponent implements OnInit {
       delete elm.Quantity;
       delete elm.Sugars;
     });
+
+    this.popupContainer = !this.popupContainer;
+    this.savePopup = !this.savePopup;
     this.DataService.saveTrackingData(data).subscribe();
   }
 
@@ -129,62 +140,24 @@ export class SumComponent implements OnInit {
     print();
   }
 
-  products: any[] = [
-    {
-      id: '1002',
-      code: 'zz21cz3c1',
-      name: 'Blue Band',
-      description: 'Product Description',
-      image: 'blue-band.jpg',
-      price: 79,
-      category: 'Fitness',
-      quantity: 2,
-      inventoryStatus: 'LOWSTOCK',
-      rating: 3,
-    },
-    {
-      id: '1003',
-      code: '244wgerg2',
-      name: 'Blue T-Shirt',
-      description: 'Product Description',
-      image: 'blue-t-shirt.jpg',
-      price: 29,
-      category: 'Clothing',
-      quantity: 25,
-      inventoryStatus: 'INSTOCK',
-      rating: 5,
-    },
+  clearPopup = false;
+  savePopup = false;
+  popupContainer = false;
+  curruntDate: any = '';
 
-    {
-      id: '1012',
-      code: '250vm23cc',
-      name: 'Green T-Shirt',
-      description: 'Product Description',
-      image: 'green-t-shirt.jpg',
-      price: 49,
-      category: 'Clothing',
-      quantity: 74,
-      inventoryStatus: 'INSTOCK',
-      rating: 5,
-    },
-    {
-      id: '1013',
-      code: 'fldsmn31b',
-      name: 'Grey T-Shirt',
-      description: 'Product Description',
-      image: 'grey-t-shirt.jpg',
-      price: 48,
-      category: 'Clothing',
-      quantity: 0,
-      inventoryStatus: 'OUTOFSTOCK',
-      rating: 3,
-    },
-  ];
+  toggleClearPopup() {
+    this.popupContainer = !this.popupContainer;
+    this.clearPopup = !this.clearPopup;
+  }
 
-  cols: any[] = [
-    { field: 'code', header: 'Code' },
-    { field: 'name', header: 'Name' },
-    { field: 'category', header: 'Category' },
-    { field: 'quantity', header: 'Quantity' },
-  ];
+  toggleSavePopup() {
+    this.popupContainer = !this.popupContainer;
+    this.savePopup = !this.savePopup;
+    let date = this.DataService.getCurruntDate();
+    this.curruntDate = this.dateFormat(date);
+  }
+
+  dateFormat(value: string) {
+    return this.OperationsService.dateFormater(value);
+  }
 }

@@ -60,19 +60,18 @@ export class OperationsService {
 
   handleChange() {
     let getterArr = this.sumArray.getValue();
-    // console.log(getterArr);
     let finalSumContainer: any = this.initialProduct;
     getterArr.map((elm: any) => {
       finalSumContainer = {
         FoodID: 'Sum',
         ShortFoodName: 'Sum',
         Translation: 'المجموع',
-        Measure: +finalSumContainer.Measure + +elm.Measure * +elm.Quantity,
-        Energy: +finalSumContainer.Energy + +elm.Energy * +elm.Quantity,
-        Protein: +finalSumContainer.Protein + +elm.Protein * +elm.Quantity,
-        Fat: +finalSumContainer.Fat + +elm.Fat * +elm.Quantity,
+        Measure: (+finalSumContainer.Measure + +elm.Measure * +elm.Quantity).toFixed(2),
+        Energy: (+finalSumContainer.Energy + +elm.Energy * +elm.Quantity).toFixed(2),
+        Protein: (+finalSumContainer.Protein + +elm.Protein * +elm.Quantity).toFixed(2),
+        Fat: (+finalSumContainer.Fat + +elm.Fat * +elm.Quantity).toFixed(2),
         Carbohydrate:
-          +finalSumContainer.Carbohydrate + +elm.Carbohydrate * +elm.Quantity,
+          (+finalSumContainer.Carbohydrate + +elm.Carbohydrate * +elm.Quantity).toFixed(2),
         Quantity: 1,
       };
     });
@@ -108,7 +107,6 @@ export class OperationsService {
   // handle remove
   handleRemove(index: any) {
     let getterArr = this.sumArray.getValue();
-    // console.log(getterArr);
     getterArr.splice(index, 1);
     this.sumArray.next(getterArr);
     this.handleChange();
@@ -134,4 +132,34 @@ export class OperationsService {
     let url = `${environment.database.url}/personal/${this.userId}.json`;
     return this._HttpClient.get(url);
   }
+
+  dateFormater(value: string) {
+    let date = (val: any) => {
+      return val.slice(0, 4) + '-' + val.slice(4, 6) + '-' + val.slice(6, 8);
+    };
+    if (!value) {
+      value = '20200101';
+    }
+    if (value.length == 8) {
+      let x = new Date(date(value));
+      return x.toDateString();
+    } else {
+      let date = (val: any) => {
+        return (
+          val.slice(0, 3) +
+          ' ' +
+          val.slice(3, 6) +
+          ' ' +
+          val.slice(6, 8) +
+          ' ' +
+          val.slice(8)
+        );
+      };
+      if (!value) {
+        value = 'Sat Jan 01 2020';
+      }
+      return date(value);
+    }
+  }
+
 }

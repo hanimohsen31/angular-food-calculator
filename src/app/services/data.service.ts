@@ -49,18 +49,15 @@ export class DataService {
     return this.HttpClient.get(url);
   }
 
+  getTrackingData() {
+    const user: any = localStorage.getItem('user');
+    const uid = JSON.parse(user).uid;
+    const url = `${this.url}/tracking/${uid}.json`;
+    return this.HttpClient.get(url);
+  }
+
   saveTrackingData(data: any) {
-    let id = '';
-    let date = new Date();
-    let hour = date.getHours();
-    let day = date.toISOString().slice(0, 10);
-    if (hour < 20) {
-      let actualDay = +day.slice(-2) - 1;
-      let actualDate = day.replaceAll('-', '').slice(0, 6) + actualDay;
-      id = actualDate;
-    } else {
-      id = date.toISOString().replaceAll('-', '').slice(0, 8);
-    }
+    let id = this.getCurruntDate();
     const user: any = localStorage.getItem('user');
     const uid = JSON.parse(user).uid;
     const url = `${this.url}/tracking/${uid}/${id}.json`;
@@ -68,10 +65,19 @@ export class DataService {
     return this.HttpClient.put(url, data);
   }
 
-  getTrackingData() {
-    const user: any = localStorage.getItem('user');
-    const uid = JSON.parse(user).uid;
-    const url = `${this.url}/tracking/${uid}.json`;
-    return this.HttpClient.get(url);
+  getCurruntDate() {
+    let date = new Date();
+    let hour = date.toLocaleTimeString(); // "1:35:47 AM"
+    let dayFormatted = date.toLocaleDateString().split('/')[1]; // "7/17/2023"
+    let dateFormatted = date.toDateString(); // "Mon Jul 17 2023" "MonJul172023"
+    if (hour.slice(-2) == 'AM') {
+      let day = +dayFormatted - 1;
+      let actualDate =
+        dateFormatted.slice(0, 8) + day + dateFormatted.slice(11);
+      return actualDate.replaceAll(' ', '');
+    } else {
+      let actualDay = dateFormatted.replaceAll(' ', '');
+      return actualDay;
+    }
   }
 }

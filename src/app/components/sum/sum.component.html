@@ -73,9 +73,9 @@
                 </div>
                 <div class="card p-1 m-1 col-3">
                   <span>Carb:</span>
-                  <span>{{
-                    +elm?.Carbohydrate * +elm.Quantity | toFixed
-                  }}</span>
+                  <span>
+                    {{+elm?.Carbohydrate * +elm.Quantity | toFixed}}
+                  </span>
                 </div>
                 <div class="card p-1 m-1 col-3 d-flex flex-column">
                   <span>Protein:</span>
@@ -94,20 +94,20 @@
             <td></td>
             <td></td>
             <td class="d-none d-md-table-cell">
-              {{ final.Energy | toFixed }}
+              {{ final.Energy }}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ final.Fat | toFixed }}
+              {{ final.Fat }}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ final.Carbohydrate | toFixed }}
+              {{ final.Carbohydrate }}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ final.Protein | toFixed }}
+              {{ final.Protein }}
             </td>
             <td>
               <button
-                (click)="handleClear()"
+                (click)="toggleClearPopup()"
                 class="btn btn-outline-danger px-4"
               >
                 Clear
@@ -136,7 +136,10 @@
               <span> ({{ targetObj?.proPer }}%) </span>
             </td>
             <td>
-              <button class="btn btn-outline-primary px-4" (click)="saveData()">
+              <button
+                class="btn btn-outline-primary px-4"
+                (click)="toggleSavePopup()"
+              >
                 Save
               </button>
             </td>
@@ -146,7 +149,7 @@
             <td colspan="5" class="d-table-cell d-md-none">
               <div class="d-flex flex-wrap justify-content-center">
                 <span class="card p-2 m-2 col-5">
-                  <span>Cal: {{ final.Energy | toFixed }}</span>
+                  <span>Cal: {{ final.Energy }}</span>
                   <span
                     >Target: {{ targetObj?.enrgTrg }} ({{
                       targetObj?.enrgPer
@@ -154,7 +157,7 @@
                   >
                 </span>
                 <span class="card p-2 m-2 col-5">
-                  <span>Fats: {{ final.Fat | toFixed }}</span>
+                  <span>Fats: {{ final.Fat }}</span>
                   <span
                     >Target: {{ targetObj?.fatTarg }} ({{
                       targetObj?.fatPerc
@@ -163,7 +166,7 @@
                   <span> </span>
                 </span>
                 <span class="card p-2 m-2 col-5">
-                  <span>Carb: {{ final.Carbohydrate | toFixed }}</span>
+                  <span>Carb: {{ final.Carbohydrate }}</span>
                   <span>
                     Target: {{ targetObj?.carbTarg }} ({{
                       targetObj?.carbPer
@@ -171,7 +174,7 @@
                   >
                 </span>
                 <span class="card p-2 m-2 col-5">
-                  <span>Protein: {{ final.Protein | toFixed }}</span>
+                  <span>Protein: {{ final.Protein }}</span>
                   <span
                     >Target: {{ targetObj?.proTrg }} ({{
                       targetObj?.proPer
@@ -194,5 +197,32 @@
         </ng-container>
       </tfoot>
     </table>
+  </div>
+</div>
+<div class="popupContainer" [class.d-none]="!popupContainer">
+  <div class="clearPopup" [class.d-none]="!clearPopup">
+    <div class="card">
+      <h4>Clear ?</h4>
+      <div class="buttons">
+        <button class="btn btn-outline-primary" (click)="handleClear()">
+          Ok
+        </button>
+        <button class="btn btn-outline-danger" (click)="toggleClearPopup()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="savePopup" [class.d-none]="!savePopup">
+    <div class="card">
+      <h4>Save {{ curruntDate }} ?</h4>
+      <div class="buttons">
+        <button class="btn btn-outline-primary" (click)="saveData()">Ok</button>
+        <button class="btn btn-outline-danger" (click)="toggleSavePopup()">
+          Cancel
+        </button>
+      </div>
+    </div>
   </div>
 </div>

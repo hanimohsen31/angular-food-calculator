@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from './../../services/data.service';
+import { OperationsService } from 'src/app/services/operations.service';
 
 @Component({
   selector: 'app-tracking',
@@ -7,25 +8,20 @@ import { DataService } from './../../services/data.service';
   styleUrls: ['./tracking.component.scss'],
 })
 export class TrackingComponent implements OnInit {
-  constructor(private DataService: DataService) {}
+  constructor(
+    private DataService: DataService,
+    private OperationsService: OperationsService
+  ) {}
 
   dataArray: any[];
 
   ngOnInit(): void {
     this.DataService.getTrackingData().subscribe((res) => {
-      console.log(res);
-      this.dataArray = Object.values(res).reverse()
+      this.dataArray = Object.values(res).reverse();
     });
   }
 
   dateFormat(value: string) {
-    let date = (val: any) => {
-      return val.slice(0, 4) + '-' + val.slice(4, 6) + '-' + val.slice(6, 8);
-    };
-    if (!value) {
-      value = '20200101';
-    }
-    let x = new Date(date(value));
-    return x.toDateString();
+    return this.OperationsService.dateFormater(value)
   }
 }
