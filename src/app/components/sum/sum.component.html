@@ -149,7 +149,7 @@
             <td colspan="5" class="d-table-cell d-md-none">
               <div class="d-flex flex-wrap justify-content-center">
                 <span class="card p-2 m-2 col-5">
-                  <span>Cal: {{ final.Energy }}</span>
+                  <span>Cal: {{ final.Energy | toFixed }}</span>
                   <span
                     >Target: {{ targetObj?.enrgTrg }} ({{
                       targetObj?.enrgPer
@@ -157,7 +157,7 @@
                   >
                 </span>
                 <span class="card p-2 m-2 col-5">
-                  <span>Fats: {{ final.Fat }}</span>
+                  <span>Fats: {{ final.Fat | toFixed }}</span>
                   <span
                     >Target: {{ targetObj?.fatTarg }} ({{
                       targetObj?.fatPerc
@@ -166,7 +166,7 @@
                   <span> </span>
                 </span>
                 <span class="card p-2 m-2 col-5">
-                  <span>Carb: {{ final.Carbohydrate }}</span>
+                  <span>Carb: {{ final.Carbohydrate | toFixed }}</span>
                   <span>
                     Target: {{ targetObj?.carbTarg }} ({{
                       targetObj?.carbPer
@@ -174,7 +174,7 @@
                   >
                 </span>
                 <span class="card p-2 m-2 col-5">
-                  <span>Protein: {{ final.Protein }}</span>
+                  <span>Protein: {{ final.Protein | toFixed }}</span>
                   <span
                     >Target: {{ targetObj?.proTrg }} ({{
                       targetObj?.proPer
