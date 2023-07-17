@@ -74,7 +74,7 @@
                 <div class="card p-1 m-1 col-3">
                   <span>Carb:</span>
                   <span>
-                    {{+elm?.Carbohydrate * +elm.Quantity | toFixed}}
+                    {{ +elm?.Carbohydrate * +elm.Quantity | toFixed }}
                   </span>
                 </div>
                 <div class="card p-1 m-1 col-3 d-flex flex-column">
@@ -94,16 +94,16 @@
             <td></td>
             <td></td>
             <td class="d-none d-md-table-cell">
-              {{ final.Energy }}
+              {{ final.Energy | toFixed }}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ final.Fat }}
+              {{ final.Fat | toFixed }}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ final.Carbohydrate }}
+              {{ final.Carbohydrate | toFixed }}
             </td>
             <td class="d-none d-md-table-cell">
-              {{ final.Protein }}
+              {{ final.Protein | toFixed }}
             </td>
             <td>
               <button
