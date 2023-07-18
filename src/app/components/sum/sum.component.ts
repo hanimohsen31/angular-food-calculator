@@ -111,9 +111,9 @@ export class SumComponent implements OnInit {
       ...this.finsObj[0],
       Food: [...this.sumArray],
     };
-    console.log(this.targetObj);
-    console.log(this.finsObj[0]);
-    console.log(this.sumArray);
+    // console.log(this.targetObj);
+    // console.log(this.finsObj[0]);
+    // console.log(this.sumArray);
     let data = JSON.parse(JSON.stringify(container));
     delete data.FoodID;
     delete data.Measure;

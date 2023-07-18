@@ -80,6 +80,9 @@ tr {
     .card {
       width: 500px;
       padding: 20px;
+      @media (max-width: 767px) {
+        width: 90vw;
+      }
       .buttons {
         display: flex;
         justify-content: end;
