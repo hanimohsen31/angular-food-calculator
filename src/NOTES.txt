@@ -1,1 +1,1 @@
-npm run build && firebase deploy && git add . && git commit -m 'popup' && git push origin main
+npm run build && firebase deploy && git add . && git commit -m 'toggle-details' && git push origin main

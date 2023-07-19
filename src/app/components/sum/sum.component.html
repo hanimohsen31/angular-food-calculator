@@ -4,6 +4,7 @@
     <button
       (click)="toggleDetails()"
       class="btn btn-outline-primary d-block d-md-none"
+      *ngIf="(finalSumObject$ | async).length > 0"
     >
       <span *ngIf="displayDetails == false">Show Details</span>
       <span *ngIf="displayDetails == true">Hide Details</span>
