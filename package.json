@@ -6,7 +6,8 @@
     "start": "ng serve --open",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build && git add . && git commit -m 'update' && git push origin main && firebase deploy"
   },
   "private": true,
   "dependencies": {

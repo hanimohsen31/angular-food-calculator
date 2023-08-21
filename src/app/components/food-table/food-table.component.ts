@@ -4,7 +4,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { DataService } from './../../services/data.service';
 import { OperationsService } from './../../services/operations.service';
 import { MatSort } from '@angular/material/sort';
-import { interval, take } from 'rxjs';
 
 @Component({
   selector: 'app-food-table',
