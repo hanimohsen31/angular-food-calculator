@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/food-calculator",
+    "public": "docs",
     "ignore": [
       "firebase.json",
       "**/.*",
