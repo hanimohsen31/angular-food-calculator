@@ -1,26 +1,16 @@
 export const environment = {
   production: true,
   firebase: {
-    apiKey: "AIzaSyCSGV6WbkPWDKzJHRnr5bXDHuq3H5daVf8",
-    authDomain: "food-calculator-500.firebaseapp.com",
-    databaseURL: "https://food-calculator-500-default-rtdb.firebaseio.com",
-    projectId: "food-calculator-500",
-    storageBucket: "food-calculator-500.appspot.com",
-    messagingSenderId: "71693719279",
-    appId: "1:71693719279:web:d8c4d03547b113efc36d1a"
-  },
-  firebaseConfig: {
-    apiKey: "AIzaSyCSGV6WbkPWDKzJHRnr5bXDHuq3H5daVf8",
-    authDomain: "food-calculator-500.firebaseapp.com",
-    databaseURL: "https://food-calculator-500-default-rtdb.firebaseio.com",
-    projectId: "food-calculator-500",
-    storageBucket: "food-calculator-500.appspot.com",
-    messagingSenderId: "71693719279",
-    appId: "1:71693719279:web:d8c4d03547b113efc36d1a"
+    apiKey: 'AIzaSyA4xjGjKFsDjTxDaaSFD-nLdKxK8WGiwCg',
+    authDomain: 'food-calculator-800.firebaseapp.com',
+    projectId: 'food-calculator-800',
+    storageBucket: 'food-calculator-800.appspot.com',
+    messagingSenderId: '675403730887',
+    appId: '1:675403730887:web:5ad70e175f6f233ed4d3e2',
+    databaseURL: 'https://food-calculator-800-default-rtdb.firebaseio.com',
   },
   database: {
-    url: 'https://food-calculator-500-default-rtdb.firebaseio.com',
+    url: 'https://food-calculator-800-default-rtdb.firebaseio.com',
   },
-  admins: ['hanimohsen3131@gmail.com'],
-  // recaptchaEnterpriseKey:"F1EC7F2E-C880-4534-9530-6870CB44E0B0"
+  admins: ['hanimohsen3131@gmail.com','hanimohsen31@gmail.com'],
 };
