@@ -35,6 +35,7 @@ import { LandingContactComponent } from './pages/landing/components/landing-cont
 import { LandingMapComponent } from './pages/landing/components/landing-map/landing-map.component';
 import { LandingFooterComponent } from './pages/landing/components/landing-footer/landing-footer.component';
 import { TrackingComponent } from './pages/tracking/tracking.component';
+import { PersonalDeitComponent } from './pages/personal-deit/personal-deit.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { TrackingComponent } from './pages/tracking/tracking.component';
     LandingMapComponent,
     LandingFooterComponent,
     TrackingComponent,
+    PersonalDeitComponent,
   ],
   imports: [
     BrowserModule,

@@ -118,8 +118,15 @@
           <!-- ----------------------------- target ----------------------------- -->
           <tr class="bg-light d-none d-md-table-row">
             <td>Target</td>
-            <td></td>
-            <td></td>
+            <td colspan="2">
+              <button
+              class="btn btn-outline-primary px-4"
+              (click)="saveDeitData()"
+            >
+              Save Deit
+            </button>
+            </td>
+            <!-- <td></td> -->
             <td class="d-none d-md-table-cell">
               <span>{{ targetObj?.enrgTrg }}</span>
               <span>({{ targetObj?.enrgPer }}%)</span>

@@ -14,6 +14,7 @@ import { NotesComponent } from './pages/notes/notes.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { TrackingComponent } from './pages/tracking/tracking.component';
+import { PersonalDeitComponent } from './pages/personal-deit/personal-deit.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 // const redirectUnauthorizedToHome = () => redirectUnauthorizedTo(['home']);
 
@@ -58,12 +59,15 @@ const routes: Routes = [
     component: LandingComponent,
     canActivate: [HidePagesAfterLoginGuard],
   },
-
+  {
+    path: 'deit',
+    component: PersonalDeitComponent,
+    canActivate: [redirectUnauthorizedToLogin],
+  },
   {
     path: '',
     redirectTo: '/home',
     pathMatch: 'full',
-    // data: { authGuardPipe: redirectUnauthorizedToHome },
   },
   {
     path: '**',

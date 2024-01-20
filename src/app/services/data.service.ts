@@ -65,6 +65,16 @@ export class DataService {
     return this.HttpClient.put(url, data);
   }
 
+
+  saveDeitData(data: any) {
+    // let id = this.getCurruntDate();
+    const user: any = localStorage.getItem('user');
+    const uid = JSON.parse(user).uid;
+    const url = `${this.url}/deit/${uid}.json`;
+    data = { ...data};
+    return this.HttpClient.post(url, data);
+  }
+
   getCurruntDate() {
     let date = new Date();
     let hour = date.toLocaleTimeString(); // "1:35:47 AM"

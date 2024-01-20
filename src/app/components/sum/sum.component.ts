@@ -59,8 +59,10 @@ export class SumComponent implements OnInit {
   });
 
   updatePercentageObj(finsObj: any, trgtEnr: any) {
+    console.log( typeof(+trgtEnr) )
+    console.log( (+trgtEnr).toFixed() )
     let obj = {
-      enrgTrg: +trgtEnr.toFixed(),
+      enrgTrg: (+trgtEnr).toFixed(),
       enrgPer: ((+finsObj.Energy * 100) / +trgtEnr).toFixed(),
       fatTarg: ((+trgtEnr * this.fatFactor) / this.fatCalGM).toFixed(),
       fatPerc: (
@@ -134,6 +136,37 @@ export class SumComponent implements OnInit {
     this.popupContainer = !this.popupContainer;
     this.savePopup = !this.savePopup;
     this.DataService.saveTrackingData(data).subscribe();
+  }
+
+  saveDeitData() {
+    let container = {
+      ...this.targetObj,
+      ...this.finsObj[0],
+      Food: [...this.sumArray],
+    };
+    // console.log(this.targetObj);
+    // console.log(this.finsObj[0]);
+    // console.log(this.sumArray);
+    let data = JSON.parse(JSON.stringify(container));
+    delete data.FoodID;
+    delete data.Measure;
+    delete data.Quantity;
+    delete data.ShortFoodName;
+    delete data.Translation;
+    data.Food.map((elm: any) => {
+      delete elm.Equavlint;
+      delete elm.EquavlintMeasure;
+      delete elm.EquavlintMeasureUnit;
+      delete elm.FoodID;
+      delete elm.Measure;
+      delete elm.MeasureUnit;
+      delete elm.Quantity;
+      delete elm.Sugars;
+    });
+
+    // this.popupContainer = !this.popupContainer;
+    // this.savePopup = !this.savePopup;
+    this.DataService.saveDeitData(data).subscribe();
   }
 
   print() {

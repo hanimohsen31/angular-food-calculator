@@ -1,0 +1,94 @@
+/* Structure */
+table {
+  width: 100%;
+}
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.inVisible {
+  display: none;
+}
+
+input {
+  width: 100px;
+}
+
+tr {
+  vertical-align: middle;
+}
+
+.mat-column-ShortFoodName,
+.mat-column-Translation {
+  width: fit-content;
+  max-width: 200px;
+}
+
+@media (max-width: 767px) {
+  .mat-header-cell.cdk-header-cell.cdk-column-Translation.mat-column-Translation,
+  .mat-cell.cdk-cell.cdk-column-Translation.mat-column-Translation.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Energy.mat-column-Energy,
+  .mat-cell.cdk-cell.cdk-column-Energy.mat-column-Energy.ng-star-inserted,
+
+  // .mat-header-cell.cdk-header-cell.cdk-column-Equavlint.mat-column-Equavlint,
+  // .mat-cell.cdk-cell.cdk-column-Equavlint.mat-column-Equavlint.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Fat.mat-column-Fat,
+  .mat-cell.cdk-cell.cdk-column-Fat.mat-column-Fat.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Protein.mat-column-Protein,
+  .mat-cell.cdk-cell.cdk-column-Protein.mat-column-Protein.ng-star-inserted,
+
+  .mat-header-cell.cdk-header-cell.cdk-column-Carbohydrate.mat-column-Carbohydrate,
+  .mat-cell.cdk-cell.cdk-column-Carbohydrate.mat-column-Carbohydrate.ng-star-inserted {
+    display: none;
+  }
+
+  // .mat-header-cell.cdk-header-cell.cdk-column-Equavlint.mat-column-Equavlint,
+  .mat-cell.cdk-cell.cdk-column-Equavlint.mat-column-Equavlint.ng-star-inserted {
+    font-size: 10px;
+    // word-wrap: break-word;
+    // width: 20px;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  .mat-header-cell.cdk-header-cell.cdk-column-ShortFoodName.mat-column-ShortFoodName,
+  .mat-cell.cdk-cell.cdk-column-ShortFoodName.mat-column-ShortFoodName.ng-star-inserted {
+    width: 50%;
+  }
+  .mat-header-cell.cdk-header-cell.cdk-column-MeasureUnit.mat-column-MeasureUnit,
+  .mat-cell.cdk-cell.cdk-column-MeasureUnit.mat-column-MeasureUnit.ng-star-inserted {
+    text-align: center;
+    width: 25%;
+  }
+
+  .mat-header-cell.cdk-header-cell.cdk-column-menue.mat-column-menue {
+    text-align: center;
+    width: 25%;
+  }
+
+  .mat-cell.cdk-cell.cdk-column-menue.mat-column-menue.ng-star-inserted {
+    text-align: end;
+    width: 25%;
+  }
+
+  .mat-form-field {
+    width: 100%;
+  }
+}
+
+@media print {
+  table,
+  mat-form-field,
+  mat-paginator,
+  .mat-elevation-z8 {
+    display: none;
+  }
+}
