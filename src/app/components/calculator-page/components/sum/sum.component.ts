@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { map, combineLatest } from 'rxjs';
-import { OperationsService } from './../../services/operations.service';
-import { DataService } from './../../services/data.service';
+import { OperationsService } from 'src/app/services/operations.service';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-sum',
