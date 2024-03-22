@@ -5,6 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialExampleModule } from './services/AngularMaterial';
+import { ReactiveFormsModule } from '@angular/forms';
+
 // import { PrimeNgModule } from './services/PrimeNgModules';
 import { AngularFireModule } from '@angular/fire/compat';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -15,15 +17,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { AppComponent } from './app.component';
 import { FoodTableComponent } from './components/food-table/food-table.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
 import { ToFixedPipe } from './services/to-fixed.pipe';
 import { SumComponent } from './components/sum/sum.component';
-import { AddNewFoodComponent } from './components/add-new-food/add-new-food.component';
-import { AddNewPageComponent } from './pages/add-new-page/add-new-page.component';
+import { AddNewFoodComponent } from './pages/add-new-food/add-new-food.component';
 import { CalculatorPageComponent } from './pages/calculator-page/calculator-page.component';
-import { LoginComponent } from './components/login/login.component';
+import { LoginComponent } from './pages/login/login.component';
 import { environment } from '../environments/environment';
-import { NotFoundComponent } from './components/not-found/not-found.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { NotesComponent } from './pages/notes/notes.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { LandingComponent } from './pages/landing/landing.component';
@@ -35,7 +36,8 @@ import { LandingContactComponent } from './pages/landing/components/landing-cont
 import { LandingMapComponent } from './pages/landing/components/landing-map/landing-map.component';
 import { LandingFooterComponent } from './pages/landing/components/landing-footer/landing-footer.component';
 import { TrackingComponent } from './pages/tracking/tracking.component';
-import { PersonalDeitComponent } from './pages/personal-deit/personal-deit.component';
+import { InputComponent } from './shared/input/input.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,6 @@ import { PersonalDeitComponent } from './pages/personal-deit/personal-deit.compo
     ToFixedPipe,
     SumComponent,
     AddNewFoodComponent,
-    AddNewPageComponent,
     CalculatorPageComponent,
     LoginComponent,
     NotFoundComponent,
@@ -60,17 +61,19 @@ import { PersonalDeitComponent } from './pages/personal-deit/personal-deit.compo
     LandingMapComponent,
     LandingFooterComponent,
     TrackingComponent,
-    PersonalDeitComponent,
+    InputComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    CommonModule,
     MaterialExampleModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireModule,
+    ReactiveFormsModule,
     // ------------------
     MatFormFieldModule,
     MatInputModule,

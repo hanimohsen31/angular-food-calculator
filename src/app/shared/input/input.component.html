@@ -1,0 +1,10 @@
+<div [class]="'mb-3 containerClass ' + containerClass">
+  <label [class]="'form-label ' + labelClass">{{label}}</label>
+  <input
+    [required] = 'required'
+    [(ngModel)]="data"
+    [type]="type"
+    [class]="'form-control ' + inputClass"
+    id="ShortFoodName"
+  />
+</div>
