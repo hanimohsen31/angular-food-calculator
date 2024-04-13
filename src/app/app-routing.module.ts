@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CalculatorPageComponent } from './components/calculator-page/calculator-page.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { LoginComponent } from './components/login/login.component';
-import { HidePagesAfterLoginGuard } from './services/hide-pages-after-login.guard';
+import { LoginComponent } from './auth/login/login.component';
+import { HidePagesAfterLoginGuard } from './auth/hide-pages-after-login.guard';
 import {
   AngularFireAuthGuard,
   redirectUnauthorizedTo,

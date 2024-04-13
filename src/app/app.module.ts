@@ -22,7 +22,7 @@ import { ToFixedPipe } from './services/pipes/to-fixed.pipe';
 import { SumComponent } from './components/calculator-page/components/sum/sum.component';
 import { AddNewFoodComponent } from './components/add-new-food/add-new-food.component';
 import { CalculatorPageComponent } from './components/calculator-page/calculator-page.component';
-import { LoginComponent } from './components/login/login.component';
+import { LoginComponent } from './auth/login/login.component';
 import { environment } from '../environments/environment';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotesComponent } from './components/notes/notes.component';
