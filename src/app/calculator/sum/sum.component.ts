@@ -9,8 +9,8 @@ import { FoodDataService } from 'src/app/shared/services/food-data.service';
 })
 export class SumComponent implements OnInit {
   // properties
-  targetObj: any = {};
   addedFoodList: any = [];
+  targetResult: any = {};
   sumResult: any = {};
   clearPopup: boolean = false;
   savePopup: boolean = false;
@@ -26,31 +26,40 @@ export class SumComponent implements OnInit {
     this.getUserAddedFoodList();
     this.observeAddedFoodList();
     this.observeSumResult();
+    this.observeTargetResult();
   }
 
   getUserAddedFoodList() {
     this.FoodDataService.getUserAddedFoodList().subscribe({
-      next: (res: any) =>
-        res
-          ? (this.OperationsService.addedFoodList.next(res),
-            this.OperationsService.calculateSumResult())
-          : this.OperationsService.addedFoodList.next([]),
+      next: (res: any) => {
+        if (res) {
+          this.OperationsService.addedFoodList.next(res);
+          this.OperationsService.calculateSumResult();
+          this.OperationsService.calculateTargetResult();
+        } else this.OperationsService.addedFoodList.next([]);
+      },
+      error: (err: any) => console.log(err),
     });
   }
 
   observeAddedFoodList() {
     this.OperationsService.addedFoodList$.subscribe({
-      next: (res: any) => {
-        this.addedFoodList = res;
-      },
+      next: (res: any) => (this.addedFoodList = res),
+      error: (err: any) => console.log(err),
     });
   }
 
   observeSumResult() {
     this.OperationsService.sumResult$.subscribe({
-      next: (res: any) => {
-        this.sumResult = res;
-      },
+      next: (res: any) => (this.sumResult = res),
+      error: (err: any) => console.log(err),
+    });
+  }
+
+  observeTargetResult() {
+    this.OperationsService.targetResult$.subscribe({
+      next: (res: any) => (this.targetResult = res),
+      error: (err: any) => console.log(err),
     });
   }
 
@@ -70,7 +79,12 @@ export class SumComponent implements OnInit {
     this.OperationsService.handleClear();
   }
 
-  saveData() {}
+  saveData() {
+    this.OperationsService.saveUserTrackingData(this.sumResult).subscribe({
+      next: (res) => this.toggleSavePopup(),
+      error: (err) => console.log(err),
+    });
+  }
 
   toggleClearPopup() {
     this.clearPopup = !this.clearPopup;

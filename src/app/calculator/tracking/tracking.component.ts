@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FoodDataService } from 'src/app/shared/services/food-data.service';
+import { OperationsService } from 'src/app/shared/services/operations.service';
 
 @Component({
   selector: 'app-tracking',

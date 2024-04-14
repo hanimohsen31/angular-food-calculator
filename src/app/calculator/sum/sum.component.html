@@ -45,10 +45,10 @@
         <tr class="bg-light d-none d-md-table-row">
           <td>Target</td>
           <td colspan="2"></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.enrgTrg }}</span><span>({{ targetObj?.enrgPer }}%)</span></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.fatTarg }}</span><span>({{ targetObj?.fatPerc }}%)</span></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.carbTarg }}</span><span>({{ targetObj?.carbPer }}%)</span></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.proTrg }}</span><span>({{ targetObj?.proPer }}%)</span></td>
+          <td class="d-none d-md-table-cell"><span>{{ targetResult?.Energy | ToFixed }}%</span></td>
+          <td class="d-none d-md-table-cell"><span>{{ targetResult?.Fat | ToFixed }}%</span></td>
+          <td class="d-none d-md-table-cell"><span>{{ targetResult?.Carbohydrate | ToFixed }}%</span></td>
+          <td class="d-none d-md-table-cell"><span>{{ targetResult?.Protein | ToFixed }}%</span></td>
           <td><button class="btn btn-outline-primary px-4" (click)="toggleSavePopup()">Save</button></td>
         </tr>
       </tfoot>

@@ -10,7 +10,7 @@ export class OperationsService {
   // user
   user = localStorage.getItem('user') || '';
   userId = JSON.parse(this.user).uid;
-  url = `${environment.database.url}/users/${this.userId}.json`;
+  url = `${environment.database.url}/users/${this.userId}`;
   targetEnergy = 2000;
 
   // added Food List
@@ -20,6 +20,10 @@ export class OperationsService {
   // sum result object
   sumResult = new BehaviorSubject({});
   sumResult$ = this.sumResult.asObservable();
+
+  // target result object
+  targetResult = new BehaviorSubject({});
+  targetResult$ = this.targetResult.asObservable();
 
   constructor(private HttpClient: HttpClient) {}
 
@@ -49,12 +53,13 @@ export class OperationsService {
 
   // handle clear
   handleClear() {
-    return this.HttpClient.delete(this.url).subscribe({
+  let url = `${environment.database.url}/users/${this.userId}.json`;
+    return this.HttpClient.delete(url).subscribe({
       next: (res) => this.addedFoodList.next([]),
     });
   }
 
-  calculateSumResult(){
+  calculateSumResult() {
     let addedFoodListValue = this.addedFoodList.getValue();
     let sumResult: any = {
       Quantity: 1,
@@ -74,12 +79,25 @@ export class OperationsService {
       sumResult.Fat += elm.Fat * elm.Quantity;
       sumResult.Carbohydrate += elm.Carbohydrate * elm.Quantity;
     });
-    this.sumResult.next(sumResult)
+    this.sumResult.next(sumResult);
+  }
+
+  calculateTargetResult() {
+    let sumResultValue: any = this.sumResult.getValue()
+    sumResultValue = {
+      Energy: (sumResultValue.Energy / 2000) * 100,
+      Protein: ((sumResultValue.Protein * 4) / (2000 * 0.2)) * 100,
+      Fat: ((sumResultValue.Fat * 9) / (2000 * 0.3)) * 100,
+      Carbohydrate: ((sumResultValue.Carbohydrate * 4) / (2000 * 0.5)) * 100,
+    };
+    this.targetResult.next(sumResultValue)
   }
 
   handleChange() {
-    this.calculateSumResult()
-    this.HttpClient.put(this.url, {
+    let url = `${environment.database.url}/users/${this.userId}.json`;
+    this.calculateSumResult();
+    this.calculateTargetResult();
+    this.HttpClient.put(url, {
       addedFoodList: this.addedFoodList.getValue(),
     }).subscribe();
   }
@@ -89,7 +107,7 @@ export class OperationsService {
     let id = this.getNowDateString();
     const user: any = localStorage.getItem('user');
     const uid = JSON.parse(user).uid;
-    const url = `${this.url}/tracking/${uid}/${id}.json`;
+    let url = `${environment.database.url}/tracking/${uid}/${id}.json`;
     data = { ...data, id: id };
     return this.HttpClient.put(url, data);
   }
