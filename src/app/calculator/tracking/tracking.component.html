@@ -1,0 +1,48 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">
+        <span class="p-2 p-md-2 m-1 mx-md-3">Tracking</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of dataArray; let indx = index" class="result-sm">
+      <td>{{ indx + 1 }}</td>
+      <td>
+        <div class="content p-2 p-md-2 m-1 mx-md-3 card">
+
+          <div class="date w-100">
+            <span>Date: {{ item?.id }}</span>
+          </div>
+
+          <div class="energy w-100">
+            <span>Cal: {{ item?.Energy }}</span>
+            <span>&#160;==&#160;</span>
+            <span>Target: {{ item?.enrgTrg }}&#160;({{ item?.enrgPer }}%)</span>
+          </div>
+
+          <div class="fat w-100">
+            <span>Fats: {{ item?.Fat }}</span>
+            <span>&#160;==&#160;</span>
+            <span>Target: {{ item?.fatTarg }}&#160;({{ item?.fatPerc }}%)</span>
+          </div>
+
+          <div class="carb w-100">
+            <span>Carb: {{ item?.Carbohydrate }}</span>
+            <span>&#160;==&#160;</span>
+            <span>Target: {{ item?.carbTarg }}&#160;({{ item?.carbPer }}%)</span>
+          </div>
+
+          <div class="protein w-100">
+            <span>Protein: {{ item?.Protein }}</span>
+            <span>&#160;==&#160;</span>
+            <span> Target: {{ item?.proTrg }}&#160;({{ item?.proPer }}%) </span>
+          </div>
+          
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

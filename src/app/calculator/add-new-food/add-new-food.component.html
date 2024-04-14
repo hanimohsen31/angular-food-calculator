@@ -1,0 +1,15 @@
+<div class="container pt-3 pb-4">
+  <form class="row" [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <app-input label="Food Name" formControlName="ShortFoodName" class="col-6"></app-input>
+    <app-input label="Translation Arabic" formControlName="Translation" class="col-6"></app-input>
+    <app-input label="Measure" formControlName="Measure" class="col-6"></app-input>
+    <app-input label="Unit" formControlName="MeasureUnit" class="col-6"></app-input>
+    <app-input label="Calories" formControlName="Energy" class="col-sm-12 col-md-4 mb-3"></app-input>
+    <app-input label="Carbohydrate" formControlName="Carbohydrate" class="col-sm-12 col-md-4 mb-3"></app-input>
+    <app-input label="Fat" formControlName="Fat" class="col-sm-12 col-md-4 mb-3"></app-input>
+    <app-input label="Protein" formControlName="Protein" class="col-sm-12 col-md-4 mb-3"></app-input>
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary px-5">Submit</button>
+    </div>
+  </form>
+</div>
