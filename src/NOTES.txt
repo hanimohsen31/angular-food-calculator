@@ -1,1 +1,0 @@
-npm run build && firebase deploy && git add . && git commit -m 'toggle-details' && git push origin main

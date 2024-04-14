@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService } from 'src/app/shared/services/data.service';
-import { OperationsService } from 'src/app/shared/services/operations.service';
+import { FoodDataService } from 'src/app/shared/services/food-data.service';
 
 @Component({
   selector: 'app-tracking',
@@ -8,20 +7,20 @@ import { OperationsService } from 'src/app/shared/services/operations.service';
   styleUrls: ['./tracking.component.scss'],
 })
 export class TrackingComponent implements OnInit {
-  dataArray: any[];
+  dataArray: any = [];
 
-  constructor(
-    private DataService: DataService,
-    private OperationsService: OperationsService
-  ) {}
+  constructor(private FoodDataService: FoodDataService) {}
 
-  ngOnInit(): void {
-    this.DataService.getTrackingData().subscribe((res) => {
-      this.dataArray = Object.values(res).reverse();
-    });
+  ngOnInit() {
+    this.getTrackingData();
   }
 
-  dateFormat(value: string) {
-    return this.OperationsService.dateFormater(value)
+  getTrackingData() {
+    this.FoodDataService.getUserTrackingData().subscribe({
+      next: (res) => {
+        this.dataArray = Object.values(res).reverse();
+        console.log(this.dataArray);
+      },
+    });
   }
 }

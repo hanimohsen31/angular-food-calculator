@@ -1,6 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { DataService } from '../../services/data.service';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FoodDataService } from 'src/app/shared/services/food-data.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -21,12 +20,11 @@ export class AddNewFoodComponent implements OnInit {
     Protein: new FormControl(0, [Validators.required]),
   });
 
-  constructor(private DataService: DataService) {}
+  constructor(private FoodDataService: FoodDataService) {}
   ngOnInit(): void {}
 
   onSubmit() {
     if (this.formData.valid) {
-      console.log(this.formData.value);
       this.addNewFood(this.formData.value);
     } else {
       alert('Data not valid');
@@ -38,10 +36,8 @@ export class AddNewFoodComponent implements OnInit {
   }
 
   addNewFood(formdata: any) {
-    this.DataService.addNewFood(formdata).subscribe({
-      next: (res) => {
-        this.resetForm();
-      },
+    this.FoodDataService.addNewFood(formdata).subscribe({
+      next: (res) => this.resetForm(),
       error: (err) => console.log(err),
     });
   }
