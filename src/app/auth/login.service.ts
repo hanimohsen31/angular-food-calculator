@@ -20,9 +20,11 @@ export class LoginService {
   constructor(
     private AngularFireAuth: AngularFireAuth,
     private Router: Router
-  ) {}
+  ) {
+    this.checkAdmin()
+  }
 
-  ngOnInit() {
+  checkAdmin() {
     let user: any = localStorage.getItem('user');
     let email: any = JSON.parse(user)?.email;
     if (user) {

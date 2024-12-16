@@ -44,11 +44,13 @@ export class FoodTableComponent implements AfterViewInit {
   getFoodData() {
     this.FoodDataService.getFoodData().subscribe({
       next: (res) => {
-        let array: any = Object.values(res);
-        // fill table and sort
-        this.dataSource = new MatTableDataSource(array);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        if(res){
+          let array: any = Object.values(res);
+          // fill table and sort
+          this.dataSource = new MatTableDataSource(array);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        }
       },
     });
   }
