@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "food-calculator-100",
     "public": "docs",
     "ignore": [
       "firebase.json",
