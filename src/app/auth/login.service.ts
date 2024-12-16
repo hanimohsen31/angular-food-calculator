@@ -36,32 +36,30 @@ export class LoginService {
   }
 
   logInWithGoogle() {
-    this.Router.navigate(['/calculator']);
-
-    // this.AngularFireAuth.signInWithPopup(new GoogleAuthProvider()).then(
-    //   (response: any) => {
-    //     console.log(response);
-    //     // save user info in localstorage
-    //     let user = {
-    //       idToken: response.credential.idToken,
-    //       name: response.user.displayName,
-    //       email: response.user.email,
-    //       photoURL: response.user.photoURL,
-    //       uid: response.additionalUserInfo.profile.id,
-    //     };
-    //     localStorage.setItem('user', JSON.stringify(user));
-    //     // set isLoggedin status
-    //     this.isLoggedin.next(true);
-    //     // set admin status
-    //     this.adminsEmail.find((eml) =>
-    //       response.user.email === eml ? this.isAdmin.next(true) : null
-    //     );
-    //     this.Router.navigate(['/calculator']);
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    this.AngularFireAuth.signInWithPopup(new GoogleAuthProvider()).then(
+      (response: any) => {
+        console.log(response);
+        // save user info in localstorage
+        let user = {
+          idToken: response.credential.idToken,
+          name: response.user.displayName,
+          email: response.user.email,
+          photoURL: response.user.photoURL,
+          uid: response.additionalUserInfo.profile.id,
+        };
+        localStorage.setItem('user', JSON.stringify(user));
+        // set isLoggedin status
+        this.isLoggedin.next(true);
+        // set admin status
+        this.adminsEmail.find((eml) =>
+          response.user.email === eml ? this.isAdmin.next(true) : null
+        );
+        this.Router.navigate(['/calculator']);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   logOut() {
