@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "food-calculator-800"
+  },
+  "targets": {
+    "collection-5000": {
+      "hosting": {
+        "food-calculator-100": [
+          "food-calculator-100"
+        ]
+      }
+    }
   }
 }
