@@ -14,6 +14,8 @@ import { NotesComponent } from './notes/notes.component';
 import { MainComponent } from './main/main.component';
 import { SumComponent } from './sum/sum.component';
 import { TrackingComponent } from './tracking/tracking.component';
+import { RecipesComponent } from './recipes/recipes.component';
+import { TargetComponent } from './target/target.component';
 import { ToFixedPipe } from '../shared/services/to-fixed.pipe';
 
 @NgModule({
@@ -26,6 +28,8 @@ import { ToFixedPipe } from '../shared/services/to-fixed.pipe';
     SumComponent,
     MainComponent,
     TrackingComponent,
+    RecipesComponent,
+    TargetComponent,
     ToFixedPipe,
   ],
   imports: [

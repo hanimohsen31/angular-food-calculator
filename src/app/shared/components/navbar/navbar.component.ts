@@ -14,8 +14,14 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {}
 
   isLoggedIn$ = this.LoginService.isLoggedin$;
-  isAdmin = this.LoginService.isAdmin$;
+  isAdmin$ = this.LoginService.isAdmin$;
   heroImg = 'assets/images/f2.jpg';
+
+  // the google popup is opened from here, the login page is a detour the navbar
+  // does not need
+  login() {
+    this.LoginService.logInWithGoogle();
+  }
 
   logout() {
     this.LoginService.logOut();

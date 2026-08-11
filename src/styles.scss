@@ -10,3 +10,37 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   overflow-x: hidden !important;
 }
+
+/* the confirm pop ups of the calculator all wear the same look, the class
+   beside this one only says which pop up it is */
+.popupContainer {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  overflow: hidden;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.151);
+
+  .card {
+    width: 500px;
+    padding: 20px;
+
+    @media (max-width: 767px) {
+      width: 90vw;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: end;
+
+      button {
+        margin-inline-start: 10px;
+      }
+    }
+  }
+}

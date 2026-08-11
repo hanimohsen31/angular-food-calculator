@@ -1,10 +1,24 @@
 <div [class]="'mb-3 containerClass ' + containerClass">
   <label [class]="'form-label ' + labelClass">{{label}}</label>
-  <input
-    [required] = 'required'
+
+  <!-- a field given a list of options is picked from instead of typed in -->
+  <select
+    *ngIf="options.length; else freeText"
+    [required]="required"
     [(ngModel)]="data"
-    [type]="type"
-    [class]="'form-control ' + inputClass"
-    id="ShortFoodName"
-  />
+    (blur)="onBlur()"
+    [class]="'form-select ' + inputClass"
+  >
+    <option *ngFor="let option of selectOptions" [ngValue]="option">{{ option }}</option>
+  </select>
+
+  <ng-template #freeText>
+    <input
+      [required] = 'required'
+      [(ngModel)]="data"
+      [type]="type"
+      [class]="'form-control ' + inputClass"
+      id="ShortFoodName"
+    />
+  </ng-template>
 </div>

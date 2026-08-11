@@ -19,6 +19,18 @@ export class InputComponent implements ControlValueAccessor {
   @Input() inputClass: string = '';
   @Input() containerClass: string = '';
   @Input() labelClass: string = '';
+  // a list here turns the field into a dropdown of those values
+  @Input() options: any[] = [];
+
+  // a value saved before this list existed is not dropped from the dropdown,
+  // it is offered beside the options so editing does not silently blank it
+  get selectOptions(): any[] {
+    let value = this.dataPrivate;
+    if (value === null || value === undefined || value === '') {
+      return this.options;
+    }
+    return this.options.includes(value) ? this.options : [value, ...this.options];
+  }
 
   // Internal data model
   private dataPrivate: any = '';

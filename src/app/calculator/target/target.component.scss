@@ -1,0 +1,35 @@
+.resultCard {
+  /* the number the page exists to give is the one thing read from across the
+     room, the rest of the card explains where it came from */
+  .headline {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+
+    .value {
+      font-size: 3rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .unit {
+      color: #6c757d;
+    }
+  }
+
+  .breakdown {
+    .line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}

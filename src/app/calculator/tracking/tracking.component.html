@@ -1,48 +1,144 @@
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">
-        <span class="p-2 p-md-2 m-1 mx-md-3">Tracking</span>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of dataArray; let indx = index" class="result-sm">
-      <td>{{ indx + 1 }}</td>
-      <td>
-        <div class="content p-2 p-md-2 m-1 mx-md-3 card">
+<div class="container Tracking pt-3 pb-4">
+  <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Tracking History</h4>
+    <span class="text-muted small" *ngIf="dataArray.length">
+      Showing {{ rangeStart }}-{{ rangeEnd }} of {{ dataArray.length }}
+      {{ dataArray.length == 1 ? "day" : "days" }}
+    </span>
+  </div>
 
-          <div class="date w-100">
-            <span>Date: {{ item?.id }}</span>
-          </div>
+  <p class="text-muted" *ngIf="loading">Loading tracked days ...</p>
 
-          <div class="energy w-100">
-            <span>Cal: {{ item?.Energy }}</span>
-            <span>&#160;==&#160;</span>
-            <span>Target: {{ item?.enrgTrg }}&#160;({{ item?.enrgPer }}%)</span>
-          </div>
+  <p class="text-muted" *ngIf="!loading && !dataArray.length">
+    No days tracked yet, save a day from the calculator to see it here.
+  </p>
 
-          <div class="fat w-100">
-            <span>Fats: {{ item?.Fat }}</span>
-            <span>&#160;==&#160;</span>
-            <span>Target: {{ item?.fatTarg }}&#160;({{ item?.fatPerc }}%)</span>
-          </div>
+  <!-- ------------------------------ tracked days ------------------------------ -->
+  <div class="dayList">
+    <div class="card dayCard" *ngFor="let item of pagedData; trackBy: trackById">
+      <div class="card-header dayHeader">
+        <span class="dayDate">{{ formatDate(item?.id) }}</span>
 
-          <div class="carb w-100">
-            <span>Carb: {{ item?.Carbohydrate }}</span>
-            <span>&#160;==&#160;</span>
-            <span>Target: {{ item?.carbTarg }}&#160;({{ item?.carbPer }}%)</span>
-          </div>
+        <span class="d-flex align-items-center gap-2">
+          <span class="badge dayBadge" [ngClass]="statusClass(item, macros[0])">
+            {{ percent(item, macros[0]) | number: "1.0-0" }}% of target
+          </span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger deleteBtn"
+            title="Delete this day"
+            aria-label="Delete this day"
+            (click)="toggleDeletePopup(item)"
+          >
+            <span class="material-icons">delete</span>
+          </button>
+        </span>
+      </div>
 
-          <div class="protein w-100">
-            <span>Protein: {{ item?.Protein }}</span>
-            <span>&#160;==&#160;</span>
-            <span> Target: {{ item?.proTrg }}&#160;({{ item?.proPer }}%) </span>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-xl-3" *ngFor="let macro of macros">
+            <div class="macroRow" [ngClass]="macro.theme">
+              <div class="macroHead">
+                <span class="macroLabel">{{ macro.label }}</span>
+                <span class="macroValue">
+                  {{ value(item, macro) | number: macro.digits }}
+                  <small class="text-muted">
+                    / {{ target(item, macro) | number: macro.digits }} {{ macro.unit }}
+                  </small>
+                </span>
+              </div>
+
+              <div class="macroTrack">
+                <div class="macroBar">
+                  <div
+                    class="macroFill"
+                    [ngClass]="statusClass(item, macro)"
+                    [style.width.%]="barWidth(item, macro)"
+                  ></div>
+                </div>
+                <span class="macroPercent" [ngClass]="statusClass(item, macro)">
+                  {{ percent(item, macro) | number: "1.0-0" }}%
+                </span>
+              </div>
+            </div>
           </div>
-          
         </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ------------------------------ pagination ------------------------------ -->
+  <div
+    class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4"
+    *ngIf="dataArray.length"
+  >
+    <div class="d-flex align-items-center gap-2 pageSize">
+      <label class="text-muted small mb-0" for="trackingPageSize">Days per page</label>
+      <select
+        id="trackingPageSize"
+        class="form-select form-select-sm"
+        [(ngModel)]="pageSize"
+        (ngModelChange)="handlePageSizeChange()"
+      >
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+    </div>
+
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="currentPage == 1">
+          <button type="button" class="page-link" (click)="goToPage(currentPage - 1)">
+            Previous
+          </button>
+        </li>
+
+        <li class="page-item" *ngIf="pageNumbers[0] > 1">
+          <button type="button" class="page-link" (click)="goToPage(1)">1</button>
+        </li>
+        <li class="page-item disabled" *ngIf="pageNumbers[0] > 2">
+          <span class="page-link">...</span>
+        </li>
+
+        <li
+          class="page-item"
+          *ngFor="let page of pageNumbers"
+          [class.active]="page == currentPage"
+        >
+          <button type="button" class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+
+        <li class="page-item disabled" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages - 1">
+          <span class="page-link">...</span>
+        </li>
+        <li class="page-item" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages">
+          <button type="button" class="page-link" (click)="goToPage(totalPages)">
+            {{ totalPages }}
+          </button>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage == totalPages">
+          <button type="button" class="page-link" (click)="goToPage(currentPage + 1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- delete confirm pop up -->
+<div class="popupContainer deletePopup" [class.d-none]="!deletePopup">
+  <div class="card">
+    <h4>Delete {{ formatDate(dayToDelete?.id) }} ?</h4>
+    <p class="text-danger mb-0" *ngIf="deleteError">{{ deleteError }}</p>
+    <div class="buttons mt-3">
+      <button class="btn btn-outline-primary" [disabled]="deleting" (click)="handleDelete()">
+        {{ deleting ? "Deleting ..." : "Ok" }}
+      </button>
+      <button class="btn btn-outline-danger" [disabled]="deleting" (click)="toggleDeletePopup()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

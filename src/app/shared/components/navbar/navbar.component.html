@@ -1,11 +1,10 @@
-<!-- <div *ngIf="isLoggedIn$ | async"> -->
 <div>
   <nav
     class="navbar navbar-expand-lg bg-body-tertiary"
     style="background-color: #e3f2fd"
   >
     <div class="container-fluid">
-      <a class="navbar-brand" routerLink="calculator">FODCAL</a>
+      <a class="navbar-brand" routerLink="/calculator/main">FODCAL</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -18,29 +17,48 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- the calculator is the only tab a guest gets, the rest shows up once
+             there is a signed in user -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" routerLink="calculator" >Calculator</a>
-          </li>
-          <li class="nav-item" *ngIf="isAdmin | async">
-            <a class="nav-link" routerLink="add-new">Add-New</a>
+            <a class="nav-link" routerLink="/calculator/main" routerLinkActive="active">Calculator</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="notes">Notes</a>
+            <a class="nav-link" routerLink="/calculator/target" routerLinkActive="active">Daily Calories</a>
           </li>
+          <!-- the shared food list is only written to by the admin emails -->
+          <ng-container *ngIf="isAdmin$ | async">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/calculator/add-new" routerLinkActive="active">Add New</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/calculator/recipes" routerLinkActive="active">Add Recipe</a>
+            </li>
+          </ng-container>
+          <ng-container *ngIf="isLoggedIn$ | async">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/calculator/tracking" routerLinkActive="active">Tracking</a>
+            </li>
+          </ng-container>
+        </ul>
+        <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" routerLink="profile">Profile</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="tracking">Tracking</a>
-          </li>
-          <li class="nav-item" *ngIf="!(isLoggedIn$ | async)">
-            <a class="nav-link" routerLink="/login">Login</a>
-          </li>
-          <li class="nav-item" *ngIf="isLoggedIn$ | async">
-            <a class="nav-link" (click)="logout()" routerLink="/login"
-              >Logout</a
+            <button
+              *ngIf="!(isLoggedIn$ | async)"
+              type="button"
+              class="btn btn-outline-primary px-4 loginBtn"
+              (click)="login()"
             >
+              Login
+            </button>
+            <button
+              *ngIf="isLoggedIn$ | async"
+              type="button"
+              class="btn btn-outline-danger px-4 loginBtn"
+              (click)="logout()"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>

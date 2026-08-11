@@ -15,6 +15,6 @@ export class AuthComponent implements OnInit {
     this.LoginService.logInWithGoogle();
   }
   goBack() {
-    this.Router.navigate(['/landing']);
+    this.Router.navigate(['/calculator/main']);
   }
 }

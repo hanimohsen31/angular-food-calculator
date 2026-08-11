@@ -1,0 +1,178 @@
+<div class="container Target pt-3 pb-4">
+  <h4 class="mb-3">Daily Calories</h4>
+  <p class="text-muted">
+    What a body of this size burns in a day, and what to eat against it to reach
+    the weight it is heading for.
+  </p>
+
+  <div class="row">
+    <!-- ------------------------------ the body ------------------------------ -->
+    <div class="col-12 col-lg-6">
+      <div class="card p-3 h-100">
+        <form class="row" [formGroup]="formData">
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label" for="targetGender">Gender</label>
+            <select id="targetGender" class="form-select" formControlName="Gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label" for="targetAge">
+              Age
+              <small class="text-danger" *ngIf="isOutOfRange('Age')">
+                {{ limits.Age.min }} - {{ limits.Age.max }}
+              </small>
+            </label>
+            <div class="input-group">
+              <input
+                id="targetAge"
+                type="number"
+                [min]="limits.Age.min"
+                [max]="limits.Age.max"
+                class="form-control"
+                formControlName="Age"
+                (input)="capField('Age')"
+                (change)="clampField('Age')"
+                (blur)="clampField('Age')"
+              />
+              <span class="input-group-text">years</span>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label" for="targetWeight">
+              Weight
+              <small class="text-danger" *ngIf="isOutOfRange('Weight')">
+                {{ limits.Weight.min }} - {{ limits.Weight.max }}
+              </small>
+            </label>
+            <div class="input-group">
+              <input
+                id="targetWeight"
+                type="number"
+                [min]="limits.Weight.min"
+                [max]="limits.Weight.max"
+                class="form-control"
+                formControlName="Weight"
+                (input)="capField('Weight')"
+                (change)="clampField('Weight')"
+                (blur)="clampField('Weight')"
+              />
+              <span class="input-group-text">kg</span>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-3">
+            <label class="form-label" for="targetHeight">
+              Height
+              <small class="text-danger" *ngIf="isOutOfRange('Height')">
+                {{ limits.Height.min }} - {{ limits.Height.max }}
+              </small>
+            </label>
+            <div class="input-group">
+              <input
+                id="targetHeight"
+                type="number"
+                [min]="limits.Height.min"
+                [max]="limits.Height.max"
+                class="form-control"
+                formControlName="Height"
+                (input)="capField('Height')"
+                (change)="clampField('Height')"
+                (blur)="clampField('Height')"
+              />
+              <span class="input-group-text">cm</span>
+            </div>
+          </div>
+
+          <div class="col-12 mb-3">
+            <label class="form-label" for="targetActivity">Daily activity</label>
+            <select id="targetActivity" class="form-select" formControlName="Activity">
+              <option *ngFor="let activity of activities" [ngValue]="activity.value">
+                {{ activity.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12 mb-3">
+            <label class="form-label" for="targetGoal">Goal</label>
+            <select id="targetGoal" class="form-select" formControlName="Goal">
+              <option *ngFor="let goal of goals" [ngValue]="goal.id">{{ goal.label }}</option>
+            </select>
+          </div>
+        </form>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-secondary px-4" (click)="reset()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ------------------------------ the result ------------------------------ -->
+    <div class="col-12 col-lg-6 mt-3 mt-lg-0">
+      <div class="card p-3 h-100 resultCard">
+        <p class="text-danger mb-0" *ngIf="!target">
+          {{ rangeError || "Fill in an age, a weight and a height to work the day out." }}
+        </p>
+
+        <ng-container *ngIf="target">
+          <div class="headline">
+            <span class="value">{{ target }}</span>
+            <span class="unit">kcal a day</span>
+          </div>
+
+          <div class="breakdown">
+            <div class="line">
+              <span>Resting burn</span>
+              <span>{{ bmr }} kcal</span>
+            </div>
+            <div class="line">
+              <span>With the daily activity</span>
+              <span>{{ maintenance }} kcal</span>
+            </div>
+            <div class="line">
+              <span>What the goal asks for</span>
+              <span [class.text-danger]="goalOffset < 0" [class.text-success]="goalOffset > 0">
+                {{ goalOffset > 0 ? "+" : "" }}{{ goalOffset }} kcal
+              </span>
+            </div>
+          </div>
+
+          <h6 class="mt-3 mb-2">What that leaves of every macro</h6>
+          <div class="breakdown">
+            <div class="line" *ngFor="let macro of macros">
+              <span>{{ macro.label }} <small class="text-muted">{{ macro.percent }}%</small></span>
+              <span>{{ macro.grams }} gm <small class="text-muted">({{ macro.calories }} kcal)</small></span>
+            </div>
+          </div>
+          <p class="text-muted small mt-2 mb-0" *ngIf="selectedGoal.split">
+            {{ selectedGoal.label }} is eaten on more protein than an even day,
+            it is what muscle is kept and built on.
+          </p>
+
+          <p class="text-muted small mt-3 mb-0">
+            The calculator is set to {{ currentTarget }} kcal right now.
+          </p>
+
+          <div class="d-flex justify-content-end mt-2">
+            <button type="button" class="btn btn-primary px-4" (click)="applyTarget()">
+              Use this as the daily target
+            </button>
+          </div>
+
+          <p class="text-success small mt-2 mb-0" *ngIf="applied">
+            Saved, the calculator now reads against {{ target }} kcal and this split.
+            <a routerLink="/calculator/main">Back to the calculator</a>
+          </p>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-muted small mt-3 mb-0">
+    The resting burn is worked out with the Mifflin St Jeor equation. It is an
+    estimate, what the scale does over a couple of weeks is the real answer.
+  </p>
+</div>

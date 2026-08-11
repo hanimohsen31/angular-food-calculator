@@ -1,13 +1,154 @@
-.date {
-  color: blue;
+/* one day per row, the four macros share the width inside the card */
+.dayList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-td {
-  vertical-align: middle;
+.dayCard {
+  box-shadow: 0px 0px 22px -14px rgba(0, 0, 0, 0.5);
 }
 
-.content {
+.dayHeader {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+
+  .dayDate {
+    font-weight: 600;
+    color: #0d6efd;
+  }
+
+  .dayBadge {
+    font-weight: 500;
+
+    &.under {
+      background-color: #6c757d;
+    }
+    &.onTarget {
+      background-color: #198754;
+    }
+    &.over {
+      background-color: #dc3545;
+    }
+  }
+
+  .deleteBtn {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    line-height: 1;
+
+    .material-icons {
+      font-size: 18px;
+    }
+  }
+}
+
+/* every macro sits in its own panel, tinted with the colour of that macro */
+.macroRow {
+  height: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-inline-start: 3px solid #adb5bd;
+  background-color: #f8f9fa;
+
+  .macroHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4px;
+
+    .macroLabel {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .macroValue {
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+  }
+
+  .macroTrack {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .macroBar {
+      flex: 1 1 auto;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #dee2e6;
+
+      .macroFill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+    }
+
+    /* the percentages of a card line up under each other */
+    .macroPercent {
+      flex: 0 0 auto;
+      width: 48px;
+      text-align: end;
+      font-size: 0.8rem;
+      color: #6c757d;
+
+      &.onTarget {
+        color: #198754;
+      }
+      &.over {
+        color: #dc3545;
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* every macro keeps its own colour, going past the target turns it red */
+  &.energy {
+    border-inline-start-color: #0d6efd;
+    .macroFill {
+      background-color: #0d6efd;
+    }
+  }
+  &.fat {
+    border-inline-start-color: #fd7e14;
+    .macroFill {
+      background-color: #fd7e14;
+    }
+  }
+  &.carb {
+    border-inline-start-color: #6f42c1;
+    .macroFill {
+      background-color: #6f42c1;
+    }
+  }
+  &.protein {
+    border-inline-start-color: #20c997;
+    .macroFill {
+      background-color: #20c997;
+    }
+  }
+
+  .macroFill.over {
+    background-color: #dc3545;
+  }
+}
+
+.pageSize {
+  .form-select {
+    width: auto;
+  }
+}
+
+.pagination {
+  .page-link {
+    cursor: pointer;
+  }
 }

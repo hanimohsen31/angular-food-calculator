@@ -8,7 +8,6 @@
         <tr>
           <th scope="col">Name</th>
           <th scope="col">Quantity</th>
-          <th scope="col">Measure</th>
           <th scope="col" class="d-none d-md-table-cell">Calories</th>
           <th scope="col" class="d-none d-md-table-cell">Fats</th>
           <th scope="col" class="d-none d-md-table-cell">Carbs</th>
@@ -20,12 +19,24 @@
         <ng-container *ngFor="let elm of addedFoodList; let i = index">
           <tr class="bg-light">
             <td>{{ elm?.ShortFoodName }}</td>
-            <td><input type="number" class="form-control" [(ngModel)]="+elm.Quantity" (change)="handleChange()" (blur)="handleChange()" /></td>
-            <td>{{ elm?.Measure }} {{ elm?.MeasureUnit }}</td>
-            <td class="d-none d-md-table-cell">{{ elm?.Energy * elm.Quantity | ToFixed}}</td>
-            <td class="d-none d-md-table-cell">{{ elm?.Fat * elm.Quantity | ToFixed}}</td>
-            <td class="d-none d-md-table-cell">{{ elm?.Carbohydrate * elm.Quantity | ToFixed}}</td>
-            <td class="d-none d-md-table-cell">{{ elm?.Protein * elm.Quantity | ToFixed}}</td>
+            <td>
+              <div class="input-group quantityGroup">
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  [(ngModel)]="elm.Quantity"
+                  (input)="handleInput()"
+                  (change)="handleChange()"
+                  (blur)="handleChange()"
+                />
+                <span class="input-group-text">{{ elm?.MeasureUnit }}</span>
+              </div>
+            </td>
+            <td class="d-none d-md-table-cell">{{ scale(elm, 'Energy') | ToFixed}}</td>
+            <td class="d-none d-md-table-cell">{{ scale(elm, 'Fat') | ToFixed}}</td>
+            <td class="d-none d-md-table-cell">{{ scale(elm, 'Carbohydrate') | ToFixed}}</td>
+            <td class="d-none d-md-table-cell">{{ scale(elm, 'Protein') | ToFixed}}</td>
             <td><button (click)="handleRemove(i)" class="btn btn-outline-danger">Remove</button></td>
           </tr>
         </ng-container>
@@ -34,7 +45,7 @@
         <!-- ------------------------------ Sum ------------------------------ -->
         <tr class="bg-light">
           <td>Sum</td>
-          <td colspan="2"></td>
+          <td class="placeholderCell">overall</td>
           <td class="d-none d-md-table-cell">{{ sumResult.Energy | ToFixed}}</td>
           <td class="d-none d-md-table-cell">{{ sumResult.Fat | ToFixed}}</td>
           <td class="d-none d-md-table-cell">{{ sumResult.Carbohydrate | ToFixed}}</td>
@@ -42,14 +53,38 @@
           <td><button (click)="toggleClearPopup()" class="btn btn-outline-danger px-4">Clear</button></td>
         </tr>
         <!-- ----------------------------- target ----------------------------- -->
-        <tr class="bg-light d-none d-md-table-row">
+        <!-- the input lives on this row, so it stays on the small screen too -->
+        <tr class="bg-light">
           <td>Target</td>
-          <td colspan="2"></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.enrgTrg }}</span><span>({{ targetObj?.enrgPer }}%)</span></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.fatTarg }}</span><span>({{ targetObj?.fatPerc }}%)</span></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.carbTarg }}</span><span>({{ targetObj?.carbPer }}%)</span></td>
-          <td class="d-none d-md-table-cell"><span>{{ targetObj?.proTrg }}</span><span>({{ targetObj?.proPer }}%)</span></td>
-          <td><button class="btn btn-outline-primary px-4" (click)="toggleSavePopup()">Save</button></td>
+          <td>
+            <div class="input-group targetGroup">
+              <input
+                type="number"
+                min="0"
+                step="50"
+                class="form-control"
+                [(ngModel)]="targetEnergy"
+                (input)="handleTargetChange()"
+                (change)="handleTargetChange()"
+                (blur)="handleTargetChange()"
+              />
+              <span class="input-group-text">kcal</span>
+            </div>
+          </td>
+          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.enrgTrg }}</span><span>({{ targetObj?.enrgPer | ToFixed }}%)</span></td>
+          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.fatTarg | ToFixed }}</span><span>({{ targetObj?.fatPerc | ToFixed }}%)</span></td>
+          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.carbTarg | ToFixed }}</span><span>({{ targetObj?.carbPer | ToFixed }}%)</span></td>
+          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.proTrg | ToFixed }}</span><span>({{ targetObj?.proPer | ToFixed }}%)</span></td>
+          <td>
+            <button
+              class="btn btn-outline-primary px-4"
+              [disabled]="isGuest"
+              [title]="isGuest ? 'Login to keep a record of this day' : 'Save this day'"
+              (click)="toggleSavePopup()"
+            >
+              Save
+            </button>
+          </td>
         </tr>
       </tfoot>
     </table>
@@ -71,9 +106,17 @@
 <div class="popupContainer savePopup" [class.d-none]="!savePopup">
   <div class="card">
     <h4>Save {{ curruntDate }} ?</h4>
-    <div class="buttons">
-      <button class="btn btn-outline-primary" (click)="saveData()">Ok</button>
-      <button class="btn btn-outline-danger" (click)="toggleSavePopup()">Cancel</button>
+    <p class="text-muted mb-0">
+      The totals and the targets of this day are kept, saving it again overwrites it.
+    </p>
+    <p class="text-danger mb-0" *ngIf="saveError">{{ saveError }}</p>
+    <div class="buttons mt-3">
+      <button class="btn btn-outline-primary" [disabled]="saving" (click)="saveData()">
+        {{ saving ? "Saving ..." : "Ok" }}
+      </button>
+      <button class="btn btn-outline-danger" [disabled]="saving" (click)="toggleSavePopup()">
+        Cancel
+      </button>
     </div>
   </div>
 </div>

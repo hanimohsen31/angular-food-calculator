@@ -1,0 +1,206 @@
+tr {
+  vertical-align: middle;
+}
+
+.quantityInput {
+  width: 100px;
+}
+
+/* the quantity input and its unit stay on one line */
+.quantityGroup {
+  width: 140px;
+  flex-wrap: nowrap;
+  .input-group-text {
+    padding: 0.375rem 0.5rem;
+  }
+}
+
+.foodDropdown {
+  position: relative;
+
+  .dropdownToggle {
+    color: #6c757d;
+
+    &.open {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  .dropdownMenu {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0px 0px 22px -7px rgba(0, 0, 0, 0.5);
+
+    .searchBar {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    .dropdownOptions {
+      max-height: 300px;
+      overflow-y: auto;
+
+      .option {
+        cursor: pointer;
+
+        &:hover {
+          background-color: #e9ecef;
+        }
+
+        .optionText {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .dropdownFooter {
+      border-top: 1px solid rgba(0, 0, 0, 0.125);
+    }
+  }
+}
+
+/* the columns are laid out from these widths instead of from what the rows
+   happen to hold, so the name column keeps one width on every page */
+.savedRecipes {
+  table-layout: fixed;
+
+  th,
+  td {
+    overflow-wrap: break-word;
+  }
+
+  th:nth-child(1) {
+    width: 18%;
+  }
+  th:nth-child(2) {
+    width: 14%;
+  }
+  th:nth-child(3) {
+    width: 9%;
+  }
+  th:nth-child(4) {
+    width: 10%;
+  }
+  th:nth-child(5),
+  th:nth-child(6),
+  th:nth-child(7),
+  th:nth-child(8) {
+    width: 7%;
+  }
+  th:nth-child(9) {
+    width: 21%;
+  }
+
+  /* the nutrient columns are dropped on a small screen, what is left shares
+     the table between it */
+  @media (max-width: 767px) {
+    th:nth-child(1) {
+      width: 34%;
+    }
+    th:nth-child(3) {
+      width: 20%;
+    }
+    th:nth-child(4) {
+      width: 16%;
+    }
+    th:nth-child(9) {
+      width: 30%;
+    }
+  }
+}
+
+/* the column no longer widens for the buttons, so they wrap inside it instead,
+   sitting under the centred header. the cell stays a table cell, otherwise it
+   drops out of the row and stops growing with it, the inner row does the
+   arranging. the 1px is the floor a cell grows from, it gives the child a
+   height to measure its 100% against */
+.actions {
+  height: 1px;
+  vertical-align: middle;
+
+  > div {
+    height: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.itemsCell {
+  background-color: #f8f9fa;
+
+  .itemsPanel {
+    overflow-x: auto;
+  }
+
+  /* the rows are held to one set of columns, the header included, so every
+     value sits under the word that names it */
+  .itemsGrid {
+    min-width: 700px;
+  }
+
+  .itemRow {
+    display: grid;
+    grid-template-columns: 260px repeat(5, 1fr);
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    span {
+      overflow-wrap: break-word;
+    }
+
+    span:not(:first-child) {
+      text-align: end;
+    }
+  }
+
+  .itemHeader {
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  .itemTotal {
+    font-weight: 600;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: none;
+  }
+}
+
+.pageSize {
+  .form-select {
+    width: auto;
+  }
+}
+
+.pagination {
+  .page-link {
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 767px) {
+  table {
+    * {
+      font-size: small;
+    }
+  }
+  .quantityInput {
+    width: 70px;
+  }
+  .quantityGroup {
+    width: 105px;
+  }
+}
+
+/* the pop up itself is dressed by the global .popupContainer */

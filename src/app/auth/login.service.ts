@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { GoogleAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { OperationsService } from 'src/app/shared/services/operations.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,20 +20,31 @@ export class LoginService {
 
   constructor(
     private AngularFireAuth: AngularFireAuth,
-    private Router: Router
-  ) {}
+    private Router: Router,
+    private OperationsService: OperationsService
+  ) {
+    // a service never gets an ngOnInit hook, so the stored session
+    // has to be read here, otherwise every reload looks logged out
+    this.restoreSession();
+  }
 
-  ngOnInit() {
+  restoreSession() {
     let user: any = localStorage.getItem('user');
-    let email: any = JSON.parse(user)?.email;
-    if (user) {
-      this.isLoggedin.next(true);
-      this.adminsEmail.find((eml) =>
-        email === eml ? this.isAdmin.next(true) : null
-      );
-    } else {
-      this.logOut();
+    if (!user) {
+      return;
     }
+    try {
+      let email = JSON.parse(user)?.email;
+      this.isLoggedin.next(true);
+      this.setAdminStatus(email);
+    } catch (error) {
+      // a corrupted entry is not a session
+      localStorage.removeItem('user');
+    }
+  }
+
+  setAdminStatus(email: string) {
+    this.isAdmin.next(this.adminsEmail.includes(email));
   }
 
   logInWithGoogle() {
@@ -51,10 +63,13 @@ export class LoginService {
         // set isLoggedin status
         this.isLoggedin.next(true);
         // set admin status
-        this.adminsEmail.find((eml) =>
-          response.user.email === eml ? this.isAdmin.next(true) : null
-        );
-        this.Router.navigate(['/calculator']);
+        this.setAdminStatus(response.user.email);
+        // the calculator can already be the open page, the list of the user who
+        // just signed in is pulled here rather than waiting on a page to load
+        this.OperationsService.loadAddedFoodList();
+        // login and logout both land on the calculator, the app is entered
+        // there whether there is an account behind it or not
+        this.Router.navigate(['/calculator/main']);
       },
       (error) => {
         console.log(error);
@@ -65,7 +80,11 @@ export class LoginService {
   logOut() {
     localStorage.removeItem('user');
     this.isLoggedin.next(false);
+    this.isAdmin.next(false);
+    // the calculator is already the open page, so nothing re init it, the table
+    // of the user who just left is dropped here instead
+    this.OperationsService.resetToGuest();
     this.AngularFireAuth.signOut();
-    this.Router.navigate(['/home']);
+    this.Router.navigate(['/calculator/main']);
   }
 }

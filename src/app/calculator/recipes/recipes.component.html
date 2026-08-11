@@ -1,0 +1,296 @@
+<div class="container Recipes pt-3 pb-4">
+  <!-- ------------------------------ builder ------------------------------ -->
+  <div class="card p-3 mb-4">
+    <h4 class="mb-3">{{ builderTitle }}</h4>
+    <p class="text-muted small" *ngIf="copiedFromName">
+      A copy of {{ copiedFromName }}, saving it leaves the original as it is.
+    </p>
+
+    <form class="row" [formGroup]="formData">
+      <app-input label="Recipe Name" formControlName="ShortFoodName" class="col-12 col-md-4"></app-input>
+      <app-input label="Translation Arabic" formControlName="Translation" class="col-12 col-md-4"></app-input>
+      <app-input label="Unit" formControlName="MeasureUnit" [options]="measureUnits" class="col-12 col-md-4"></app-input>
+    </form>
+
+    <!-- items picker -->
+    <div class="mb-3 foodDropdown" #foodDropdown>
+      <label class="form-label">Add items from the menu</label>
+
+      <button
+        type="button"
+        class="form-select text-start dropdownToggle"
+        [class.open]="dropdownOpen"
+        (click)="toggleDropdown()"
+      >
+        Select food item
+      </button>
+
+      <div class="dropdownMenu card" *ngIf="dropdownOpen">
+        <!-- search bar -->
+        <div class="p-2 searchBar">
+          <input
+            #searchInput
+            type="text"
+            class="form-control"
+            placeholder="Search food ..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilter()"
+          />
+        </div>
+
+        <!-- options -->
+        <ul class="list-group list-group-flush dropdownOptions">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center option"
+            *ngFor="let food of filteredFoodList"
+            (click)="handleAddItem(food)"
+          >
+            <span class="optionText">
+              <span>{{ food.ShortFoodName }}</span>
+              <small class="text-muted mx-2">{{ food.Translation }}</small>
+              <small class="text-muted">({{ food.Measure }} {{ food.MeasureUnit }} - {{ food.Energy }} cal)</small>
+            </span>
+            <span class="badge bg-primary rounded-pill" *ngIf="getPickedQuantity(food)">
+              {{ getPickedQuantity(food) }} {{ food.MeasureUnit }}
+            </span>
+          </li>
+          <li class="list-group-item text-muted" *ngIf="!filteredFoodList.length">
+            No food matching "{{ searchTerm }}"
+          </li>
+        </ul>
+
+        <div class="p-2 text-muted small dropdownFooter" *ngIf="matchesCount > filteredFoodList.length">
+          Showing {{ filteredFoodList.length }} of {{ matchesCount }}, keep typing to narrow the list
+        </div>
+      </div>
+    </div>
+
+    <!-- items of the recipe -->
+    <table class="table table-hover" *ngIf="recipeItems.length">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Quantity</th>
+          <th scope="col" class="d-none d-md-table-cell">Calories</th>
+          <th scope="col" class="d-none d-md-table-cell">Fats</th>
+          <th scope="col" class="d-none d-md-table-cell">Carbs</th>
+          <th scope="col" class="d-none d-md-table-cell">Protein</th>
+          <th scope="col">Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bg-light" *ngFor="let item of recipeItems; let i = index">
+          <td>{{ item?.ShortFoodName }}</td>
+          <td>
+            <div class="input-group quantityGroup">
+              <input
+                type="number"
+                min="0"
+                class="form-control quantityInput"
+                [(ngModel)]="item.Quantity"
+                [ngModelOptions]="{ standalone: true }"
+                (input)="handleQuantityInput()"
+                (change)="handleQuantityChange(item)"
+                (blur)="handleQuantityChange(item)"
+              />
+              <span class="input-group-text">{{ item?.MeasureUnit }}</span>
+            </div>
+          </td>
+          <td class="d-none d-md-table-cell">{{ scale(item, 'Energy') | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ scale(item, 'Fat') | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ scale(item, 'Carbohydrate') | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ scale(item, 'Protein') | ToFixed }}</td>
+          <td><button type="button" (click)="handleRemoveItem(i)" class="btn btn-outline-danger">Remove</button></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="bg-light">
+          <td>Total</td>
+          <td>{{ totals.Measure | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ totals.Energy | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ totals.Fat | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ totals.Carbohydrate | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ totals.Protein | ToFixed }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p class="text-muted" *ngIf="!recipeItems.length">
+      No items yet, search the menu above and add items to build the recipe.
+    </p>
+
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-outline-secondary px-4 me-2" (click)="resetBuilder()">
+        {{ editedRecipeKey || copiedFromName ? "Cancel" : "Reset" }}
+      </button>
+      <button type="button" class="btn btn-primary px-5" [disabled]="loading" (click)="onSubmit()">
+        {{ editedRecipeKey ? "Update" : "Save" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ------------------------------ saved recipes ------------------------------ -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Saved Recipes</h4>
+    <span class="text-muted small" *ngIf="recipesList.length">
+      {{ rangeStart }} - {{ rangeEnd }} of {{ recipesList.length }}
+    </span>
+  </div>
+  <p class="text-muted" *ngIf="!recipesList.length">No recipes saved yet.</p>
+
+  <table class="table table-hover savedRecipes" *ngIf="recipesList.length">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col" class="d-none d-md-table-cell">Translation</th>
+        <th scope="col">Items</th>
+        <th scope="col">Measure</th>
+        <th scope="col" class="d-none d-md-table-cell">Calories</th>
+        <th scope="col" class="d-none d-md-table-cell">Fats</th>
+        <th scope="col" class="d-none d-md-table-cell">Carbs</th>
+        <th scope="col" class="d-none d-md-table-cell">Protein</th>
+        <th scope="col" class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let recipe of pagedRecipes">
+        <tr class="bg-light">
+          <td>{{ recipe?.ShortFoodName }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.Translation }}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="toggleExpand(recipe)">
+              {{ recipe?.RecipeItems?.length || 0 }} items
+            </button>
+          </td>
+          <td>{{ recipe?.MeasureUnit }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.Energy | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.Fat | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.Carbohydrate | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.Protein | ToFixed }}</td>
+          <td class="actions">
+            <div class="d-flex gap-2 h-100">
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="editRecipe(recipe)">Edit</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="copyRecipe(recipe)">
+                Edit a Copy
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="toggleDeletePopup(recipe)">Delete</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- expanded items -->
+        <tr *ngIf="expandedKey === recipe.FoodKey">
+          <td colspan="9" class="itemsCell">
+            <!-- the items are read as their own little table, the panel scrolls
+                 sideways on a small screen rather than squeezing the columns -->
+            <div class="p-2 itemsPanel">
+              <div class="itemsGrid">
+                <div class="itemRow itemHeader">
+                  <span>Name</span>
+                  <span>Quantity</span>
+                  <span>Calories</span>
+                  <span>Fats</span>
+                  <span>Carbs</span>
+                  <span>Protein</span>
+                </div>
+
+                <div class="itemRow" *ngFor="let item of recipe?.RecipeItems">
+                  <span>
+                    {{ item?.ShortFoodName }}
+                    <small class="text-muted">{{ item?.Translation }}</small>
+                  </span>
+                  <span>{{ item?.Quantity | ToFixed }} {{ item?.MeasureUnit }}</span>
+                  <span>{{ scale(item, 'Energy') | ToFixed }} cal</span>
+                  <span>{{ scale(item, 'Fat') | ToFixed }} gm</span>
+                  <span>{{ scale(item, 'Carbohydrate') | ToFixed }} gm</span>
+                  <span>{{ scale(item, 'Protein') | ToFixed }} gm</span>
+                </div>
+
+                <!-- what the items add up to, which is what the recipe is saved as -->
+                <div class="itemRow itemTotal">
+                  <span>Total</span>
+                  <span>{{ recipe?.Measure | ToFixed }} {{ recipe?.MeasureUnit }}</span>
+                  <span>{{ recipe?.Energy | ToFixed }} cal</span>
+                  <span>{{ recipe?.Fat | ToFixed }} gm</span>
+                  <span>{{ recipe?.Carbohydrate | ToFixed }} gm</span>
+                  <span>{{ recipe?.Protein | ToFixed }} gm</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+
+  <!-- ------------------------------ pagination ------------------------------ -->
+  <div
+    class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4"
+    *ngIf="recipesList.length"
+  >
+    <div class="d-flex align-items-center gap-2 pageSize">
+      <label class="text-muted small mb-0" for="recipesPageSize">Recipes per page</label>
+      <select
+        id="recipesPageSize"
+        class="form-select form-select-sm"
+        [(ngModel)]="pageSize"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="handlePageSizeChange()"
+      >
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+    </div>
+
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="currentPage == 1">
+          <button type="button" class="page-link" (click)="goToPage(currentPage - 1)">
+            Previous
+          </button>
+        </li>
+
+        <li class="page-item" *ngIf="pageNumbers[0] > 1">
+          <button type="button" class="page-link" (click)="goToPage(1)">1</button>
+        </li>
+        <li class="page-item disabled" *ngIf="pageNumbers[0] > 2">
+          <span class="page-link">...</span>
+        </li>
+
+        <li
+          class="page-item"
+          *ngFor="let page of pageNumbers"
+          [class.active]="page == currentPage"
+        >
+          <button type="button" class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+
+        <li class="page-item disabled" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages - 1">
+          <span class="page-link">...</span>
+        </li>
+        <li class="page-item" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages">
+          <button type="button" class="page-link" (click)="goToPage(totalPages)">
+            {{ totalPages }}
+          </button>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage == totalPages">
+          <button type="button" class="page-link" (click)="goToPage(currentPage + 1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- delete confirm pop up -->
+<div class="popupContainer deletePopup" [class.d-none]="!deletePopup">
+  <div class="card">
+    <h4>Delete {{ recipeToDelete?.ShortFoodName }} ?</h4>
+    <div class="buttons">
+      <button class="btn btn-outline-primary" (click)="handleDelete()">Ok</button>
+      <button class="btn btn-outline-danger" (click)="toggleDeletePopup()">Cancel</button>
+    </div>
+  </div>
+</div>

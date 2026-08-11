@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FoodDataService } from 'src/app/shared/services/food-data.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MEASURE_UNITS } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-add-new-food',
@@ -8,6 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class AddNewFoodComponent implements OnInit {
   formDataCopy: any = {};
+  measureUnits: string[] = MEASURE_UNITS;
   formData: any = new FormGroup({
     ShortFoodName: new FormControl('', [Validators.required]),
     Translation: new FormControl('', [Validators.required]),
@@ -31,8 +33,19 @@ export class AddNewFoodComponent implements OnInit {
     }
   }
 
+  // a bare reset would leave the unit empty, which is not one of the options
   resetForm() {
-    this.formData.reset();
+    this.formData.reset({
+      ShortFoodName: '',
+      Translation: '',
+      Measure: 0,
+      MeasureUnit: this.measureUnits[0],
+      Quantity: 1,
+      Energy: 0,
+      Carbohydrate: 0,
+      Fat: 0,
+      Protein: 0,
+    });
   }
 
   addNewFood(formdata: any) {
