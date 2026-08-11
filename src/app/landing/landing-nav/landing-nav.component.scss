@@ -1,36 +1,55 @@
 nav {
-  background-color: #f0c078;
-  height: 90px;
-  padding: 10px 100px;
-  @media (max-width: 768px) {
-    height: 80px;
-    padding: 10px 0;
+  background-color: #f0c078 !important;
+  button {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0;
   }
-  .container-fluid {
-    .navbar-brand {
-      font-weight: 500;
-      font-size: 27px;
-      @media (max-width: 768px) {
-        font-weight: 400;
-        font-size: 20px;
-      }
+  // height: 90px;
+  //   padding: 10px 100px;
+    @media (max-width: 768px) {
+      // height: 80px;
+      padding: 20px 0;
     }
-    .collapse.navbar-collapse {
-      justify-content: flex-end;
-      z-index: 3;
-      background-color: #f0c078;
-      @media (max-width: 768px) {
-        justify-content: flex-start;
-      }
-    }
-    .navbar-toggler {
-      outline: none;
-      border: none;
-      box-shadow: none;
-    }
-    a {
-      font-weight: 500;
-      cursor: pointer;
-    }
-  }
+  //   .container-fluid {
+  //     .navbar-brand {
+  //       font-weight: 500;
+  //       font-size: 27px;
+  //       @media (max-width: 768px) {
+  //         font-weight: 400;
+  //         font-size: 20px;
+  //       }
+  //     }
+  //     .collapse.navbar-collapse {
+  //       justify-content: flex-end;
+  //       // z-index only applies to positioned elements; without this the open
+  //       // menu relies on paint order to stay above the (position: relative) hero
+  //       position: relative;
+  //       z-index: 3;
+  //       background-color: #f0c078;
+  //       @media (max-width: 768px) {
+  //         justify-content: flex-start;
+  //       }
+  //     }
+  //     .navbar-toggler {
+  //       outline: none;
+  //       border: none;
+  //       box-shadow: none;
+  //     }
+  //     a {
+  //       font-weight: 500;
+  //       cursor: pointer;
+  //     }
+  //   }
 }
+
+// ::ng-deep .navbar-collapse.collapse.show {
+//   display: block !important;
+//   position: absolute !important;
+//   top: 70px;
+//   left: 0;
+//   width: 100%;
+//   padding: 0;
+//   margin: 0;
+// }
