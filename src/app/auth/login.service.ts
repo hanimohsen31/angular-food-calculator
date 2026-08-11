@@ -65,8 +65,11 @@ export class LoginService {
         // set admin status
         this.setAdminStatus(response.user.email);
         // the calculator can already be the open page, the list of the user who
-        // just signed in is pulled here rather than waiting on a page to load
+        // just signed in is pulled here rather than waiting on a page to load,
+        // and their target and body come down with it so the calculator opens
+        // on what they set on whichever device they set it
         this.OperationsService.loadAddedFoodList();
+        this.OperationsService.loadSettings();
         // login and logout both land on the calculator, the app is entered
         // there whether there is an account behind it or not
         this.Router.navigate(['/calculator/main']);
@@ -78,11 +81,15 @@ export class LoginService {
   }
 
   logOut() {
+    // what was pulled down for this user is taken out of the browser first, it
+    // is kept under their id and that is only readable while the session is
+    this.OperationsService.clearUserSettings();
     localStorage.removeItem('user');
     this.isLoggedin.next(false);
     this.isAdmin.next(false);
     // the calculator is already the open page, so nothing re init it, the table
-    // of the user who just left is dropped here instead
+    // of the user who just left is dropped here instead, together with the
+    // target and the body their day was being read against
     this.OperationsService.resetToGuest();
     this.AngularFireAuth.signOut();
     this.Router.navigate(['/calculator/main']);

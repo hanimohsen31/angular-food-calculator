@@ -8,10 +8,9 @@ import { OperationsService } from 'src/app/shared/services/operations.service';
   styleUrls: ['./target.component.scss'],
 })
 export class TargetComponent implements OnInit {
-  // what the numbers were last worked out from, kept in this browser so the
-  // page opens on them again instead of on an empty form
-  storageKey = 'targetProfile';
-
+  // what the numbers were last worked out from is held by the service, which
+  // keeps it in this browser and, for a signed in user, on their entry too, so
+  // the page opens on the same body on every device instead of on an empty form
   // how much of the resting burn a day of living adds on top of it
   activities: any[] = [
     { label: 'Sedentary, little or no exercise', value: 1.2 },
@@ -75,8 +74,11 @@ export class TargetComponent implements OnInit {
   constructor(private OperationsService: OperationsService) {}
 
   ngOnInit(): void {
-    this.restore();
-    this.calculate();
+    // the body is followed rather than read once, a sign in on an open page
+    // brings one down and the form is filled with it as it lands
+    this.OperationsService.targetProfile$.subscribe({
+      next: (profile: any) => this.restore(profile),
+    });
     this.formData.valueChanges.subscribe(() => {
       // a changed number is a different day to plan, the old one is no longer
       // the one sitting on the calculator
@@ -209,27 +211,41 @@ export class TargetComponent implements OnInit {
   }
 
   // ------------------------------ storage ------------------------------
-  restore() {
-    let stored = localStorage.getItem(this.storageKey);
-    if (!stored) {
+  restore(profile: any) {
+    if (!profile) {
+      this.calculate();
       return;
     }
-    try {
-      let value = JSON.parse(stored);
-      // a goal was kept as a number of calories before the body goals existed
-      let known = this.goals.some((goal: any) => goal.id === value?.Goal);
-      value.Goal = known ? value.Goal : 'keep';
-      this.formData.patchValue(value, { emitEvent: false });
-    } catch (error) {
-      localStorage.removeItem(this.storageKey);
+    let value = { ...profile };
+    // a goal was kept as a number of calories before the body goals existed
+    let known = this.goals.some((goal: any) => goal.id === value?.Goal);
+    value.Goal = known ? value.Goal : 'keep';
+    // what is typed is stored, and what is stored comes back around here. the
+    // form is already on it, and taking it through the clamps again would pull
+    // a 7 on its way to 70 up to a minimum while the number is still being typed
+    if (this.sameAsForm(value)) {
+      this.calculate();
       return;
     }
+    this.formData.patchValue(value, { emitEvent: false });
+    // a body that came from somewhere else is a different one to plan for, what
+    // is on the calculator was worked out from the body that was here before
+    this.applied = false;
     // a range can tighten between visits, what was stored is held to the one
     // in force now
     ['Age', 'Weight', 'Height'].map((key: string) => this.clampField(key));
+    this.calculate();
+  }
+
+  // the body that came round is the one the form is already showing
+  sameAsForm(value: any): boolean {
+    let current = this.formData.value;
+    return Object.keys(current).every(
+      (key: string) => String(current[key]) === String(value?.[key])
+    );
   }
 
   store() {
-    localStorage.setItem(this.storageKey, JSON.stringify(this.formData.value));
+    this.OperationsService.handleTargetProfileChange(this.formData.value);
   }
 }

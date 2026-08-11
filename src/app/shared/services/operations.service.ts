@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FoodDataService } from './food-data.service';
@@ -12,19 +13,45 @@ export class OperationsService {
   // this browser instead of under a user entry on the server
   guestStorageKey = 'guestAddedFoodList';
 
-  // the daily calorie target is a setting of this browser, it is kept out of the
-  // user entry so saving the food list never overwrites it
-  targetStorageKey = 'targetEnergy';
+  // the target, the split it is eaten on and the body it was worked out from are
+  // one setting, they are always read and written together
+  //
+  // a guest keeps them in this browser, and a signed in user keeps a copy of
+  // their entry beside them, under their own key. the two never meet, so signing
+  // out puts the calculator back on the settings of the browser rather than
+  // leaving it on the ones of whoever just left
+  guestSettingsKey = 'settings';
+
+  // the target, the split and the body were three keys of their own before they
+  // moved together. a browser set up back then is folded into the settings of
+  // whoever is behind it now, they were never held per user to begin with
+  legacySettingsKeys: any = {
+    targetEnergy: 'targetEnergy',
+    macroSplit: 'macroSplit',
+    targetProfile: 'targetProfile',
+    updatedAt: 'settingsUpdatedAt',
+  };
+
   defaultTargetEnergy = 2000;
 
   // the target calories are split over the macros, and a gram of each macro
   // carries these calories, so a calorie target becomes a target in grams. the
   // split follows the goal the day is eaten for, so it is a setting like the
   // target itself
-  splitStorageKey = 'macroSplit';
   defaultMacroSplit: any = { Fat: 0.3, Carbohydrate: 0.5, Protein: 0.2 };
-  macroSplit: any = this.loadMacroSplit();
   caloriesPerGram: any = { Fat: 9, Carbohydrate: 4, Protein: 4 };
+
+  // the body the target was worked out from, it is what the target page opens on
+  defaultTargetProfile: any = {
+    Gender: 'male',
+    Age: 30,
+    Weight: 70,
+    Height: 170,
+    Activity: 1.375,
+    Goal: 'keep',
+  };
+
+  macroSplit: any = this.loadMacroSplit();
 
   // read on every use, the session can start or end while the service lives
   get userId(): string {
@@ -43,8 +70,22 @@ export class OperationsService {
     return !this.userId;
   }
 
-  get url(): string {
-    return `${environment.database.url}/users/${this.userId}.json`;
+  // the food list and the settings sit side by side under the user entry, each
+  // is written on its own so saving one never takes the other down with it
+  get addedFoodListUrl(): string {
+    return `${environment.database.url}/users/${this.userId}/addedFoodList.json`;
+  }
+
+  get settingsUrl(): string {
+    return `${environment.database.url}/users/${this.userId}/settings.json`;
+  }
+
+  // where the settings of whoever is behind the calculator are kept in this
+  // browser, the browser's own for a guest and a copy of the entry for a user
+  get settingsKey(): string {
+    return this.isGuest
+      ? this.guestSettingsKey
+      : `${this.guestSettingsKey}_${this.userId}`;
   }
 
   // added Food List
@@ -61,11 +102,29 @@ export class OperationsService {
   targetResult = new BehaviorSubject<any>({});
   targetResult$ = this.targetResult.asObservable();
 
+  // the body the target page was last filled in with, held here rather than on
+  // the page so it travels with the rest of the settings
+  targetProfile = new BehaviorSubject<any>(this.loadTargetProfile());
+  targetProfile$ = this.targetProfile.asObservable();
+
+  // a settings write waits for the typing to stop. the target row and the body
+  // form both change on every key, and none of those keys is worth a request
+  private settingsTouched = new Subject<void>();
+
+  // a change that the wait is still sitting on, it has not been written yet
+  private settingsPending = false;
+
   constructor(
     private HttpClient: HttpClient,
     private FoodDataService: FoodDataService
   ) {
+    this.settingsTouched
+      .pipe(debounceTime(800))
+      .subscribe(() => this.pushSettings());
     this.calculateTargetResult();
+    // a session can already be open when the app starts, the settings of
+    // whoever it belongs to are pulled before anything is read off the browser
+    this.loadSettings();
   }
 
   ngOnInit() {}
@@ -137,7 +196,7 @@ export class OperationsService {
       this.calculateSumResult();
       return;
     }
-    return this.HttpClient.delete(this.url).subscribe({
+    return this.HttpClient.delete(this.addedFoodListUrl).subscribe({
       next: (res) => this.addedFoodList.next([]),
     });
   }
@@ -159,11 +218,13 @@ export class OperationsService {
 
   // the session ended, so the list of the user who just left has to go with it.
   // the table is put back to what a guest landing on the page would see, which
-  // is the list this browser built before, or nothing at all
+  // is the list this browser built before, or nothing at all, and the target it
+  // is read against goes back to the one of the browser the same way
   resetToGuest() {
     this.addedFoodList.next([]);
     this.sumResult.next({});
     this.loadGuestAddedFoodList();
+    this.resetSettingsToGuest();
   }
 
   // the list a guest built in this browser
@@ -209,42 +270,219 @@ export class OperationsService {
     this.calculateTargetResult();
   }
 
+  // ------------------------------ settings storage ------------------------------
+  // the settings this browser holds for whoever is behind the calculator
+  readStoredSettings(): any {
+    let stored = localStorage.getItem(this.settingsKey);
+    if (!stored) {
+      return this.readLegacySettings();
+    }
+    try {
+      return JSON.parse(stored) || {};
+    } catch (error) {
+      localStorage.removeItem(this.settingsKey);
+      return {};
+    }
+  }
+
+  // the three keys the settings were kept under before they moved together,
+  // read once, written back as one and taken out of the browser
+  readLegacySettings(): any {
+    let energy = +(localStorage.getItem(this.legacySettingsKeys.targetEnergy) || 0);
+    let split = localStorage.getItem(this.legacySettingsKeys.macroSplit);
+    let profile = localStorage.getItem(this.legacySettingsKeys.targetProfile);
+    let stamp = +(localStorage.getItem(this.legacySettingsKeys.updatedAt) || 0);
+    if (!energy && !split && !profile) {
+      return {};
+    }
+    let settings: any = { updatedAt: stamp };
+    try {
+      settings.targetEnergy = energy;
+      settings.macroSplit = split ? JSON.parse(split) : null;
+      settings.targetProfile = profile ? JSON.parse(profile) : null;
+    } catch (error) {
+      // a corrupted key is not a setting, whatever else was read still stands
+    }
+    Object.keys(this.legacySettingsKeys).map((key: string) =>
+      localStorage.removeItem(this.legacySettingsKeys[key])
+    );
+    this.writeStoredSettings(settings);
+    return settings;
+  }
+
+  writeStoredSettings(settings: any) {
+    localStorage.setItem(this.settingsKey, JSON.stringify(settings));
+  }
+
+  // a setting changed, so the whole set is written back under whoever it
+  // belongs to, together with the moment it was changed
+  storeSettings(stamp: number) {
+    this.writeStoredSettings({ ...this.currentSettings(), updatedAt: stamp });
+  }
+
   // the target this browser was last set to, 2000 kcal until one is typed
   loadTargetEnergy(): number {
-    let stored = +(localStorage.getItem(this.targetStorageKey) || 0);
+    let stored = +this.readStoredSettings()?.targetEnergy || 0;
     return stored > 0 ? stored : this.defaultTargetEnergy;
+  }
+
+  // a split that does not carry all three macros is not one
+  usableSplit(split: any): any {
+    let keys = Object.keys(this.defaultMacroSplit);
+    let usable = keys.every((key: string) => +split?.[key] > 0);
+    return usable ? split : null;
   }
 
   // the split this browser was last set to, the even one until a goal sets it
   loadMacroSplit(): any {
-    let stored = localStorage.getItem(this.splitStorageKey);
-    if (!stored) {
-      return { ...this.defaultMacroSplit };
-    }
-    try {
-      let split = JSON.parse(stored);
-      let keys = Object.keys(this.defaultMacroSplit);
-      // a split that does not carry all three macros is not one
-      let usable = keys.every((key: string) => +split?.[key] > 0);
-      return usable ? split : { ...this.defaultMacroSplit };
-    } catch (error) {
-      localStorage.removeItem(this.splitStorageKey);
-      return { ...this.defaultMacroSplit };
-    }
+    let stored = this.usableSplit(this.readStoredSettings()?.macroSplit);
+    return stored || { ...this.defaultMacroSplit };
+  }
+
+  // the body this browser last worked a target out from
+  loadTargetProfile(): any {
+    let stored = this.readStoredSettings()?.targetProfile;
+    return { ...this.defaultTargetProfile, ...(stored || {}) };
   }
 
   handleMacroSplitChange(split: any) {
     this.macroSplit = split || { ...this.defaultMacroSplit };
-    localStorage.setItem(this.splitStorageKey, JSON.stringify(this.macroSplit));
     this.calculateTargetResult();
+    this.touchSettings();
   }
 
   handleTargetEnergyChange(value: any) {
     let energy = +value || 0;
     energy = energy > 0 ? energy : 0;
-    localStorage.setItem(this.targetStorageKey, String(energy));
     this.targetEnergy.next(energy);
     this.calculateTargetResult();
+    this.touchSettings();
+  }
+
+  handleTargetProfileChange(profile: any) {
+    this.targetProfile.next({
+      ...this.defaultTargetProfile,
+      ...(profile || {}),
+    });
+    this.touchSettings();
+  }
+
+  // ------------------------------ settings sync ------------------------------
+  // the settings on the calculator right now, as they would be written
+  currentSettings(): any {
+    return {
+      targetEnergy: this.targetEnergy.getValue(),
+      macroSplit: this.macroSplit,
+      targetProfile: this.targetProfile.getValue(),
+      updatedAt: this.loadSettingsStamp(),
+    };
+  }
+
+  loadSettingsStamp(): number {
+    return +this.readStoredSettings()?.updatedAt || 0;
+  }
+
+  // a setting was changed here, so this browser now holds the newest of them,
+  // and the user entry is behind until the write lands
+  touchSettings() {
+    this.storeSettings(Date.now());
+    if (this.isGuest) {
+      return;
+    }
+    this.settingsPending = true;
+    this.settingsTouched.next();
+  }
+
+  pushSettings() {
+    if (this.isGuest) {
+      return;
+    }
+    this.settingsPending = false;
+    // a browser that never changed a setting still carries a set of them, so
+    // the entry it starts is stamped as of now, an unstamped one would be read
+    // as older than every device that comes after it
+    if (!this.loadSettingsStamp()) {
+      this.storeSettings(Date.now());
+    }
+    this.HttpClient.put(this.settingsUrl, this.currentSettings()).subscribe({
+      // the settings are still the ones on the calculator, a failed write is
+      // nothing the page has to be pulled back from
+      error: (error) => console.log(error),
+    });
+  }
+
+  // what the user set on any of their devices. nothing is pulled for a guest,
+  // there is no entry to pull from and the browser is all there is
+  loadSettings() {
+    if (this.isGuest) {
+      return;
+    }
+    this.HttpClient.get(this.settingsUrl).subscribe({
+      next: (res: any) => {
+        // this is the first device to sign in, so what it holds is what the
+        // user has, and the entry is started from it
+        if (!res) {
+          this.pushSettings();
+          return;
+        }
+        // the browser was changed after the entry was last written, which is a
+        // device that was used offline or before this one signed in. it is the
+        // later of the two, so it is the one that carries over
+        if (this.loadSettingsStamp() > (+res.updatedAt || 0)) {
+          this.pushSettings();
+          return;
+        }
+        this.applySettings(res);
+      },
+      error: (error) => console.log(error),
+    });
+  }
+
+  // a set of settings is put on the calculator, the target row and the body form
+  // both follow what is handed over here
+  applySettingsToState(settings: any) {
+    let energy = +settings?.targetEnergy || 0;
+    this.targetEnergy.next(energy > 0 ? energy : this.defaultTargetEnergy);
+    this.macroSplit = this.usableSplit(settings?.macroSplit) || {
+      ...this.defaultMacroSplit,
+    };
+    this.targetProfile.next({
+      ...this.defaultTargetProfile,
+      ...(settings?.targetProfile || {}),
+    });
+    this.calculateTargetResult();
+  }
+
+  // settings that came off the user entry are put on the calculator, and kept
+  // in this browser too so the next start opens on them before the pull lands
+  applySettings(settings: any) {
+    this.applySettingsToState(settings);
+    this.storeSettings(+settings?.updatedAt || Date.now());
+  }
+
+  // the session is ending, so what was pulled down for the user who is leaving
+  // is taken out of this browser with it. it is read while the session can
+  // still be read, their settings are kept under their own key
+  clearUserSettings() {
+    if (this.isGuest) {
+      return;
+    }
+    // a change the wait is still sitting on is written now, the wait itself
+    // would come round to a browser that has already been signed out of
+    if (this.settingsPending) {
+      this.pushSettings();
+    }
+    localStorage.removeItem(this.settingsKey);
+  }
+
+  // the target and the body of the user who left go with them, and the
+  // calculator is put back on the settings this browser had of its own.
+  //
+  // nothing is stamped here, this is not a setting being changed. a guest that
+  // came out of a session carrying a fresh stamp would sign back in and write
+  // its own defaults over the account
+  resetSettingsToGuest() {
+    this.applySettingsToState(this.readStoredSettings());
   }
 
   // what the target calories allow of every macro, and how much of each the day
@@ -287,9 +525,10 @@ export class OperationsService {
       );
       return;
     }
-    this.HttpClient.put(this.url, {
-      addedFoodList: this.addedFoodList.getValue(),
-    }).subscribe();
+    this.HttpClient.put(
+      this.addedFoodListUrl,
+      this.addedFoodList.getValue()
+    ).subscribe();
   }
 
   // handle save tracking data
