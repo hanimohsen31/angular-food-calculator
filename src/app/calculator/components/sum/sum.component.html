@@ -2,16 +2,109 @@
   <div class="w-100 mt-3">
     <h4 class="date">{{ date | date }}</h4>
   </div>
-  <div class="container d-flex justify-content-center align-items-center">
-    <table class="table w-100 table-hover" *ngIf="addedFoodList.length">
+
+  <!-- ============================ small screens ============================ -->
+  <!-- a phone shows one card per food instead of a table, so nothing has to
+       squeeze into a shared column width -->
+  <div class="foodCards d-lg-none" *ngIf="addedFoodList.length">
+    <div class="foodCard" *ngFor="let elm of addedFoodList; let i = index">
+      <div class="cardHead">
+        <div class="cardTitle">
+          <span class="foodName">{{ elm?.ShortFoodName }}</span>
+          <span class="foodNameAr" *ngIf="elm?.Translation">{{ elm?.Translation }}</span>
+        </div>
+        <button (click)="handleRemove(i)" class="btn btn-sm btn-outline-danger">Remove</button>
+      </div>
+      <div class="input-group quantityGroup">
+        <input
+          type="number"
+          min="0"
+          class="form-control"
+          [(ngModel)]="elm.Quantity"
+          (input)="handleInput()"
+          (change)="handleChange()"
+          (blur)="handleChange()"
+        />
+        <span class="input-group-text">{{ elm?.MeasureUnit }}</span>
+      </div>
+      <div class="macroGrid">
+        <div class="macro"><span class="macroLabel">Calories</span><span>{{ scale(elm, 'Energy') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">Fats</span><span>{{ scale(elm, 'Fat') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">Carbs</span><span>{{ scale(elm, 'Carbohydrate') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">Protein</span><span>{{ scale(elm, 'Protein') | ToFixed }}</span></div>
+      </div>
+    </div>
+
+    <!-- totals of the day -->
+    <div class="foodCard totalCard">
+      <div class="cardHead">
+        <div class="cardTitle"><span class="foodName">Sum</span></div>
+        <button (click)="toggleClearPopup()" class="btn btn-sm btn-outline-danger">Clear</button>
+      </div>
+      <div class="macroGrid">
+        <div class="macro"><span class="macroLabel">Calories</span><span>{{ sumResult.Energy | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">Fats</span><span>{{ sumResult.Fat | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">Carbs</span><span>{{ sumResult.Carbohydrate | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">Protein</span><span>{{ sumResult.Protein | ToFixed }}</span></div>
+      </div>
+    </div>
+
+    <!-- the target of the day, and how much of it is eaten already -->
+    <div class="foodCard totalCard">
+      <div class="cardHead">
+        <div class="cardTitle"><span class="foodName">Target</span></div>
+        <button
+          class="btn btn-sm btn-outline-primary"
+          [disabled]="isGuest"
+          [title]="isGuest ? 'Login to keep a record of this day' : 'Save this day'"
+          (click)="toggleSavePopup()"
+        >
+          Save
+        </button>
+      </div>
+      <div class="input-group targetGroup">
+        <input
+          type="number"
+          min="0"
+          step="50"
+          class="form-control"
+          [(ngModel)]="targetEnergy"
+          (input)="handleTargetChange()"
+          (change)="handleTargetChange()"
+          (blur)="handleTargetChange()"
+        />
+        <span class="input-group-text">kcal</span>
+      </div>
+      <div class="macroGrid">
+        <div class="macro"><span class="macroLabel">Calories</span><span>{{ targetObj?.enrgTrg }}</span><span class="macroPerc">({{ targetObj?.enrgPer | ToFixed }}%)</span></div>
+        <div class="macro"><span class="macroLabel">Fats</span><span>{{ targetObj?.fatTarg | ToFixed }}</span><span class="macroPerc">({{ targetObj?.fatPerc | ToFixed }}%)</span></div>
+        <div class="macro"><span class="macroLabel">Carbs</span><span>{{ targetObj?.carbTarg | ToFixed }}</span><span class="macroPerc">({{ targetObj?.carbPer | ToFixed }}%)</span></div>
+        <div class="macro"><span class="macroLabel">Protein</span><span>{{ targetObj?.proTrg | ToFixed }}</span><span class="macroPerc">({{ targetObj?.proPer | ToFixed }}%)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ large and up ============================ -->
+  <div class="container d-none d-lg-flex justify-content-center align-items-center">
+    <table class="table w-100 table-hover sumTable" *ngIf="addedFoodList.length">
+      <!-- every column keeps the same width whatever the food names are -->
+      <colgroup>
+        <col class="colName" />
+        <col class="colQuantity" />
+        <col class="colMacro" />
+        <col class="colMacro" />
+        <col class="colMacro" />
+        <col class="colMacro" />
+        <col class="colAction" />
+      </colgroup>
       <thead>
         <tr>
           <th scope="col">Name</th>
           <th scope="col">Quantity</th>
-          <th scope="col" class="d-none d-md-table-cell">Calories</th>
-          <th scope="col" class="d-none d-md-table-cell">Fats</th>
-          <th scope="col" class="d-none d-md-table-cell">Carbs</th>
-          <th scope="col" class="d-none d-md-table-cell">Protein</th>
+          <th scope="col" class="d-none d-lg-table-cell">Calories</th>
+          <th scope="col" class="d-none d-lg-table-cell">Fats</th>
+          <th scope="col" class="d-none d-lg-table-cell">Carbs</th>
+          <th scope="col" class="d-none d-lg-table-cell">Protein</th>
           <th scope="col">Remove</th>
         </tr>
       </thead>
@@ -33,10 +126,10 @@
                 <span class="input-group-text">{{ elm?.MeasureUnit }}</span>
               </div>
             </td>
-            <td class="d-none d-md-table-cell">{{ scale(elm, 'Energy') | ToFixed}}</td>
-            <td class="d-none d-md-table-cell">{{ scale(elm, 'Fat') | ToFixed}}</td>
-            <td class="d-none d-md-table-cell">{{ scale(elm, 'Carbohydrate') | ToFixed}}</td>
-            <td class="d-none d-md-table-cell">{{ scale(elm, 'Protein') | ToFixed}}</td>
+            <td class="d-none d-lg-table-cell">{{ scale(elm, 'Energy') | ToFixed}}</td>
+            <td class="d-none d-lg-table-cell">{{ scale(elm, 'Fat') | ToFixed}}</td>
+            <td class="d-none d-lg-table-cell">{{ scale(elm, 'Carbohydrate') | ToFixed}}</td>
+            <td class="d-none d-lg-table-cell">{{ scale(elm, 'Protein') | ToFixed}}</td>
             <td><button (click)="handleRemove(i)" class="btn btn-outline-danger">Remove</button></td>
           </tr>
         </ng-container>
@@ -46,10 +139,10 @@
         <tr class="bg-light">
           <td>Sum</td>
           <td class="placeholderCell">overall</td>
-          <td class="d-none d-md-table-cell">{{ sumResult.Energy | ToFixed}}</td>
-          <td class="d-none d-md-table-cell">{{ sumResult.Fat | ToFixed}}</td>
-          <td class="d-none d-md-table-cell">{{ sumResult.Carbohydrate | ToFixed}}</td>
-          <td class="d-none d-md-table-cell">{{ sumResult.Protein | ToFixed}}</td>
+          <td class="d-none d-lg-table-cell">{{ sumResult.Energy | ToFixed}}</td>
+          <td class="d-none d-lg-table-cell">{{ sumResult.Fat | ToFixed}}</td>
+          <td class="d-none d-lg-table-cell">{{ sumResult.Carbohydrate | ToFixed}}</td>
+          <td class="d-none d-lg-table-cell">{{ sumResult.Protein | ToFixed}}</td>
           <td><button (click)="toggleClearPopup()" class="btn btn-outline-danger px-4">Clear</button></td>
         </tr>
         <!-- ----------------------------- target ----------------------------- -->
@@ -71,10 +164,10 @@
               <span class="input-group-text">kcal</span>
             </div>
           </td>
-          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.enrgTrg }}</span><span>({{ targetObj?.enrgPer | ToFixed }}%)</span></td>
-          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.fatTarg | ToFixed }}</span><span>({{ targetObj?.fatPerc | ToFixed }}%)</span></td>
-          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.carbTarg | ToFixed }}</span><span>({{ targetObj?.carbPer | ToFixed }}%)</span></td>
-          <td class="d-none d-md-table-cell targetCell"><span>{{ targetObj?.proTrg | ToFixed }}</span><span>({{ targetObj?.proPer | ToFixed }}%)</span></td>
+          <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.enrgTrg }}</span><span>({{ targetObj?.enrgPer | ToFixed }}%)</span></td>
+          <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.fatTarg | ToFixed }}</span><span>({{ targetObj?.fatPerc | ToFixed }}%)</span></td>
+          <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.carbTarg | ToFixed }}</span><span>({{ targetObj?.carbPer | ToFixed }}%)</span></td>
+          <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.proTrg | ToFixed }}</span><span>({{ targetObj?.proPer | ToFixed }}%)</span></td>
           <td>
             <button
               class="btn btn-outline-primary px-4"

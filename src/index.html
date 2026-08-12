@@ -35,9 +35,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <!-- bootstrap -->
     <link rel="stylesheet" href="assets/bs5.3.0/bootstrap.min.css" />
+    <!-- installable app -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#e3f2fd" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- iOS has no manifest install, it reads these instead -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="FODCAL" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png" />
   </head>
 
   <body class="mat-typography">
+    <!-- chrome fires this before angular is up, so it is caught here and the
+         app reads it back off the window when it starts -->
+    <script>
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        window.deferredInstallPrompt = e;
+        window.dispatchEvent(new Event('pwa-installable'));
+      });
+      window.addEventListener('appinstalled', function () {
+        window.deferredInstallPrompt = null;
+        window.dispatchEvent(new Event('pwa-installed'));
+      });
+    </script>
     <app-root></app-root>
     <!-- bootstrap -->
     <script src="assets/bs5.3.0/bootstrap.min.js"></script>

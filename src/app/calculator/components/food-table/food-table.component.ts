@@ -1,9 +1,15 @@
-﻿import { Component, AfterViewInit, ViewChild } from '@angular/core';
+﻿import {
+  Component,
+  AfterViewInit,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { FoodDataService } from '../../services/food-data.service';
 import { OperationsService } from '../../services/operations.service';
 import { MatSort } from '@angular/material/sort';
+import { Subscription } from 'rxjs';
 
 @Component({
   standalone: false,
@@ -11,7 +17,7 @@ import { MatSort } from '@angular/material/sort';
   templateUrl: './food-table.component.html',
   styleUrls: ['./food-table.component.scss'],
 })
-export class FoodTableComponent implements AfterViewInit {
+export class FoodTableComponent implements AfterViewInit, OnDestroy {
   // paginator
   displayedColumns: string[] = [
     'ShortFoodName',
@@ -27,12 +33,29 @@ export class FoodTableComponent implements AfterViewInit {
   // angular table
   dataSource = new MatTableDataSource([]);
 
+  // the card list on a phone draws the same page of rows the table would draw
+  rows: any[] = [];
+  private rowsSub: Subscription | null = null;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.bindRows();
+  }
+
+  ngOnDestroy() {
+    this.rowsSub?.unsubscribe();
+  }
+
+  // connect() emits the rows of the current page, filter and sort applied
+  private bindRows() {
+    this.rowsSub?.unsubscribe();
+    this.rowsSub = this.dataSource.connect().subscribe((res: any) => {
+      this.rows = res;
+    });
   }
 
   constructor(
@@ -50,6 +73,7 @@ export class FoodTableComponent implements AfterViewInit {
         this.dataSource = new MatTableDataSource(array);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.bindRows();
       },
     });
   }

@@ -9,10 +9,47 @@
     />
   </mat-form-field>
 
-  <!-- table -->
+  <!-- ============================ small screens ============================ -->
+  <!-- nine columns do not fit a phone, so they collapse into three: the food
+       name, its macros and the action -->
+  <table class="table mobileTable d-lg-none">
+    <thead>
+      <tr>
+        <th scope="col">Food</th>
+        <th scope="col">Macros</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows">
+        <td class="nameCell">
+          <span class="foodName">{{ row.ShortFoodName }}</span>
+          <span class="foodNameAr" *ngIf="row.Translation">{{ row.Translation }}</span>
+          <span class="measure">
+            {{ row.Measure }} {{ row.MeasureUnit }}
+            <span class="equavlint">{{ wordBreaker(row.Equavlint) }}</span>
+          </span>
+        </td>
+        <td class="macrosCell">
+          <div class="macro"><span class="macroLabel">Calories</span><span>{{ row.Energy }}</span></div>
+          <div class="macro"><span class="macroLabel">Fats</span><span>{{ row.Fat }}</span></div>
+          <div class="macro"><span class="macroLabel">Carbs</span><span>{{ row.Carbohydrate }}</span></div>
+          <div class="macro"><span class="macroLabel">Protein</span><span>{{ row.Protein }}</span></div>
+        </td>
+        <td class="actionCell">
+          <button (click)="handleAdd(row)" class="btn btn-sm btn-outline-primary">Add</button>
+        </td>
+      </tr>
+      <tr *ngIf="!rows.length" class="emptyRow">
+        <td class="text-muted text-center">No data matching the filter "{{ input.value }}"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================ large and up ============================ -->
   <table
     mat-table
-    class="mat-elevation-z8"
+    class="d-none d-lg-table mat-elevation-z8"
     matSortActive="ShortFoodName"
     matSortDirection="asc"
     matSortDisableClear

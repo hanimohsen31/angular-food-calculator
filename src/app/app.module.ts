@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +20,11 @@ import { HttpClientModule } from '@angular/common/http';
     CommonModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
+    // the worker is what makes the app installable, it is only built for prod
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
