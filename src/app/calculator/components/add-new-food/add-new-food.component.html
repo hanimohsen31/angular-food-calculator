@@ -1,15 +1,147 @@
 <div class="container pt-3 pb-4">
-  <form class="row" [formGroup]="formData" (ngSubmit)="onSubmit()">
-    <app-input label="Food Name" formControlName="ShortFoodName" class="col-6"></app-input>
-    <app-input label="Translation Arabic" formControlName="Translation" class="col-6"></app-input>
-    <app-input label="Measure" formControlName="Measure" class="col-6"></app-input>
-    <app-input label="Unit" formControlName="MeasureUnit" [options]="measureUnits" class="col-6"></app-input>
-    <app-input label="Calories" formControlName="Energy" class="col-sm-12 col-md-4 mb-3"></app-input>
-    <app-input label="Carbohydrate" formControlName="Carbohydrate" class="col-sm-12 col-md-4 mb-3"></app-input>
-    <app-input label="Fat" formControlName="Fat" class="col-sm-12 col-md-4 mb-3"></app-input>
-    <app-input label="Protein" formControlName="Protein" class="col-sm-12 col-md-4 mb-3"></app-input>
-    <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-primary px-5">Submit</button>
+  <!-- ------------------------------ form ------------------------------ -->
+  <div class="card p-3 mb-4">
+    <h4 class="mb-3">{{ formTitle }}</h4>
+
+    <form class="row" [formGroup]="formData" (ngSubmit)="onSubmit()">
+      <app-input label="Food Name" formControlName="ShortFoodName" class="col-6"></app-input>
+      <app-input label="Translation Arabic" formControlName="Translation" class="col-6"></app-input>
+      <app-input label="Measure" formControlName="Measure" class="col-6"></app-input>
+      <app-input label="Unit" formControlName="MeasureUnit" [options]="measureUnits" class="col-6"></app-input>
+      <app-input label="Calories" formControlName="Energy" class="col-sm-12 col-md-4 mb-3"></app-input>
+      <app-input label="Carbohydrate" formControlName="Carbohydrate" class="col-sm-12 col-md-4 mb-3"></app-input>
+      <app-input label="Fat" formControlName="Fat" class="col-sm-12 col-md-4 mb-3"></app-input>
+      <app-input label="Protein" formControlName="Protein" class="col-sm-12 col-md-4 mb-3"></app-input>
+      <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary px-4 me-2" (click)="resetForm()">
+          {{ editedFoodKey ? "Cancel" : "Reset" }}
+        </button>
+        <button type="submit" class="btn btn-primary px-5" [disabled]="loading">
+          {{ editedFoodKey ? "Update" : "Submit" }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ------------------------------ saved items ------------------------------ -->
+  <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Food Items</h4>
+    <span class="text-muted small" *ngIf="filteredFoodList.length">
+      {{ rangeStart }} - {{ rangeEnd }} of {{ filteredFoodList.length }}
+    </span>
+  </div>
+
+  <div class="input-group mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search food ..."
+      [(ngModel)]="searchTerm"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="applyFilter()"
+    />
+    <button type="button" class="btn btn-outline-secondary" (click)="clearSearch()" *ngIf="searchTerm">
+      Clear
+    </button>
+  </div>
+
+  <p class="text-muted" *ngIf="!filteredFoodList.length">
+    {{ searchTerm ? 'No food matching "' + searchTerm + '"' : "No food items yet." }}
+  </p>
+
+  <table class="table table-hover" *ngIf="filteredFoodList.length">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col" class="d-none d-md-table-cell">Translation</th>
+        <th scope="col">Measure</th>
+        <th scope="col" class="d-none d-md-table-cell">Calories</th>
+        <th scope="col" class="d-none d-md-table-cell">Fats</th>
+        <th scope="col" class="d-none d-md-table-cell">Carbs</th>
+        <th scope="col" class="d-none d-md-table-cell">Protein</th>
+        <th scope="col" class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="bg-light" *ngFor="let food of pagedFoodList">
+        <td>{{ food?.ShortFoodName }}</td>
+        <td class="d-none d-md-table-cell">{{ food?.Translation }}</td>
+        <td>{{ food?.Measure }} {{ food?.MeasureUnit }}</td>
+        <td class="d-none d-md-table-cell">{{ food?.Energy | ToFixed }}</td>
+        <td class="d-none d-md-table-cell">{{ food?.Fat | ToFixed }}</td>
+        <td class="d-none d-md-table-cell">{{ food?.Carbohydrate | ToFixed }}</td>
+        <td class="d-none d-md-table-cell">{{ food?.Protein | ToFixed }}</td>
+        <td class="actions">
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="editFood(food)">Edit</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="toggleDeletePopup(food)">
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ------------------------------ pagination ------------------------------ -->
+  <div
+    class="pager d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4"
+    *ngIf="filteredFoodList.length"
+  >
+    <div class="pageSize d-flex align-items-center gap-2">
+      <label class="text-muted small mb-0" for="foodPageSize">Items per page</label>
+      <select
+        id="foodPageSize"
+        class="form-select form-select-sm"
+        [(ngModel)]="pageSize"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="handlePageSizeChange()"
+      >
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
     </div>
-  </form>
+
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="currentPage == 1">
+          <button type="button" class="page-link" (click)="goToPage(currentPage - 1)">Previous</button>
+        </li>
+
+        <li class="page-item" *ngIf="pageNumbers[0] > 1">
+          <button type="button" class="page-link" (click)="goToPage(1)">1</button>
+        </li>
+        <li class="page-item disabled" *ngIf="pageNumbers[0] > 2">
+          <span class="page-link">...</span>
+        </li>
+
+        <li class="page-item" *ngFor="let page of pageNumbers" [class.active]="page == currentPage">
+          <button type="button" class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+
+        <li class="page-item disabled" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages - 1">
+          <span class="page-link">...</span>
+        </li>
+        <li class="page-item" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages">
+          <button type="button" class="page-link" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage == totalPages">
+          <button type="button" class="page-link" (click)="goToPage(currentPage + 1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- delete confirm pop up -->
+<div class="popupContainer deletePopup" [class.d-none]="!deletePopup">
+  <div class="card">
+    <h4>Delete {{ foodToDelete?.ShortFoodName }} ?</h4>
+    <div class="buttons">
+      <button class="btn btn-outline-primary" (click)="handleDelete()">Ok</button>
+      <button class="btn btn-outline-danger" (click)="toggleDeletePopup()">Cancel</button>
+    </div>
+  </div>
 </div>

@@ -37,6 +37,17 @@ export class FoodDataService {
     return this.HttpClient.delete(url);
   }
 
+  // plain food items live in the same list as the recipes do
+  updateFood(key: string, food: any) {
+    let url = `${this.url}/data/${key}.json`;
+    return this.HttpClient.put(url, food);
+  }
+
+  deleteFood(key: string) {
+    let url = `${this.url}/data/${key}.json`;
+    return this.HttpClient.delete(url);
+  }
+
   getGeneralNotes(): Observable<any> {
     const url = `${this.url}/notes.json`;
     console.log(url);

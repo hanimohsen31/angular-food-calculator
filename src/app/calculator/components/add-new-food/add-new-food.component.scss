@@ -1,0 +1,48 @@
+tr {
+  vertical-align: middle;
+}
+
+/* the select sizes to its own value instead of stretching across the row */
+.pageSize {
+  .form-select {
+    width: auto;
+  }
+}
+
+.pagination {
+  .page-link {
+    cursor: pointer;
+  }
+}
+
+/* the buttons wrap inside the cell rather than widening it */
+.actions {
+  > div {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 767px) {
+  table {
+    * {
+      font-size: small;
+    }
+  }
+
+  /* on a narrow screen the two halves stack, each taking the full width, so
+     the page buttons are read on their own line rather than squeezed beside
+     the page size */
+  .pager {
+    justify-content: center;
+
+    nav {
+      width: 100%;
+    }
+
+    .pagination {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+}
