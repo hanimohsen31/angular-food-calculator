@@ -4,7 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { GoogleAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { OperationsService } from 'src/app/shared/services/operations.service';
+import { OperationsService } from '../calculator/services/operations.service';
 
 @Injectable({
   providedIn: 'root',

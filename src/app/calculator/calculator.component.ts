@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-calculator',
-  templateUrl: './calculator.component.html',
+  template: `
+    <app-navbar></app-navbar>
+    <router-outlet></router-outlet>
+  `,
   styles: [],
 })
 export class CalculatorComponent implements OnInit {
   constructor() {}
-
   ngOnInit(): void {}
 }

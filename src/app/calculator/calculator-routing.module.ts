@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CalculatorComponent } from './calculator.component';
-import { FoodTableComponent } from './food-table/food-table.component';
-import { AddNewFoodComponent } from './add-new-food/add-new-food.component';
-import { NotesComponent } from './notes/notes.component';
-import { ProfileComponent } from './profile/profile.component';
-import { TrackingComponent } from './tracking/tracking.component';
-import { MainComponent } from './main/main.component';
-import { RecipesComponent } from './recipes/recipes.component';
-import { TargetComponent } from './target/target.component';
-import { AuthGuard } from '../auth/auth.guard';
-import { AdminGuard } from '../auth/admin.guard';
+import { AddNewFoodComponent } from './components/add-new-food/add-new-food.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { TrackingComponent } from './components/tracking/tracking.component';
+import { MainComponent } from './components/main/main.component';
+import { RecipesComponent } from './components/recipes/recipes.component';
+import { TargetComponent } from './components/target/target.component';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -25,7 +23,6 @@ const routes: Routes = [
       { path: 'add-new', component: AddNewFoodComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'recipes', component: RecipesComponent, canActivate: [AuthGuard, AdminGuard] },
       // the rest belongs to an account
-      { path: 'notes', component: NotesComponent, canActivate: [AuthGuard] },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'tracking', component: TrackingComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: 'main', pathMatch: 'full' },
