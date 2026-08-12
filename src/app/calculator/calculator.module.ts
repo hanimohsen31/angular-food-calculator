@@ -4,19 +4,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 // shared
 import { CalculatorRoutingModule } from './calculator-routing.module';
-import { SharedModule } from '../shared/shared.module';
+import { AngularMaterialModule } from './services/AngularMaterial';
+import { MatNativeDateModule } from '@angular/material/core';
 // components
 import { CalculatorComponent } from './calculator.component';
-import { FoodTableComponent } from './food-table/food-table.component';
-import { AddNewFoodComponent } from './add-new-food/add-new-food.component';
-import { ProfileComponent } from './profile/profile.component';
-import { NotesComponent } from './notes/notes.component';
-import { MainComponent } from './main/main.component';
-import { SumComponent } from './sum/sum.component';
-import { TrackingComponent } from './tracking/tracking.component';
-import { RecipesComponent } from './recipes/recipes.component';
-import { TargetComponent } from './target/target.component';
-import { ToFixedPipe } from '../shared/services/to-fixed.pipe';
+import { FoodTableComponent } from './components/food-table/food-table.component';
+import { AddNewFoodComponent } from './components/add-new-food/add-new-food.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { MainComponent } from './components/main/main.component';
+import { SumComponent } from './components/sum/sum.component';
+import { TrackingComponent } from './components/tracking/tracking.component';
+import { RecipesComponent } from './components/recipes/recipes.component';
+import { TargetComponent } from './components/target/target.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { InputComponent } from './components/input/input.component';
+// services
+import { ToFixedPipe } from './services/to-fixed.pipe';
 
 @NgModule({
   declarations: [
@@ -24,21 +27,23 @@ import { ToFixedPipe } from '../shared/services/to-fixed.pipe';
     AddNewFoodComponent,
     FoodTableComponent,
     ProfileComponent,
-    NotesComponent,
     SumComponent,
     MainComponent,
     TrackingComponent,
     RecipesComponent,
     TargetComponent,
+    NavbarComponent,
+    InputComponent,
     ToFixedPipe,
   ],
   imports: [
-    CommonModule,
-    CalculatorRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
     HttpClientModule,
-    SharedModule,
+    CommonModule,
+    FormsModule,
+    MatNativeDateModule,
+    ReactiveFormsModule,
+    AngularMaterialModule,
+    CalculatorRoutingModule,
   ],
 })
 export class CalculatorModule {}
