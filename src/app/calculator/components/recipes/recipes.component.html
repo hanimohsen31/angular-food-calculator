@@ -134,7 +134,10 @@
   <h4 class="mb-3">Saved Recipes</h4>
   <p class="text-muted" *ngIf="!recipesList.length">No recipes saved yet.</p>
 
-  <table class="table table-hover savedRecipes" *ngIf="recipesList.length">
+  <!-- the wrapper bounds the table to the screen, anything left over scrolls
+       inside it instead of stretching the page -->
+  <div class="table-responsive" *ngIf="recipesList.length">
+  <table class="table table-hover savedRecipes">
     <thead>
       <tr>
         <th scope="col">Name</th>
@@ -191,25 +194,25 @@
                 </div>
 
                 <div class="itemRow" *ngFor="let item of recipe?.RecipeItems">
-                  <span>
+                  <span class="itemName">
                     {{ item?.ShortFoodName }}
                     <small class="text-muted">{{ item?.Translation }}</small>
                   </span>
-                  <span>{{ item?.Quantity | ToFixed }} {{ item?.MeasureUnit }}</span>
-                  <span>{{ scale(item, 'Energy') | ToFixed }} cal</span>
-                  <span>{{ scale(item, 'Fat') | ToFixed }} gm</span>
-                  <span>{{ scale(item, 'Carbohydrate') | ToFixed }} gm</span>
-                  <span>{{ scale(item, 'Protein') | ToFixed }} gm</span>
+                  <span data-label="Quantity">{{ item?.Quantity | ToFixed }} {{ item?.MeasureUnit }}</span>
+                  <span data-label="Calories">{{ scale(item, 'Energy') | ToFixed }} cal</span>
+                  <span data-label="Fats">{{ scale(item, 'Fat') | ToFixed }} gm</span>
+                  <span data-label="Carbs">{{ scale(item, 'Carbohydrate') | ToFixed }} gm</span>
+                  <span data-label="Protein">{{ scale(item, 'Protein') | ToFixed }} gm</span>
                 </div>
 
                 <!-- what the items add up to, which is what the recipe is saved as -->
                 <div class="itemRow itemTotal">
-                  <span>Total</span>
-                  <span>{{ recipe?.Measure | ToFixed }} {{ recipe?.MeasureUnit }}</span>
-                  <span>{{ recipe?.Energy | ToFixed }} cal</span>
-                  <span>{{ recipe?.Fat | ToFixed }} gm</span>
-                  <span>{{ recipe?.Carbohydrate | ToFixed }} gm</span>
-                  <span>{{ recipe?.Protein | ToFixed }} gm</span>
+                  <span class="itemName">Total</span>
+                  <span data-label="Quantity">{{ recipe?.Measure | ToFixed }} {{ recipe?.MeasureUnit }}</span>
+                  <span data-label="Calories">{{ recipe?.Energy | ToFixed }} cal</span>
+                  <span data-label="Fats">{{ recipe?.Fat | ToFixed }} gm</span>
+                  <span data-label="Carbs">{{ recipe?.Carbohydrate | ToFixed }} gm</span>
+                  <span data-label="Protein">{{ recipe?.Protein | ToFixed }} gm</span>
                 </div>
               </div>
             </div>
@@ -218,6 +221,7 @@
       </ng-container>
     </tbody>
   </table>
+  </div>
 
   <!-- ------------------------------ pagination ------------------------------ -->
   <div

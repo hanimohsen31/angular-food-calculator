@@ -95,20 +95,18 @@ tr {
     width: 21%;
   }
 
-  /* the nutrient columns are dropped on a small screen, what is left shares
-     the table between it */
+  /* the nutrient columns are dropped on a small screen, only name, items and
+     actions are left and the three of them share the whole table, otherwise the
+     rows stop short of the width the expanded panel spans */
   @media (max-width: 767px) {
     th:nth-child(1) {
-      width: 34%;
+      width: 40%;
     }
     th:nth-child(3) {
-      width: 20%;
-    }
-    th:nth-child(4) {
-      width: 16%;
+      width: 22%;
     }
     th:nth-child(9) {
-      width: 30%;
+      width: 38%;
     }
   }
 }
@@ -133,6 +131,9 @@ tr {
 
 .itemsCell {
   background-color: #f8f9fa;
+  /* a fixed layout still grows a cell to its content, the zero is the floor the
+     panel measures its own width from so the table keeps the screen width */
+  max-width: 0;
 
   .itemsPanel {
     overflow-x: auto;
@@ -174,6 +175,46 @@ tr {
     font-weight: 600;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     border-bottom: none;
+  }
+
+  /* on a small screen the six columns are read as a stack instead, each value
+     carrying its own label, so nothing has to scroll sideways */
+  @media (max-width: 767px) {
+    .itemsGrid {
+      min-width: 0;
+    }
+
+    .itemRow.itemHeader {
+      display: none;
+    }
+
+    .itemRow {
+      display: block;
+      padding: 8px 0;
+
+      span {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+        text-align: start;
+      }
+
+      span:not(:first-child) {
+        text-align: start;
+      }
+
+      span[data-label]::before {
+        content: attr(data-label);
+        color: #6c757d;
+        font-weight: 400;
+      }
+
+      .itemName {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+    }
   }
 }
 
