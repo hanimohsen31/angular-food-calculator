@@ -5,6 +5,7 @@
   <select
     *ngIf="options.length; else freeText"
     [required]="required"
+    [disabled]="disabled"
     [(ngModel)]="data"
     (blur)="onBlur()"
     [class]="'form-select ' + inputClass"
@@ -15,6 +16,7 @@
   <ng-template #freeText>
     <input
       [required] = 'required'
+      [disabled]="disabled"
       [(ngModel)]="data"
       [type]="type"
       [class]="'form-control ' + inputClass"

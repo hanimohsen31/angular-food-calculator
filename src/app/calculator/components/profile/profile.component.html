@@ -6,9 +6,87 @@
           <img [src]="img" alt="" onerror="this.src='assets/images/ma.png'" />
         </div>
         <div class="col-12 col-md-6">
-          <h1 class="text-center text-md-start">{{ user.name }}</h1>
+          <h1 class="text-center text-md-start">{{ user?.name || user?.username }}</h1>
+          <p class="text-center text-md-start text-muted mb-1">{{ user?.email }}</p>
+          <p class="text-center text-md-start text-muted">{{ user?.username }} &middot; {{ user?.role }}</p>
         </div>
       </div>
+    </div>
+
+    <!-- ------------------------------ profile ------------------------------ -->
+    <div class="card my-3 p-3">
+      <h4>Account</h4>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" formControlName="name" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" formControlName="email" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Photo URL</label>
+          <input type="text" class="form-control" formControlName="photoURL" />
+        </div>
+        <p class="text-success" *ngIf="profileMessage">{{ profileMessage }}</p>
+        <p class="text-danger" *ngIf="profileError">{{ profileError }}</p>
+        <button type="submit" class="btn btn-outline-primary px-4" [disabled]="savingProfile">
+          {{ savingProfile ? "Saving ..." : "Save" }}
+        </button>
+      </form>
+    </div>
+
+    <!-- ------------------------------ password ------------------------------ -->
+    <div class="card my-3 p-3">
+      <h4>Password</h4>
+      <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+        <div class="mb-3">
+          <label class="form-label">Current Password</label>
+          <input type="password" class="form-control" formControlName="currentPassword" autocomplete="current-password" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">New Password</label>
+          <input type="password" class="form-control" formControlName="password" autocomplete="new-password" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" class="form-control" formControlName="confirmPassword" autocomplete="new-password" />
+        </div>
+        <p class="text-success" *ngIf="passwordMessage">{{ passwordMessage }}</p>
+        <p class="text-danger" *ngIf="passwordError">{{ passwordError }}</p>
+        <button type="submit" class="btn btn-outline-primary px-4" [disabled]="savingPassword">
+          {{ savingPassword ? "Saving ..." : "Change Password" }}
+        </button>
+      </form>
+    </div>
+
+    <!-- ------------------------------ delete ------------------------------ -->
+    <div class="card my-3 p-3">
+      <h4>Delete Account</h4>
+      <p class="text-muted">
+        The settings and every tracked day are deleted with the account, there is no way back
+        from it.
+      </p>
+      <div>
+        <button class="btn btn-outline-danger px-4" (click)="toggleDeletePopup()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm pop up -->
+<div class="popupContainer" [class.d-none]="!deletePopup">
+  <div class="card">
+    <h4>Delete this account ?</h4>
+    <p class="text-danger mb-0" *ngIf="deleteError">{{ deleteError }}</p>
+    <div class="buttons mt-3">
+      <button class="btn btn-outline-danger" [disabled]="deleting" (click)="deleteAccount()">
+        {{ deleting ? "Deleting ..." : "Delete" }}
+      </button>
+      <button class="btn btn-outline-primary" [disabled]="deleting" (click)="toggleDeletePopup()">
+        Cancel
+      </button>
     </div>
   </div>
 </div>

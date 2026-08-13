@@ -67,10 +67,9 @@ export class FoodTableComponent implements AfterViewInit, OnDestroy {
 
   getFoodData() {
     this.FoodDataService.getFoodData().subscribe({
-      next: (res) => {
-        let array: any = Object.values(res);
+      next: (res: any) => {
         // fill table and sort
-        this.dataSource = new MatTableDataSource(array);
+        this.dataSource = new MatTableDataSource(res || []);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.bindRows();

@@ -1,0 +1,31 @@
+/* the toast only ever shows on a phone, it is the answer to a back press */
+.exitToast {
+  /* out of the page entirely while there is nothing to say */
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 20000;
+  padding: 0.6rem 1.1rem;
+  transform: translate(-50%, 12px);
+  border-radius: 22px;
+  background: rgba(27, 36, 48, 0.92);
+  color: #fff;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exitToast {
+    transition: none;
+  }
+}

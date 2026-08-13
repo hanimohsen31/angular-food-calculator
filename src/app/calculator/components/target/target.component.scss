@@ -23,6 +23,7 @@
     .line {
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 8px;
       padding: 6px 0;
       border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
@@ -30,6 +31,20 @@
       &:last-child {
         border-bottom: none;
       }
+
+      /* the name of the factor, with the sum it came out of under it */
+      .label {
+        display: flex;
+        flex-direction: column;
+      }
     }
+  }
+
+  /* the working behind a number, it sits under whatever it explains and reads
+     quieter than the number itself */
+  .method {
+    color: #6c757d;
+    font-size: 0.75rem;
+    line-height: 1.3;
   }
 }

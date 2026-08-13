@@ -46,28 +46,70 @@ export class RecipesComponent implements OnInit {
 
   measureUnits: string[] = MEASURE_UNITS;
 
+  // the typed quantity is left alone once it has been touched, the items adding
+  // up to something else after that is not a reason to overwrite what was typed
+  quantityEdited: boolean = false;
+  // set while the quantity is being refilled, the field echoes a written value
+  // straight back and that echo is not somebody typing
+  fillingQuantity: boolean = false;
+
   formData: any = new FormGroup({
     ShortFoodName: new FormControl('', [Validators.required]),
     Translation: new FormControl('', [Validators.required]),
-    MeasureUnit: new FormControl('gm', [Validators.required]),
+    // a recipe is always measured in recipes, the field is shown but locked
+    MeasureUnit: new FormControl({ value: 'recipe', disabled: true }, [Validators.required]),
+    Measure: new FormControl(1, [Validators.required]),
   });
 
   constructor(private FoodDataService: FoodDataService) {}
 
   ngOnInit(): void {
     this.getFoodData();
+    // the unit decides what the quantity counts, so it is refilled on a change
+    this.formData.get('MeasureUnit').valueChanges.subscribe(() => this.syncQuantity(true));
+    // a refill writes the value back through the field itself, so only changes
+    // made outside of one of those are a quantity somebody typed
+    this.formData
+      .get('Measure')
+      .valueChanges.subscribe(() => (this.quantityEdited = this.quantityEdited || !this.fillingQuantity));
+  }
+
+  // a recipe measured in recipes is one recipe, whatever its items weigh. any
+  // other unit counts the items, so the quantity starts off as what they add
+  // up to and is typed over when it should be something else
+  // the unit is a disabled control, its value is only in the raw value
+  get measureUnit(): string {
+    return this.formData.getRawValue().MeasureUnit;
+  }
+
+  syncQuantity(unitChanged: boolean = false) {
+    let unit = this.measureUnit;
+    if (unit === 'recipe') {
+      this.fillQuantity(1);
+      return;
+    }
+    if (this.quantityEdited && !unitChanged) {
+      return;
+    }
+    if (unitChanged) {
+      this.quantityEdited = false;
+    }
+    this.fillQuantity(this.round(this.totals.Measure));
+  }
+
+  fillQuantity(value: number) {
+    this.fillingQuantity = true;
+    this.formData.get('Measure').setValue(value, { emitEvent: false });
+    this.fillingQuantity = false;
   }
 
   // ------------------------------ data ------------------------------
   getFoodData() {
     this.loading = true;
     this.FoodDataService.getFoodData().subscribe({
-      next: (res) => {
-        // keep the firebase key on every row, it is needed to update / delete
-        let array = Object.entries(res || {}).map(([key, value]: any) => ({
-          ...value,
-          FoodKey: key,
-        }));
+      next: (res: any) => {
+        // every row carries its id as FoodKey, it is needed to update / delete
+        let array = res || [];
         // plain food items feed the picker, recipes feed the saved list
         this.foodList = array.filter((elm: any) => !elm.isRecipe);
         this.recipesList = array
@@ -154,15 +196,24 @@ export class RecipesComponent implements OnInit {
     this.closeDropdown();
   }
 
+  // an item of a saved recipe is stored by what it is, not by which row of the
+  // food list it came off, so a picked food is matched on its key when there is
+  // one and on its name otherwise
+  sameItem(item: any, food: any): boolean {
+    return item?.FoodKey
+      ? item.FoodKey === food?.FoodKey
+      : item?.ShortFoodName === food?.ShortFoodName;
+  }
+
   // quantity already picked for a food, shown as a badge inside the dropdown
   getPickedQuantity(food: any) {
-    let existed = this.recipeItems.find((elm: any) => elm.FoodKey === food.FoodKey);
+    let existed = this.recipeItems.find((elm: any) => this.sameItem(elm, food));
     return existed ? +existed.Quantity : 0;
   }
 
   // ------------------------------ items ------------------------------
   handleAddItem(food: any) {
-    let existed = this.recipeItems.find((elm: any) => elm.FoodKey === food.FoodKey);
+    let existed = this.recipeItems.find((elm: any) => this.sameItem(elm, food));
     // quantities are in the measure unit itself, one click is one full measure
     let step = +food.Measure || 0;
     if (existed) {
@@ -226,6 +277,7 @@ export class RecipesComponent implements OnInit {
       totals.Sugars += this.scale(item, 'Sugars');
     });
     this.totals = totals;
+    this.syncQuantity();
   }
 
   emptyTotals() {
@@ -270,22 +322,20 @@ export class RecipesComponent implements OnInit {
   // a recipe is stored as a normal food item, so it shows up in the food table,
   // plus the RecipeItems it was built from, so it stays editable
   buildRecipe() {
-    let value = this.formData.value;
+    let value = this.formData.getRawValue();
     return {
       ShortFoodName: value.ShortFoodName,
       Translation: value.Translation,
       MeasureUnit: value.MeasureUnit,
-      Measure: this.round(this.totals.Measure),
+      // a recipe is saved as one serving of whatever the quantity says, the
+      // nutrients below are what the whole of it comes to
+      Measure: value.MeasureUnit === 'recipe' ? 1 : this.round(value.Measure) || 1,
       Quantity: 1,
       Energy: this.round(this.totals.Energy),
       Carbohydrate: this.round(this.totals.Carbohydrate),
       Fat: this.round(this.totals.Fat),
       Protein: this.round(this.totals.Protein),
       Sugars: this.round(this.totals.Sugars),
-      Equavlint: '',
-      EquavlintMeasure: 0,
-      EquavlintMeasureUnit: '',
-      FoodID: this.editedRecipeFoodID || `R-${new Date().getTime()}`,
       isRecipe: true,
       QuantityBasis: 'unit',
       RecipeItems: this.recipeItems,
@@ -308,16 +358,22 @@ export class RecipesComponent implements OnInit {
     this.copiedFromName = '';
     this.editedRecipeKey = recipe.FoodKey;
     this.editedRecipeFoodID = recipe.FoodID || '';
-    this.formData.patchValue({
-      ShortFoodName: recipe.ShortFoodName,
-      Translation: recipe.Translation,
-      MeasureUnit: recipe.MeasureUnit || 'gm',
-    });
+    this.formData.patchValue(
+      {
+        ShortFoodName: recipe.ShortFoodName,
+        Translation: recipe.Translation,
+      },
+      { emitEvent: false },
+    );
     // deep copy so cancelling an edit does not touch the saved list
     this.recipeItems = (recipe.RecipeItems || []).map((elm: any) => ({
       ...elm,
     }));
+    this.quantityEdited = false;
     this.calculateTotals();
+    // the quantity comes back as it was saved, the totals do not overwrite it
+    this.fillQuantity(+recipe.Measure || 1);
+    this.quantityEdited = true;
     this.clearSearch();
     this.closeDropdown();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -337,7 +393,11 @@ export class RecipesComponent implements OnInit {
   }
 
   resetBuilder() {
-    this.formData.reset({ ShortFoodName: '', Translation: '', MeasureUnit: 'gm' });
+    this.formData.reset(
+      { ShortFoodName: '', Translation: '', MeasureUnit: 'recipe', Measure: 1 },
+      { emitEvent: false },
+    );
+    this.quantityEdited = false;
     this.recipeItems = [];
     this.editedRecipeKey = '';
     this.editedRecipeFoodID = '';

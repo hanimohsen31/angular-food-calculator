@@ -1,6 +1,6 @@
 export const environment = {
-  production: false,
-  baseUrl: 'http://localhost:5000',
+  production: true,
+  baseUrl: 'https://node.ellavibes.store',
   // every food calculator endpoint lives under this prefix on the node server
   apiPrefix: '/foodcal',
 };

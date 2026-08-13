@@ -1,85 +1,73 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import {
+  foodFromApi,
+  foodToApi,
+  trackingDayFromApi,
+} from './api-mapper';
 
+// everything the shared food list and the tracked days are read and written
+// through. the screens keep speaking in their own field names, the translation
+// to the node server shape happens here
 @Injectable({
   providedIn: 'root',
 })
-
 export class FoodDataService {
   constructor(private HttpClient: HttpClient) {}
-  url = environment.database.url;
+  url = `${environment.baseUrl}${environment.apiPrefix}`;
 
-  getFoodData(): Observable<any> {
-    const url = `${this.url}/data.json`;
-    return this.HttpClient.get(url);
+  // ------------------------------ food ------------------------------
+  // foods and recipes share one collection, the recipes carry isRecipe, which
+  // is what the screens filter on
+  getFoodData(): Observable<any[]> {
+    return this.HttpClient.get(`${this.url}/data`).pipe(
+      map((res: any) => (res?.data || []).map((elm: any) => foodFromApi(elm)))
+    );
   }
 
   addNewFood(formData: any) {
-    let url = `${this.url}/data.json`;
-    return this.HttpClient.post(url, formData);
+    return this.HttpClient.post(`${this.url}/data`, foodToApi(formData));
   }
 
-  // a recipe is stored inside the shared food list, so it shows in the food table
+  updateFood(id: string, food: any) {
+    return this.HttpClient.patch(`${this.url}/data/${id}`, foodToApi(food));
+  }
+
+  deleteFood(id: string) {
+    return this.HttpClient.delete(`${this.url}/data/${id}`);
+  }
+
+  // ------------------------------ recipes ------------------------------
+  getRecipes(): Observable<any[]> {
+    return this.HttpClient.get(`${this.url}/recipes`).pipe(
+      map((res: any) => (res?.data || []).map((elm: any) => foodFromApi(elm)))
+    );
+  }
+
   addNewRecipe(recipe: any) {
-    let url = `${this.url}/data.json`;
-    return this.HttpClient.post(url, recipe);
+    return this.HttpClient.post(`${this.url}/recipes`, foodToApi({ ...recipe, isRecipe: true }));
   }
 
-  updateRecipe(key: string, recipe: any) {
-    let url = `${this.url}/data/${key}.json`;
-    return this.HttpClient.put(url, recipe);
+  updateRecipe(id: string, recipe: any) {
+    return this.HttpClient.patch(`${this.url}/recipes/${id}`, foodToApi({ ...recipe, isRecipe: true }));
   }
 
-  deleteRecipe(key: string) {
-    let url = `${this.url}/data/${key}.json`;
-    return this.HttpClient.delete(url);
+  deleteRecipe(id: string) {
+    return this.HttpClient.delete(`${this.url}/recipes/${id}`);
   }
 
-  // plain food items live in the same list as the recipes do
-  updateFood(key: string, food: any) {
-    let url = `${this.url}/data/${key}.json`;
-    return this.HttpClient.put(url, food);
-  }
-
-  deleteFood(key: string) {
-    let url = `${this.url}/data/${key}.json`;
-    return this.HttpClient.delete(url);
-  }
-
-  getGeneralNotes(): Observable<any> {
-    const url = `${this.url}/notes.json`;
-    console.log(url);
-    return this.HttpClient.get(url);
-  }
-
-  // '' when nobody is signed in, so a guest never builds a user url
-  private getUserId(): string {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      return '';
-    }
-    try {
-      return JSON.parse(user)?.uid || '';
-    } catch (error) {
-      return '';
-    }
-  }
-
-  getUserTrackingData() {
-    const url = `${this.url}/tracking/${this.getUserId()}.json`;
-    return this.HttpClient.get(url);
+  // ------------------------------ tracking ------------------------------
+  // the token says whose days these are, nothing about the user is sent
+  getUserTrackingData(): Observable<any[]> {
+    return this.HttpClient.get(`${this.url}/tracking`).pipe(
+      map((res: any) => (res?.data || []).map((elm: any) => trackingDayFromApi(elm)))
+    );
   }
 
   // a day is stored under the date it was saved for, which is its id
   deleteUserTrackingDay(id: string) {
-    const url = `${this.url}/tracking/${this.getUserId()}/${id}.json`;
-    return this.HttpClient.delete(url);
-  }
-
-  getUserAddedFoodList() {
-    const url = `${this.url}/users/${this.getUserId()}/addedFoodList.json`;
-    return this.HttpClient.get(url);
+    return this.HttpClient.delete(`${this.url}/tracking/${id}`);
   }
 }

@@ -1,5 +1,4 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { user } from '@angular/fire/auth';
 import { LoginService } from 'src/app/auth/login.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PwaInstallService } from '../../services/pwa-install.service';
@@ -14,7 +13,8 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private LoginService: LoginService,
-    private PwaInstallService: PwaInstallService
+    private PwaInstallService: PwaInstallService,
+    private Router: Router
   ) {}
   ngOnInit(): void {}
 
@@ -43,10 +43,9 @@ export class NavbarComponent implements OnInit {
     this.showIosHelp = false;
   }
 
-  // the google popup is opened from here, the login page is a detour the navbar
-  // does not need
+  // an account is typed into now, so the button opens the page it is typed on
   login() {
-    this.LoginService.logInWithGoogle();
+    this.Router.navigate(['/auth']);
   }
 
   logout() {

@@ -54,9 +54,8 @@ export class AddNewFoodComponent implements OnInit {
     this.loading = true;
     this.FoodDataService.getFoodData().subscribe({
       next: (res: any) => {
-        // keep the firebase key on every row, it is needed to update / delete
-        this.foodList = Object.entries(res || {})
-          .map(([key, value]: any) => ({ ...value, FoodKey: key }))
+        // every row carries its id as FoodKey, it is needed to update / delete
+        this.foodList = (res || [])
           .filter((elm: any) => !elm.isRecipe)
           .sort((a: any, b: any) => (a.ShortFoodName || '').localeCompare(b.ShortFoodName || ''));
         this.applyFilter();

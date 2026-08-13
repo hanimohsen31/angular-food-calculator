@@ -71,9 +71,12 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
+  // a disabled control is still read, it just cannot be typed in
+  disabled: boolean = false;
+
   // This function is called by the forms API when the control status changes to or from 'DISABLED'.
   // Depending on the status, it enables or disables the appropriate DOM element.
-  setDisabledState?(isDisabled: boolean): void {
-    // Implement this method if you need to disable your custom component
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 }

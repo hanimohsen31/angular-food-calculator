@@ -2,7 +2,7 @@
   <h4 class="mb-3">Daily Calories</h4>
   <p class="text-muted">
     What a body of this size burns in a day, and what to eat against it to reach
-    the weight it is heading for.
+    the weight it is heading for. Every number below says how it was worked out.
   </p>
 
   <div class="row">
@@ -87,6 +87,41 @@
             </div>
           </div>
 
+          <!-- the equation the resting burn is read off -->
+          <div class="col-12 mb-3">
+            <label class="form-label" for="targetFormula">Equation</label>
+            <select id="targetFormula" class="form-select" formControlName="Formula">
+              <option *ngFor="let formula of formulas" [ngValue]="formula.id">
+                {{ formula.label }}
+              </option>
+            </select>
+            <small class="form-text text-muted">{{ selectedFormula.note }}</small>
+          </div>
+
+          <!-- only the two lean mass equations read it, it is asked for there -->
+          <div class="col-12 col-md-6 mb-3" *ngIf="selectedFormula.needsBodyFat">
+            <label class="form-label" for="targetBodyFat">
+              Body fat
+              <small class="text-danger" *ngIf="isOutOfRange('BodyFat')">
+                {{ limits.BodyFat.min }} - {{ limits.BodyFat.max }}
+              </small>
+            </label>
+            <div class="input-group">
+              <input
+                id="targetBodyFat"
+                type="number"
+                [min]="limits.BodyFat.min"
+                [max]="limits.BodyFat.max"
+                class="form-control"
+                formControlName="BodyFat"
+                (input)="capField('BodyFat')"
+                (change)="clampField('BodyFat')"
+                (blur)="clampField('BodyFat')"
+              />
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+
           <div class="col-12 mb-3">
             <label class="form-label" for="targetActivity">Daily activity</label>
             <select id="targetActivity" class="form-select" formControlName="Activity">
@@ -96,12 +131,100 @@
             </select>
           </div>
 
+          <div class="col-12 col-md-6 mb-3" *ngIf="isCustomActivity">
+            <label class="form-label" for="targetActivityCustom">Multiplier</label>
+            <input
+              id="targetActivityCustom"
+              type="number"
+              min="1"
+              max="3"
+              step="0.05"
+              class="form-control"
+              formControlName="ActivityCustom"
+            />
+            <small class="form-text text-muted">Between 1 and 3.</small>
+          </div>
+
           <div class="col-12 mb-3">
             <label class="form-label" for="targetGoal">Goal</label>
             <select id="targetGoal" class="form-select" formControlName="Goal">
               <option *ngFor="let goal of goals" [ngValue]="goal.id">{{ goal.label }}</option>
             </select>
           </div>
+
+          <div class="col-12 col-md-6 mb-3" *ngIf="selectedGoal.custom">
+            <label class="form-label" for="targetGoalCustom">Calories a day</label>
+            <div class="input-group">
+              <input
+                id="targetGoalCustom"
+                type="number"
+                min="-1500"
+                max="1500"
+                step="50"
+                class="form-control"
+                formControlName="GoalCustom"
+              />
+              <span class="input-group-text">kcal</span>
+            </div>
+            <small class="form-text text-muted">Under zero to lose, over it to gain.</small>
+          </div>
+
+          <!-- ---------------------- how the calories are cut up ---------------------- -->
+          <div class="col-12 mb-3">
+            <label class="form-label" for="targetMacroMethod">Macro split</label>
+            <select id="targetMacroMethod" class="form-select" formControlName="MacroMethod">
+              <option *ngFor="let method of macroMethods" [ngValue]="method.id">
+                {{ method.label }}
+              </option>
+            </select>
+          </div>
+
+          <ng-container *ngIf="macroMethod === 'custom'">
+            <div class="col-4 mb-3">
+              <label class="form-label" for="targetSplitFat">Fats</label>
+              <div class="input-group">
+                <input id="targetSplitFat" type="number" min="0" max="100" class="form-control" formControlName="SplitFat" />
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="col-4 mb-3">
+              <label class="form-label" for="targetSplitCarbs">Carbs</label>
+              <div class="input-group">
+                <input id="targetSplitCarbs" type="number" min="0" max="100" class="form-control" formControlName="SplitCarbs" />
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="col-4 mb-3">
+              <label class="form-label" for="targetSplitProtein">Protein</label>
+              <div class="input-group">
+                <input id="targetSplitProtein" type="number" min="0" max="100" class="form-control" formControlName="SplitProtein" />
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="col-12 mb-3" *ngIf="customSplitTotal !== 100">
+              <small class="text-danger">
+                The three add to {{ customSplitTotal }}, they are read as shares of that rather
+                than as percentages of the day.
+              </small>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="macroMethod === 'perKg'">
+            <div class="col-6 mb-3">
+              <label class="form-label" for="targetProteinPerKg">Protein</label>
+              <div class="input-group">
+                <input id="targetProteinPerKg" type="number" min="0" max="4" step="0.1" class="form-control" formControlName="ProteinPerKg" />
+                <span class="input-group-text">gm/kg</span>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label" for="targetFatPerKg">Fat</label>
+              <div class="input-group">
+                <input id="targetFatPerKg" type="number" min="0" max="3" step="0.1" class="form-control" formControlName="FatPerKg" />
+                <span class="input-group-text">gm/kg</span>
+              </div>
+            </div>
+          </ng-container>
         </form>
 
         <div class="d-flex justify-content-end">
@@ -122,35 +245,68 @@
             <span class="value">{{ target }}</span>
             <span class="unit">kcal a day</span>
           </div>
+          <p class="method mt-2 mb-0">{{ targetMethod }}</p>
 
-          <div class="breakdown">
+          <div class="breakdown mt-2">
+            <div class="line" *ngIf="leanMethod">
+              <div class="label">
+                <span>Lean mass</span>
+                <small class="method">{{ leanMethod }}</small>
+              </div>
+              <span>{{ leanMass | number: "1.0-1" }} kg</span>
+            </div>
             <div class="line">
-              <span>Resting burn</span>
+              <div class="label">
+                <span>Resting burn</span>
+                <small class="method">{{ selectedFormula.label }} &middot; {{ bmrMethod }}</small>
+              </div>
               <span>{{ bmr }} kcal</span>
             </div>
             <div class="line">
-              <span>With the daily activity</span>
+              <div class="label">
+                <span>With the daily activity</span>
+                <small class="method">{{ maintenanceMethod }}</small>
+              </div>
               <span>{{ maintenance }} kcal</span>
             </div>
             <div class="line">
-              <span>What the goal asks for</span>
-              <span [class.text-danger]="goalOffset < 0" [class.text-success]="goalOffset > 0">
-                {{ goalOffset > 0 ? "+" : "" }}{{ goalOffset }} kcal
+              <div class="label">
+                <span>What the goal asks for</span>
+                <small class="method">{{ goalMethod }}</small>
+              </div>
+              <span [class.text-danger]="appliedOffset < 0" [class.text-success]="appliedOffset > 0">
+                {{ appliedOffset > 0 ? "+" : "" }}{{ appliedOffset }} kcal
               </span>
             </div>
           </div>
 
-          <h6 class="mt-3 mb-2">What that leaves of every macro</h6>
+          <h6 class="mt-3 mb-1">What that leaves of every macro</h6>
+          <p class="method mb-2">{{ splitMethod }}</p>
           <div class="breakdown">
             <div class="line" *ngFor="let macro of macros">
-              <span>{{ macro.label }} <small class="text-muted">{{ macro.percent }}%</small></span>
+              <div class="label">
+                <span>{{ macro.label }} <small class="text-muted">{{ macro.percent }}%</small></span>
+                <small class="method">{{ macro.method }}</small>
+              </div>
               <span>{{ macro.grams }} gm <small class="text-muted">({{ macro.calories }} kcal)</small></span>
             </div>
+            <div class="line">
+              <div class="label">
+                <span>The three together</span>
+                <small class="method">
+                  whole grams rarely land on the target exactly, this is how far off they came
+                </small>
+              </div>
+              <span>
+                {{ macroTotalCalories }} kcal
+                <small class="text-muted">
+                  ({{ macroCalorieDrift > 0 ? "+" : "" }}{{ macroCalorieDrift }})
+                </small>
+              </span>
+            </div>
           </div>
-          <p class="text-muted small mt-2 mb-0" *ngIf="selectedGoal.split">
-            {{ selectedGoal.label }} is eaten on more protein than an even day,
-            it is what muscle is kept and built on.
-          </p>
+
+          <p class="text-danger small mt-2 mb-0" *ngIf="plan.constrained">{{ plan.note }}</p>
 
           <p class="text-muted small mt-3 mb-0">
             The calculator is set to {{ currentTarget }} kcal right now.
@@ -172,7 +328,8 @@
   </div>
 
   <p class="text-muted small mt-3 mb-0">
-    The resting burn is worked out with the Mifflin St Jeor equation. It is an
-    estimate, what the scale does over a couple of weeks is the real answer.
+    Every one of these equations is an estimate, they only differ in what they
+    read the body off. What the scale does over a couple of weeks is the real
+    answer, and the number here is worth moving to meet it.
   </p>
 </div>

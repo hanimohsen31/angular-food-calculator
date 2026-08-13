@@ -1,0 +1,193 @@
+<div class="authPage">
+  <div class="authCard">
+    <!-- the app introduces itself here, the navbar is not always in view on a
+         phone once the keyboard is open -->
+    <div class="brand">
+      <div class="mark">FC</div>
+      <h1>{{ mode === "login" ? "Welcome back" : "Create your account" }}</h1>
+      <p>
+        {{
+          mode === "login"
+            ? "Sign in to keep your tracking and targets in one place"
+            : "A few details and the calculator starts remembering your days"
+        }}
+      </p>
+    </div>
+
+    <!-- one switch, the sliding pill says which side is live -->
+    <div class="modeSwitch" [class.right]="mode === 'signup'">
+      <span class="pill" aria-hidden="true"></span>
+      <button type="button" [class.active]="mode === 'login'" (click)="switchMode('login')">
+        Login
+      </button>
+      <button type="button" [class.active]="mode === 'signup'" (click)="switchMode('signup')">
+        Create Account
+      </button>
+    </div>
+
+    <!-- ------------------------------ login ------------------------------ -->
+    <form *ngIf="mode === 'login'" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <label for="loginUsername">Username or Email</label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#64;</span>
+          <input
+            id="loginUsername"
+            type="text"
+            formControlName="username"
+            autocomplete="username"
+            placeholder="you@example.com"
+            [class.invalid]="showError('username')"
+          />
+        </div>
+        <small class="error" *ngIf="showError('username')">Enter your username or email</small>
+      </div>
+
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#9679;</span>
+          <input
+            id="loginPassword"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="At least eight characters"
+            [class.invalid]="showError('password')"
+          />
+          <button
+            type="button"
+            class="reveal"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword ? "Hide" : "Show" }}
+          </button>
+        </div>
+        <small class="error" *ngIf="showError('password')">
+          Your password is at least eight characters
+        </small>
+      </div>
+
+      <p class="formError" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" class="submit" [disabled]="loading">
+        <span class="spinner" *ngIf="loading" aria-hidden="true"></span>
+        {{ loading ? "Signing in ..." : "Login" }}
+      </button>
+    </form>
+
+    <!-- ------------------------------ signup ------------------------------ -->
+    <form *ngIf="mode === 'signup'" [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <label for="signupUsername">Username</label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#64;</span>
+          <input
+            id="signupUsername"
+            type="text"
+            formControlName="username"
+            autocomplete="username"
+            placeholder="your_name"
+            [class.invalid]="showError('username')"
+          />
+        </div>
+        <small class="hint" *ngIf="!showError('username')">
+          Letters, numbers, dot, dash and underscore only
+        </small>
+        <small class="error" *ngIf="showError('username')">
+          Three to thirty characters, letters, numbers, dot, dash and underscore only
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="signupEmail">Email</label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#9993;</span>
+          <input
+            id="signupEmail"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            [class.invalid]="showError('email')"
+          />
+        </div>
+        <small class="error" *ngIf="showError('email')">Enter a valid email address</small>
+      </div>
+
+      <div class="field">
+        <label for="signupName">Name <span class="optional">optional</span></label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#9786;</span>
+          <input
+            id="signupName"
+            type="text"
+            formControlName="name"
+            autocomplete="name"
+            placeholder="How we should greet you"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="signupPassword">Password</label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#9679;</span>
+          <input
+            id="signupPassword"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="new-password"
+            placeholder="At least eight characters"
+            [class.invalid]="showError('password')"
+          />
+          <button
+            type="button"
+            class="reveal"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword ? "Hide" : "Show" }}
+          </button>
+        </div>
+        <!-- the bar is only about length, it is a nudge and not a rule -->
+        <div class="strength" *ngIf="signupForm.value.password">
+          <span class="track"><span class="fill" [style.width.%]="passwordStrength"></span></span>
+          <small>{{ passwordStrengthLabel }}</small>
+        </div>
+        <small class="error" *ngIf="showError('password')">At least eight characters</small>
+      </div>
+
+      <div class="field">
+        <label for="signupConfirm">Confirm Password</label>
+        <div class="control">
+          <span class="icon" aria-hidden="true">&#9679;</span>
+          <input
+            id="signupConfirm"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+            placeholder="Type it once more"
+            [class.invalid]="showError('confirmPassword') || passwordsDiffer"
+          />
+        </div>
+        <small class="error" *ngIf="passwordsDiffer">The two passwords are not the same</small>
+      </div>
+
+      <p class="formError" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" class="submit" [disabled]="loading">
+        <span class="spinner" *ngIf="loading" aria-hidden="true"></span>
+        {{ loading ? "Creating ..." : "Create Account" }}
+      </button>
+    </form>
+
+    <!-- the calculator itself never needed an account, the way back to it is
+         kept on the page so a guest is not stuck here -->
+    <div class="guest">
+      <span>or</span>
+      <a routerLink="/calculator/main">Continue as a guest</a>
+    </div>
+  </div>
+</div>

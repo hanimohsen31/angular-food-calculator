@@ -3,6 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    // login and signup, the guards send whoever is not signed in here
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+  },
+  {
     path: 'calculator',
     loadChildren: () => import('./calculator/calculator.module').then((m) => m.CalculatorModule),
   },

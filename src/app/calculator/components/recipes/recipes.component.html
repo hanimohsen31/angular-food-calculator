@@ -7,9 +7,18 @@
     </p>
 
     <form class="row" [formGroup]="formData">
-      <app-input label="Recipe Name" formControlName="ShortFoodName" class="col-12 col-md-4"></app-input>
-      <app-input label="Translation Arabic" formControlName="Translation" class="col-12 col-md-4"></app-input>
-      <app-input label="Unit" formControlName="MeasureUnit" [options]="measureUnits" class="col-12 col-md-4"></app-input>
+      <app-input label="Recipe Name" formControlName="ShortFoodName" class="col-12 col-md-3"></app-input>
+      <app-input label="Translation Arabic" formControlName="Translation" class="col-12 col-md-3"></app-input>
+      <app-input label="Unit" formControlName="MeasureUnit" [options]="measureUnits" class="col-12 col-md-3"></app-input>
+      <!-- a recipe is one recipe, there is nothing to type, any other unit is
+           counted and the quantity is asked for -->
+      <app-input
+        *ngIf="measureUnit !== 'recipe'"
+        label="Quantity"
+        type="number"
+        formControlName="Measure"
+        class="col-12 col-md-3"
+      ></app-input>
     </form>
 
     <!-- items picker -->
@@ -106,7 +115,9 @@
       <tfoot>
         <tr class="bg-light">
           <td>Total</td>
-          <td>{{ totals.Measure | ToFixed }}</td>
+          <!-- the items are added up in their own units, a sum of those is not
+               a quantity of anything, so the column is left empty -->
+          <td></td>
           <td class="d-none d-md-table-cell">{{ totals.Energy | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ totals.Fat | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ totals.Carbohydrate | ToFixed }}</td>
@@ -208,7 +219,7 @@
                 <!-- what the items add up to, which is what the recipe is saved as -->
                 <div class="itemRow itemTotal">
                   <span class="itemName">Total</span>
-                  <span data-label="Quantity">{{ recipe?.Measure | ToFixed }} {{ recipe?.MeasureUnit }}</span>
+                  <span data-label="Quantity"></span>
                   <span data-label="Calories">{{ recipe?.Energy | ToFixed }} cal</span>
                   <span data-label="Fats">{{ recipe?.Fat | ToFixed }} gm</span>
                   <span data-label="Carbs">{{ recipe?.Carbohydrate | ToFixed }} gm</span>

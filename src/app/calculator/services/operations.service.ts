@@ -4,6 +4,8 @@ import { debounceTime } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FoodDataService } from './food-data.service';
+import { settingsFromApi, settingsToApi, trackingDayToApi } from './api-mapper';
+import { storedToken, storedUserId } from 'src/app/auth/session';
 
 @Injectable({
   providedIn: 'root',
@@ -26,34 +28,38 @@ export class OperationsService {
     Age: 30,
     Weight: 70,
     Height: 170,
+    BodyFat: 20,
+    // which equation the resting burn is read off, and which of the fields
+    // beside it the target page is working from
+    Formula: 'mifflin',
     Activity: 1.375,
+    ActivityCustom: 1.4,
     Goal: 'keep',
+    GoalCustom: -500,
+    MacroMethod: 'goal',
+    SplitProtein: 20,
+    SplitFat: 30,
+    SplitCarbs: 50,
+    ProteinPerKg: 2.0,
+    FatPerKg: 0.8,
   };
 
   macroSplit: any = this.loadMacroSplit();
 
   get userId(): string {
-    let user = localStorage.getItem('user');
-    if (!user) {
-      return '';
-    }
-    try {
-      return JSON.parse(user)?.uid || '';
-    } catch (error) {
-      return '';
-    }
+    return storedUserId();
   }
 
+  // a session is a token, the user entry beside it is only what it is read as.
+  // without one there is nobody for the server to keep anything under
   get isGuest(): boolean {
-    return !this.userId;
+    return !storedToken();
   }
 
-  get addedFoodListUrl(): string {
-    return `${environment.database.url}/users/${this.userId}/addedFoodList.json`;
-  }
-
+  // the working list and the settings are one document on the server, the list
+  // rides along inside it
   get settingsUrl(): string {
-    return `${environment.database.url}/users/${this.userId}/settings.json`;
+    return `${environment.baseUrl}${environment.apiPrefix}/settings`;
   }
 
   get settingsKey(): string {
@@ -166,8 +172,11 @@ export class OperationsService {
       this.calculateSumResult();
       return;
     }
-    return this.HttpClient.delete(this.addedFoodListUrl).subscribe({
-      next: (res) => this.addedFoodList.next([]),
+    return this.HttpClient.patch(this.settingsUrl, { addedFoodList: [] }).subscribe({
+      next: () => {
+        this.addedFoodList.next([]);
+        this.calculateSumResult();
+      },
     });
   }
 
@@ -178,11 +187,13 @@ export class OperationsService {
       this.loadGuestAddedFoodList();
       return;
     }
-    this.FoodDataService.getUserAddedFoodList().subscribe({
+    this.HttpClient.get(this.settingsUrl).subscribe({
       next: (res: any) => {
-        this.addedFoodList.next(res ? this.normalizeAddedFoodList(res) : []);
+        let list = res?.data?.addedFoodList || [];
+        this.addedFoodList.next(this.normalizeAddedFoodList(list));
         this.calculateSumResult();
       },
+      error: (error) => console.log(error),
     });
   }
 
@@ -374,7 +385,9 @@ export class OperationsService {
     if (!this.loadSettingsStamp()) {
       this.storeSettings(Date.now());
     }
-    this.HttpClient.put(this.settingsUrl, this.currentSettings()).subscribe({
+    // a patch rather than a full write, the working list lives on the same
+    // document and a replace would take it with it
+    this.HttpClient.patch(this.settingsUrl, settingsToApi(this.currentSettings())).subscribe({
       // the settings are still the ones on the calculator, a failed write is
       // nothing the page has to be pulled back from
       error: (error) => console.log(error),
@@ -389,20 +402,21 @@ export class OperationsService {
     }
     this.HttpClient.get(this.settingsUrl).subscribe({
       next: (res: any) => {
+        let settings = settingsFromApi(res?.data);
         // this is the first device to sign in, so what it holds is what the
         // user has, and the entry is started from it
-        if (!res) {
+        if (!settings || !settings.updatedAt) {
           this.pushSettings();
           return;
         }
         // the browser was changed after the entry was last written, which is a
         // device that was used offline or before this one signed in. it is the
         // later of the two, so it is the one that carries over
-        if (this.loadSettingsStamp() > (+res.updatedAt || 0)) {
+        if (this.loadSettingsStamp() > settings.updatedAt) {
           this.pushSettings();
           return;
         }
-        this.applySettings(res);
+        this.applySettings(settings);
       },
       error: (error) => console.log(error),
     });
@@ -491,7 +505,9 @@ export class OperationsService {
       localStorage.setItem(this.guestStorageKey, JSON.stringify(this.addedFoodList.getValue()));
       return;
     }
-    this.HttpClient.put(this.addedFoodListUrl, this.addedFoodList.getValue()).subscribe();
+    this.HttpClient
+      .patch(this.settingsUrl, { addedFoodList: this.addedFoodList.getValue() })
+      .subscribe({ error: (error) => console.log(error) });
   }
 
   // handle save tracking data
@@ -502,9 +518,11 @@ export class OperationsService {
       return EMPTY;
     }
     let id = this.getNowDateString();
-    const url = `${environment.database.url}/tracking/${this.userId}/${id}.json`;
-    data = { ...data, id: id };
-    return this.HttpClient.put(url, data);
+    const url = `${environment.baseUrl}${environment.apiPrefix}/tracking/${id}`;
+    // the rows the day was made of are kept beside the totals, the tracking
+    // page draws the totals and the history is what the rows are there for
+    let items = this.addedFoodList.getValue();
+    return this.HttpClient.put(url, trackingDayToApi({ ...data, items }, id));
   }
 
   // helper function

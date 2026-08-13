@@ -84,8 +84,9 @@ export class TrackingComponent implements OnInit {
 
   getTrackingData() {
     this.FoodDataService.getUserTrackingData().subscribe({
-      next: (res) => {
-        this.dataArray = res ? Object.values(res).reverse() : [];
+      next: (res: any) => {
+        // the server hands the days back newest first already
+        this.dataArray = res || [];
         this.loading = false;
         this.applyPaging();
       },
