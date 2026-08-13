@@ -9,9 +9,18 @@ tr {
   }
 }
 
+/* the page buttons wrap onto a second line instead of overflowing a narrow screen */
 .pagination {
+  flex-wrap: wrap;
+  justify-content: center;
+
   .page-link {
     cursor: pointer;
+    min-width: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    text-align: center;
   }
 }
 
@@ -30,19 +39,9 @@ tr {
     }
   }
 
-  /* on a narrow screen the two halves stack, each taking the full width, so
-     the page buttons are read on their own line rather than squeezed beside
-     the page size */
-  .pager {
-    justify-content: center;
-
-    nav {
+  .actions {
+    button {
       width: 100%;
-    }
-
-    .pagination {
-      flex-wrap: wrap;
-      justify-content: center;
     }
   }
 }

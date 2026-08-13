@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, HostListener, OnInit } from '@angular/core';
 import { FoodDataService } from '../../services/food-data.service';
 import { OperationsService } from '../../services/operations.service';
 
@@ -118,9 +118,21 @@ export class TrackingComponent implements OnInit {
     this.buildPageNumbers(total);
   }
 
+  // a narrow screen only has room for a short run of page buttons
+  compactPager: boolean = window.matchMedia('(max-width: 767px)').matches;
+
+  @HostListener('window:resize')
+  handleResize() {
+    let compact = window.matchMedia('(max-width: 767px)').matches;
+    if (compact != this.compactPager) {
+      this.compactPager = compact;
+      this.applyPaging();
+    }
+  }
+
   // at most five page buttons, kept around the page being read
   buildPageNumbers(total: number) {
-    let width = 5;
+    let width = this.compactPager ? 3 : 5;
     let start = Math.max(1, this.currentPage - Math.floor(width / 2));
     let end = Math.min(total, start + width - 1);
     start = Math.max(1, end - width + 1);

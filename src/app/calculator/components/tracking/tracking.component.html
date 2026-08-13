@@ -1,10 +1,6 @@
 <div class="container Tracking pt-3 pb-4">
   <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Tracking History</h4>
-    <span class="text-muted small" *ngIf="dataArray.length">
-      Showing {{ rangeStart }}-{{ rangeEnd }} of {{ dataArray.length }}
-      {{ dataArray.length == 1 ? "day" : "days" }}
-    </span>
   </div>
 
   <p class="text-muted" *ngIf="loading">Loading tracked days ...</p>
@@ -70,35 +66,26 @@
 
   <!-- ------------------------------ pagination ------------------------------ -->
   <div
-    class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4"
+    class="pager d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-2 mt-4"
     *ngIf="dataArray.length"
   >
-    <div class="d-flex align-items-center gap-2 pageSize">
-      <label class="text-muted small mb-0" for="trackingPageSize">Days per page</label>
-      <select
-        id="trackingPageSize"
-        class="form-select form-select-sm"
-        [(ngModel)]="pageSize"
-        (ngModelChange)="handlePageSizeChange()"
-      >
-        <option [ngValue]="5">5</option>
-        <option [ngValue]="10">10</option>
-        <option [ngValue]="20">20</option>
-      </select>
-    </div>
-
     <nav *ngIf="totalPages > 1">
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item" [class.disabled]="currentPage == 1">
-          <button type="button" class="page-link" (click)="goToPage(currentPage - 1)">
-            Previous
+          <button
+            type="button"
+            class="page-link"
+            aria-label="Previous page"
+            (click)="goToPage(currentPage - 1)"
+          >
+            <span aria-hidden="true">&lsaquo;</span>
           </button>
         </li>
 
-        <li class="page-item" *ngIf="pageNumbers[0] > 1">
+        <li class="page-item" *ngIf="!compactPager && pageNumbers[0] > 1">
           <button type="button" class="page-link" (click)="goToPage(1)">1</button>
         </li>
-        <li class="page-item disabled" *ngIf="pageNumbers[0] > 2">
+        <li class="page-item disabled" *ngIf="!compactPager && pageNumbers[0] > 2">
           <span class="page-link">...</span>
         </li>
 
@@ -110,20 +97,55 @@
           <button type="button" class="page-link" (click)="goToPage(page)">{{ page }}</button>
         </li>
 
-        <li class="page-item disabled" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages - 1">
+        <li
+          class="page-item disabled"
+          *ngIf="!compactPager && pageNumbers[pageNumbers.length - 1] < totalPages - 1"
+        >
           <span class="page-link">...</span>
         </li>
-        <li class="page-item" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages">
+        <li
+          class="page-item"
+          *ngIf="!compactPager && pageNumbers[pageNumbers.length - 1] < totalPages"
+        >
           <button type="button" class="page-link" (click)="goToPage(totalPages)">
             {{ totalPages }}
           </button>
         </li>
 
         <li class="page-item" [class.disabled]="currentPage == totalPages">
-          <button type="button" class="page-link" (click)="goToPage(currentPage + 1)">Next</button>
+          <button
+            type="button"
+            class="page-link"
+            aria-label="Next page"
+            (click)="goToPage(currentPage + 1)"
+          >
+            <span aria-hidden="true">&rsaquo;</span>
+          </button>
         </li>
       </ul>
     </nav>
+
+    <div
+      class="pageSize d-flex flex-column flex-md-row justify-content-center align-items-center gap-2"
+    >
+      <span class="text-muted small">
+        {{ rangeStart }} - {{ rangeEnd }} of {{ dataArray.length }}
+        {{ dataArray.length == 1 ? "day" : "days" }}
+      </span>
+      <div class="d-flex align-items-center gap-2">
+        <label class="text-muted small mb-0" for="trackingPageSize">Days per page</label>
+        <select
+          id="trackingPageSize"
+          class="form-select form-select-sm"
+          [(ngModel)]="pageSize"
+          (ngModelChange)="handlePageSizeChange()"
+        >
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+        </select>
+      </div>
+    </div>
   </div>
 </div>
 

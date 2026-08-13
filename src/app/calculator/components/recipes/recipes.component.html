@@ -131,12 +131,7 @@
   </div>
 
   <!-- ------------------------------ saved recipes ------------------------------ -->
-  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Saved Recipes</h4>
-    <span class="text-muted small" *ngIf="recipesList.length">
-      {{ rangeStart }} - {{ rangeEnd }} of {{ recipesList.length }}
-    </span>
-  </div>
+  <h4 class="mb-3">Saved Recipes</h4>
   <p class="text-muted" *ngIf="!recipesList.length">No recipes saved yet.</p>
 
   <table class="table table-hover savedRecipes" *ngIf="recipesList.length">
@@ -145,7 +140,7 @@
         <th scope="col">Name</th>
         <th scope="col" class="d-none d-md-table-cell">Translation</th>
         <th scope="col">Items</th>
-        <th scope="col">Measure</th>
+        <th scope="col" class="d-none d-md-table-cell">Measure</th>
         <th scope="col" class="d-none d-md-table-cell">Calories</th>
         <th scope="col" class="d-none d-md-table-cell">Fats</th>
         <th scope="col" class="d-none d-md-table-cell">Carbs</th>
@@ -163,7 +158,7 @@
               {{ recipe?.RecipeItems?.length || 0 }} items
             </button>
           </td>
-          <td>{{ recipe?.MeasureUnit }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.MeasureUnit }}</td>
           <td class="d-none d-md-table-cell">{{ recipe?.Energy | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ recipe?.Fat | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ recipe?.Carbohydrate | ToFixed }}</td>
@@ -226,36 +221,26 @@
 
   <!-- ------------------------------ pagination ------------------------------ -->
   <div
-    class="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-4"
+    class="pager d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-2 mt-4"
     *ngIf="recipesList.length"
   >
-    <div class="d-flex align-items-center gap-2 pageSize">
-      <label class="text-muted small mb-0" for="recipesPageSize">Recipes per page</label>
-      <select
-        id="recipesPageSize"
-        class="form-select form-select-sm"
-        [(ngModel)]="pageSize"
-        [ngModelOptions]="{ standalone: true }"
-        (ngModelChange)="handlePageSizeChange()"
-      >
-        <option [ngValue]="5">5</option>
-        <option [ngValue]="10">10</option>
-        <option [ngValue]="20">20</option>
-      </select>
-    </div>
-
     <nav *ngIf="totalPages > 1">
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item" [class.disabled]="currentPage == 1">
-          <button type="button" class="page-link" (click)="goToPage(currentPage - 1)">
-            Previous
+          <button
+            type="button"
+            class="page-link"
+            aria-label="Previous page"
+            (click)="goToPage(currentPage - 1)"
+          >
+            <span aria-hidden="true">&lsaquo;</span>
           </button>
         </li>
 
-        <li class="page-item" *ngIf="pageNumbers[0] > 1">
+        <li class="page-item" *ngIf="!compactPager && pageNumbers[0] > 1">
           <button type="button" class="page-link" (click)="goToPage(1)">1</button>
         </li>
-        <li class="page-item disabled" *ngIf="pageNumbers[0] > 2">
+        <li class="page-item disabled" *ngIf="!compactPager && pageNumbers[0] > 2">
           <span class="page-link">...</span>
         </li>
 
@@ -267,20 +252,54 @@
           <button type="button" class="page-link" (click)="goToPage(page)">{{ page }}</button>
         </li>
 
-        <li class="page-item disabled" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages - 1">
+        <li
+          class="page-item disabled"
+          *ngIf="!compactPager && pageNumbers[pageNumbers.length - 1] < totalPages - 1"
+        >
           <span class="page-link">...</span>
         </li>
-        <li class="page-item" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages">
+        <li
+          class="page-item"
+          *ngIf="!compactPager && pageNumbers[pageNumbers.length - 1] < totalPages"
+        >
           <button type="button" class="page-link" (click)="goToPage(totalPages)">
             {{ totalPages }}
           </button>
         </li>
 
         <li class="page-item" [class.disabled]="currentPage == totalPages">
-          <button type="button" class="page-link" (click)="goToPage(currentPage + 1)">Next</button>
+          <button
+            type="button"
+            class="page-link"
+            aria-label="Next page"
+            (click)="goToPage(currentPage + 1)"
+          >
+            <span aria-hidden="true">&rsaquo;</span>
+          </button>
         </li>
       </ul>
     </nav>
+
+    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2">
+      <div class="pageSize d-flex flex-wrap justify-content-center align-items-center gap-2">
+        <span class="text-muted small">{{ rangeStart }} - {{ rangeEnd }} of {{ recipesList.length }}</span>
+      </div>
+
+      <div class="pageSize d-flex flex-wrap justify-content-center align-items-center gap-2">
+        <label class="text-muted small mb-0" for="recipesPageSize">Recipes per page</label>
+        <select
+          id="recipesPageSize"
+          class="form-select form-select-sm"
+          [(ngModel)]="pageSize"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="handlePageSizeChange()"
+        >
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+        </select>
+      </div>
+    </div>
   </div>
 </div>
 
