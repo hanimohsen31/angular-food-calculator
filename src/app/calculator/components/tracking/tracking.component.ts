@@ -1,6 +1,7 @@
 ﻿import { Component, HostListener, OnInit } from '@angular/core';
 import { FoodDataService } from '../../services/food-data.service';
 import { OperationsService } from '../../services/operations.service';
+import { FOOD_COLUMN_LABELS } from '../../services/constants';
 
 interface Macro {
   label: string;
@@ -33,10 +34,12 @@ export class TrackingComponent implements OnInit {
   deleting: boolean = false;
   deleteError: string = '';
 
-  // the four rows drawn on every tracked day, in the order they are read
+  // the four rows drawn on every tracked day, in the order they are read. a day
+  // stores its sugars too, but there is no target to read those against, so
+  // they are not one of the bars
   macros: Macro[] = [
     {
-      label: 'Calories',
+      label: FOOD_COLUMN_LABELS.Energy,
       valueKey: 'Energy',
       targetKey: 'enrgTrg',
       percentKey: 'enrgPer',
@@ -45,7 +48,7 @@ export class TrackingComponent implements OnInit {
       theme: 'energy',
     },
     {
-      label: 'Fats',
+      label: FOOD_COLUMN_LABELS.Fat,
       valueKey: 'Fat',
       targetKey: 'fatTarg',
       percentKey: 'fatPerc',
@@ -54,7 +57,7 @@ export class TrackingComponent implements OnInit {
       theme: 'fat',
     },
     {
-      label: 'Carbs',
+      label: FOOD_COLUMN_LABELS.Carbohydrate,
       valueKey: 'Carbohydrate',
       targetKey: 'carbTarg',
       percentKey: 'carbPer',
@@ -63,7 +66,7 @@ export class TrackingComponent implements OnInit {
       theme: 'carb',
     },
     {
-      label: 'Protein',
+      label: FOOD_COLUMN_LABELS.Protein,
       valueKey: 'Protein',
       targetKey: 'proTrg',
       percentKey: 'proPer',

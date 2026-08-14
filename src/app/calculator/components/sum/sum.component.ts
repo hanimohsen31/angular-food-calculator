@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { OperationsService } from '../../services/operations.service';
+import { FOOD_COLUMN_LABELS } from '../../services/constants';
 
 @Component({
   standalone: false,
@@ -9,6 +10,7 @@ import { OperationsService } from '../../services/operations.service';
 })
 export class SumComponent implements OnInit {
   // properties
+  columnLabels: any = FOOD_COLUMN_LABELS;
   targetObj: any = {};
   targetEnergy: number = 0;
   addedFoodList: any = [];

@@ -10,6 +10,7 @@ import { FoodDataService } from '../../services/food-data.service';
 import { OperationsService } from '../../services/operations.service';
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
+import { FOOD_COLUMN_LABELS } from '../../services/constants';
 
 @Component({
   standalone: false,
@@ -19,17 +20,19 @@ import { Subscription } from 'rxjs';
 })
 export class FoodTableComponent implements AfterViewInit, OnDestroy {
   // paginator
+  // the columns are the fields the server stores, nothing else is drawn
   displayedColumns: string[] = [
     'ShortFoodName',
     'Translation',
     'MeasureUnit',
-    'Equavlint',
     'Energy',
     'Fat',
     'Carbohydrate',
     'Protein',
+    'Sugars',
     'menue',
   ];
+  columnLabels: any = FOOD_COLUMN_LABELS;
   // angular table
   dataSource = new MatTableDataSource([]);
 
@@ -89,10 +92,5 @@ export class FoodTableComponent implements AfterViewInit, OnDestroy {
   // handle add
   handleAdd(element: any) {
     this.OperationsService.handleAdd(element);
-  }
-
-  // word breaker
-  wordBreaker(value: String) {
-    return value ? value.replace('/', ' ') : '_______';
   }
 }

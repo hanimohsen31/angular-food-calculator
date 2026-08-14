@@ -1,74 +1,171 @@
-<div class="container pt-3 pb-4">
+<div class="container pt-3 pb-5">
   <div class="ProfilePage">
-    <div class="card ProfilePageContent my-2">
-      <div class="row">
-        <div class="col-12 col-md-6">
-          <img [src]="img" alt="" onerror="this.src='assets/images/ma.png'" />
+    <!-- ------------------------------ header ------------------------------ -->
+    <div class="card ProfileHeader my-2">
+      <div class="headerBanner"></div>
+
+      <div class="headerBody">
+        <div class="headerText">
+          <h1>{{ user?.name || user?.username }}</h1>
+          <p class="headerEmail">
+            <span class="material-icons">mail_outline</span>{{ user?.email }}
+          </p>
+          <div class="headerChips">
+            <span class="chip" *ngIf="user?.username">
+              <span class="material-icons">alternate_email</span>{{ user?.username }}
+            </span>
+            <span class="chip chipRole" *ngIf="user?.role">
+              <span class="material-icons">verified_user</span>{{ user?.role }}
+            </span>
+          </div>
         </div>
-        <div class="col-12 col-md-6">
-          <h1 class="text-center text-md-start">{{ user?.name || user?.username }}</h1>
-          <p class="text-center text-md-start text-muted mb-1">{{ user?.email }}</p>
-          <p class="text-center text-md-start text-muted">{{ user?.username }} &middot; {{ user?.role }}</p>
+
+        <div class="avatar">
+          <img *ngIf="img" [src]="img" alt="" onerror="this.style.display='none'" />
+          <span class="avatarInitials" *ngIf="!img">{{ initials }}</span>
         </div>
       </div>
     </div>
 
     <!-- ------------------------------ profile ------------------------------ -->
-    <div class="card my-3 p-3">
-      <h4>Account</h4>
+    <div class="card sectionCard my-3">
+      <div class="sectionHead">
+        <span class="sectionIcon"><span class="material-icons">person_outline</span></span>
+        <div>
+          <h4>Account</h4>
+          <p class="sectionHint">The name, the email and the photo shown on this page</p>
+        </div>
+      </div>
+
       <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-        <div class="mb-3">
-          <label class="form-label">Name</label>
-          <input type="text" class="form-control" formControlName="name" />
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" formControlName="name" placeholder="Your name" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="you@example.com"
+              [class.is-invalid]="profileForm.controls.email.invalid && profileForm.controls.email.touched"
+            />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Photo URL</label>
+            <input type="text" class="form-control" formControlName="photoURL" placeholder="https://..." />
+          </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-control" formControlName="email" />
+
+        <div class="alert alert-success alertSlim mt-3" *ngIf="profileMessage">
+          <span class="material-icons">check_circle</span>{{ profileMessage }}
         </div>
-        <div class="mb-3">
-          <label class="form-label">Photo URL</label>
-          <input type="text" class="form-control" formControlName="photoURL" />
+        <div class="alert alert-danger alertSlim mt-3" *ngIf="profileError">
+          <span class="material-icons">error_outline</span>{{ profileError }}
         </div>
-        <p class="text-success" *ngIf="profileMessage">{{ profileMessage }}</p>
-        <p class="text-danger" *ngIf="profileError">{{ profileError }}</p>
-        <button type="submit" class="btn btn-outline-primary px-4" [disabled]="savingProfile">
-          {{ savingProfile ? "Saving ..." : "Save" }}
-        </button>
+
+        <div class="sectionFoot">
+          <button type="submit" class="btn btn-primary px-4" [disabled]="savingProfile">
+            <span class="spinner-border spinner-border-sm me-2" *ngIf="savingProfile"></span>
+            {{ savingProfile ? "Saving ..." : "Save" }}
+          </button>
+        </div>
       </form>
     </div>
 
     <!-- ------------------------------ password ------------------------------ -->
-    <div class="card my-3 p-3">
-      <h4>Password</h4>
+    <div class="card sectionCard my-3">
+      <div class="sectionHead">
+        <span class="sectionIcon"><span class="material-icons">lock_outline</span></span>
+        <div>
+          <h4>Password</h4>
+          <p class="sectionHint">Eight characters at the least, the current one is asked for first</p>
+        </div>
+      </div>
+
       <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
-        <div class="mb-3">
-          <label class="form-label">Current Password</label>
-          <input type="password" class="form-control" formControlName="currentPassword" autocomplete="current-password" />
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Current Password</label>
+            <div class="input-group">
+              <input
+                [type]="showCurrentPassword ? 'text' : 'password'"
+                class="form-control"
+                formControlName="currentPassword"
+                autocomplete="current-password"
+              />
+              <button
+                class="btn btn-outline-secondary revealButton"
+                type="button"
+                (click)="showCurrentPassword = !showCurrentPassword"
+              >
+                <span class="material-icons">{{ showCurrentPassword ? "visibility_off" : "visibility" }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">New Password</label>
+            <div class="input-group">
+              <input
+                [type]="showNewPassword ? 'text' : 'password'"
+                class="form-control"
+                formControlName="password"
+                autocomplete="new-password"
+              />
+              <button
+                class="btn btn-outline-secondary revealButton"
+                type="button"
+                (click)="showNewPassword = !showNewPassword"
+              >
+                <span class="material-icons">{{ showNewPassword ? "visibility_off" : "visibility" }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Confirm New Password</label>
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              class="form-control"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+            />
+          </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">New Password</label>
-          <input type="password" class="form-control" formControlName="password" autocomplete="new-password" />
+
+        <div class="alert alert-success alertSlim mt-3" *ngIf="passwordMessage">
+          <span class="material-icons">check_circle</span>{{ passwordMessage }}
         </div>
-        <div class="mb-3">
-          <label class="form-label">Confirm New Password</label>
-          <input type="password" class="form-control" formControlName="confirmPassword" autocomplete="new-password" />
+        <div class="alert alert-danger alertSlim mt-3" *ngIf="passwordError">
+          <span class="material-icons">error_outline</span>{{ passwordError }}
         </div>
-        <p class="text-success" *ngIf="passwordMessage">{{ passwordMessage }}</p>
-        <p class="text-danger" *ngIf="passwordError">{{ passwordError }}</p>
-        <button type="submit" class="btn btn-outline-primary px-4" [disabled]="savingPassword">
-          {{ savingPassword ? "Saving ..." : "Change Password" }}
-        </button>
+
+        <div class="sectionFoot">
+          <button type="submit" class="btn btn-primary px-4" [disabled]="savingPassword">
+            <span class="spinner-border spinner-border-sm me-2" *ngIf="savingPassword"></span>
+            {{ savingPassword ? "Saving ..." : "Change Password" }}
+          </button>
+        </div>
       </form>
     </div>
 
     <!-- ------------------------------ delete ------------------------------ -->
-    <div class="card my-3 p-3">
-      <h4>Delete Account</h4>
-      <p class="text-muted">
-        The settings and every tracked day are deleted with the account, there is no way back
-        from it.
-      </p>
-      <div>
+    <div class="card sectionCard dangerCard my-3">
+      <div class="sectionHead">
+        <span class="sectionIcon sectionIconDanger"
+          ><span class="material-icons">delete_outline</span></span
+        >
+        <div>
+          <h4>Delete Account</h4>
+          <p class="sectionHint">
+            The settings and every tracked day are deleted with the account, there is no way back
+            from it.
+          </p>
+        </div>
+      </div>
+
+      <div class="sectionFoot">
         <button class="btn btn-outline-danger px-4" (click)="toggleDeletePopup()">Delete</button>
       </div>
     </div>
@@ -77,15 +174,20 @@
 
 <!-- confirm pop up -->
 <div class="popupContainer" [class.d-none]="!deletePopup">
-  <div class="card">
+  <div class="card deletePopup">
+    <span class="popupIcon"><span class="material-icons">warning_amber</span></span>
     <h4>Delete this account ?</h4>
-    <p class="text-danger mb-0" *ngIf="deleteError">{{ deleteError }}</p>
+    <p class="text-muted mb-0">Every tracked day goes with it, there is no way back from it.</p>
+    <div class="alert alert-danger alertSlim mt-3 mb-0" *ngIf="deleteError">
+      <span class="material-icons">error_outline</span>{{ deleteError }}
+    </div>
     <div class="buttons mt-3">
-      <button class="btn btn-outline-danger" [disabled]="deleting" (click)="deleteAccount()">
-        {{ deleting ? "Deleting ..." : "Delete" }}
-      </button>
-      <button class="btn btn-outline-primary" [disabled]="deleting" (click)="toggleDeletePopup()">
+      <button class="btn btn-outline-secondary" [disabled]="deleting" (click)="toggleDeletePopup()">
         Cancel
+      </button>
+      <button class="btn btn-danger" [disabled]="deleting" (click)="deleteAccount()">
+        <span class="spinner-border spinner-border-sm me-2" *ngIf="deleting"></span>
+        {{ deleting ? "Deleting ..." : "Delete" }}
       </button>
     </div>
   </div>

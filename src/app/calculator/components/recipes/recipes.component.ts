@@ -1,7 +1,12 @@
 ﻿import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FoodDataService } from '../../services/food-data.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MEASURE_UNITS } from '../../services/constants';
+import {
+  FOOD_COLUMN_LABELS,
+  FOOD_LABELS,
+  MEASURE_UNITS,
+  NAME_MAX_LENGTH,
+} from '../../services/constants';
 
 @Component({
   standalone: false,
@@ -45,6 +50,10 @@ export class RecipesComponent implements OnInit {
   loading: boolean = false;
 
   measureUnits: string[] = MEASURE_UNITS;
+  labels: any = FOOD_LABELS;
+  columnLabels: any = FOOD_COLUMN_LABELS;
+  // what went wrong with the last save, shown above the buttons
+  formError: string = '';
 
   // the typed quantity is left alone once it has been touched, the items adding
   // up to something else after that is not a reason to overwrite what was typed
@@ -53,12 +62,19 @@ export class RecipesComponent implements OnInit {
   // straight back and that echo is not somebody typing
   fillingQuantity: boolean = false;
 
+  // a recipe is stored as a food item, so it is held to the same rules: the
+  // english name is the required one, the arabic name is optional, and both are
+  // capped at the 200 characters the server takes. the items themselves are
+  // what the server requires beyond that, and those are checked on submit
   formData: any = new FormGroup({
-    ShortFoodName: new FormControl('', [Validators.required]),
-    Translation: new FormControl('', [Validators.required]),
+    ShortFoodName: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(NAME_MAX_LENGTH),
+    ]),
+    Translation: new FormControl('', [Validators.maxLength(NAME_MAX_LENGTH)]),
     // a recipe is always measured in recipes, the field is shown but locked
     MeasureUnit: new FormControl({ value: 'recipe', disabled: true }, [Validators.required]),
-    Measure: new FormControl(1, [Validators.required]),
+    Measure: new FormControl(1, [Validators.required, Validators.min(0)]),
   });
 
   constructor(private FoodDataService: FoodDataService) {}
@@ -114,7 +130,6 @@ export class RecipesComponent implements OnInit {
         this.foodList = array.filter((elm: any) => !elm.isRecipe);
         this.recipesList = array
           .filter((elm: any) => elm.isRecipe)
-          .map((elm: any) => this.normalizeRecipe(elm))
           .sort((a: any, b: any) => (a.ShortFoodName || '').localeCompare(b.ShortFoodName || ''));
         this.applyFilter();
         // a save or a delete can leave the page being read past the last recipe
@@ -126,23 +141,6 @@ export class RecipesComponent implements OnInit {
         this.loading = false;
       },
     });
-  }
-
-  // recipes saved before quantities moved to gm kept the item quantity as a
-  // number of measures, they are converted once on load so the screen and the
-  // totals both speak in gm
-  normalizeRecipe(recipe: any) {
-    if (recipe?.QuantityBasis === 'unit') {
-      return recipe;
-    }
-    return {
-      ...recipe,
-      QuantityBasis: 'unit',
-      RecipeItems: (recipe?.RecipeItems || []).map((item: any) => ({
-        ...item,
-        Quantity: (+item.Quantity || 0) * (+item.Measure || 0),
-      })),
-    };
   }
 
   // ------------------------------ picker ------------------------------
@@ -294,13 +292,16 @@ export class RecipesComponent implements OnInit {
   // ------------------------------ save ------------------------------
   onSubmit() {
     if (!this.formData.valid) {
-      alert('Recipe name and translation are required');
+      this.formData.markAllAsTouched();
+      this.formError = 'Fix the fields marked above before saving';
       return;
     }
+    // the server refuses a recipe with no items, so it is caught here first
     if (!this.recipeItems.length) {
-      alert('Add at least one item to the recipe');
+      this.formError = 'A recipe needs at least one item';
       return;
     }
+    this.formError = '';
     let recipe = this.buildRecipe();
     let request = this.editedRecipeKey
       ? this.FoodDataService.updateRecipe(this.editedRecipeKey, recipe)
@@ -314,7 +315,7 @@ export class RecipesComponent implements OnInit {
       error: (err) => {
         console.log(err);
         this.loading = false;
-        alert('Could not save the recipe');
+        this.formError = err?.error?.message || 'Could not save the recipe';
       },
     });
   }
@@ -356,6 +357,7 @@ export class RecipesComponent implements OnInit {
 
   editRecipe(recipe: any) {
     this.copiedFromName = '';
+    this.formError = '';
     this.editedRecipeKey = recipe.FoodKey;
     this.editedRecipeFoodID = recipe.FoodID || '';
     this.formData.patchValue(
@@ -402,6 +404,7 @@ export class RecipesComponent implements OnInit {
     this.editedRecipeKey = '';
     this.editedRecipeFoodID = '';
     this.copiedFromName = '';
+    this.formError = '';
     this.calculateTotals();
     this.clearSearch();
     this.closeDropdown();
@@ -430,7 +433,7 @@ export class RecipesComponent implements OnInit {
       error: (err) => {
         console.log(err);
         this.loading = false;
-        alert('Could not delete the recipe');
+        this.formError = err?.error?.message || 'Could not delete the recipe';
       },
     });
   }

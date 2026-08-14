@@ -28,10 +28,11 @@
         <span class="input-group-text">{{ elm?.MeasureUnit }}</span>
       </div>
       <div class="macroGrid">
-        <div class="macro"><span class="macroLabel">Calories</span><span>{{ scale(elm, 'Energy') | ToFixed }}</span></div>
-        <div class="macro"><span class="macroLabel">Fats</span><span>{{ scale(elm, 'Fat') | ToFixed }}</span></div>
-        <div class="macro"><span class="macroLabel">Carbs</span><span>{{ scale(elm, 'Carbohydrate') | ToFixed }}</span></div>
-        <div class="macro"><span class="macroLabel">Protein</span><span>{{ scale(elm, 'Protein') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Energy }}</span><span>{{ scale(elm, 'Energy') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Fat }}</span><span>{{ scale(elm, 'Fat') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Carbohydrate }}</span><span>{{ scale(elm, 'Carbohydrate') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Protein }}</span><span>{{ scale(elm, 'Protein') | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Sugars }}</span><span>{{ scale(elm, 'Sugars') | ToFixed }}</span></div>
       </div>
     </div>
 
@@ -42,10 +43,11 @@
         <button (click)="toggleClearPopup()" class="btn btn-sm btn-outline-danger">Clear</button>
       </div>
       <div class="macroGrid">
-        <div class="macro"><span class="macroLabel">Calories</span><span>{{ sumResult.Energy | ToFixed }}</span></div>
-        <div class="macro"><span class="macroLabel">Fats</span><span>{{ sumResult.Fat | ToFixed }}</span></div>
-        <div class="macro"><span class="macroLabel">Carbs</span><span>{{ sumResult.Carbohydrate | ToFixed }}</span></div>
-        <div class="macro"><span class="macroLabel">Protein</span><span>{{ sumResult.Protein | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Energy }}</span><span>{{ sumResult.Energy | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Fat }}</span><span>{{ sumResult.Fat | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Carbohydrate }}</span><span>{{ sumResult.Carbohydrate | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Protein }}</span><span>{{ sumResult.Protein | ToFixed }}</span></div>
+        <div class="macro"><span class="macroLabel">{{ columnLabels.Sugars }}</span><span>{{ sumResult.Sugars | ToFixed }}</span></div>
       </div>
     </div>
 
@@ -95,16 +97,18 @@
         <col class="colMacro" />
         <col class="colMacro" />
         <col class="colMacro" />
+        <col class="colMacro" />
         <col class="colAction" />
       </colgroup>
       <thead>
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Quantity</th>
-          <th scope="col" class="d-none d-lg-table-cell">Calories</th>
-          <th scope="col" class="d-none d-lg-table-cell">Fats</th>
-          <th scope="col" class="d-none d-lg-table-cell">Carbs</th>
-          <th scope="col" class="d-none d-lg-table-cell">Protein</th>
+          <th scope="col">{{ columnLabels.ShortFoodName }}</th>
+          <th scope="col">{{ columnLabels.Quantity }}</th>
+          <th scope="col" class="d-none d-lg-table-cell">{{ columnLabels.Energy }}</th>
+          <th scope="col" class="d-none d-lg-table-cell">{{ columnLabels.Fat }}</th>
+          <th scope="col" class="d-none d-lg-table-cell">{{ columnLabels.Carbohydrate }}</th>
+          <th scope="col" class="d-none d-lg-table-cell">{{ columnLabels.Protein }}</th>
+          <th scope="col" class="d-none d-lg-table-cell">{{ columnLabels.Sugars }}</th>
           <th scope="col">Remove</th>
         </tr>
       </thead>
@@ -130,6 +134,7 @@
             <td class="d-none d-lg-table-cell">{{ scale(elm, 'Fat') | ToFixed}}</td>
             <td class="d-none d-lg-table-cell">{{ scale(elm, 'Carbohydrate') | ToFixed}}</td>
             <td class="d-none d-lg-table-cell">{{ scale(elm, 'Protein') | ToFixed}}</td>
+            <td class="d-none d-lg-table-cell">{{ scale(elm, 'Sugars') | ToFixed}}</td>
             <td><button (click)="handleRemove(i)" class="btn btn-outline-danger">Remove</button></td>
           </tr>
         </ng-container>
@@ -143,6 +148,7 @@
           <td class="d-none d-lg-table-cell">{{ sumResult.Fat | ToFixed}}</td>
           <td class="d-none d-lg-table-cell">{{ sumResult.Carbohydrate | ToFixed}}</td>
           <td class="d-none d-lg-table-cell">{{ sumResult.Protein | ToFixed}}</td>
+          <td class="d-none d-lg-table-cell">{{ sumResult.Sugars | ToFixed}}</td>
           <td><button (click)="toggleClearPopup()" class="btn btn-outline-danger px-4">Clear</button></td>
         </tr>
         <!-- ----------------------------- target ----------------------------- -->
@@ -168,6 +174,9 @@
           <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.fatTarg | ToFixed }}</span><span>({{ targetObj?.fatPerc | ToFixed }}%)</span></td>
           <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.carbTarg | ToFixed }}</span><span>({{ targetObj?.carbPer | ToFixed }}%)</span></td>
           <td class="d-none d-lg-table-cell targetCell"><span>{{ targetObj?.proTrg | ToFixed }}</span><span>({{ targetObj?.proPer | ToFixed }}%)</span></td>
+          <!-- sugars are counted but not targeted, there is no target to read
+               them against -->
+          <td class="d-none d-lg-table-cell"></td>
           <td>
             <button
               class="btn btn-outline-primary px-4"

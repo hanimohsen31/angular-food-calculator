@@ -1,7 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FoodDataService } from '../../services/food-data.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MEASURE_UNITS } from '../../services/constants';
+import {
+  FOOD_COLUMN_LABELS,
+  FOOD_LABELS,
+  MEASURE_UNITS,
+  NAME_MAX_LENGTH,
+} from '../../services/constants';
 
 @Component({
   standalone: false,
@@ -12,6 +17,11 @@ import { MEASURE_UNITS } from '../../services/constants';
 export class AddNewFoodComponent implements OnInit {
   formDataCopy: any = {};
   measureUnits: string[] = MEASURE_UNITS;
+  labels: any = FOOD_LABELS;
+  columnLabels: any = FOOD_COLUMN_LABELS;
+  nameMaxLength: number = NAME_MAX_LENGTH;
+  // what went wrong with the last submit, shown above the buttons
+  formError: string = '';
 
   // saved food items, the recipes are left to the recipes screen
   foodList: any[] = [];
@@ -31,16 +41,23 @@ export class AddNewFoodComponent implements OnInit {
   deletePopup: boolean = false;
   foodToDelete: any = null;
 
+  // the rules are the ones the server stores under: the english name is the
+  // only required key, the arabic one is optional, both are capped at 200
+  // characters, and every nutrient is a number that cannot go below zero
   formData: any = new FormGroup({
-    ShortFoodName: new FormControl('', [Validators.required]),
-    Translation: new FormControl('', [Validators.required]),
-    Measure: new FormControl(0, [Validators.required]),
+    ShortFoodName: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(NAME_MAX_LENGTH),
+    ]),
+    Translation: new FormControl('', [Validators.maxLength(NAME_MAX_LENGTH)]),
+    Measure: new FormControl(0, [Validators.required, Validators.min(0)]),
     MeasureUnit: new FormControl('gm', [Validators.required]),
     Quantity: new FormControl(1),
-    Energy: new FormControl(0, [Validators.required]),
-    Carbohydrate: new FormControl(0, [Validators.required]),
-    Fat: new FormControl(0, [Validators.required]),
-    Protein: new FormControl(0, [Validators.required]),
+    Energy: new FormControl(0, [Validators.required, Validators.min(0)]),
+    Carbohydrate: new FormControl(0, [Validators.required, Validators.min(0)]),
+    Fat: new FormControl(0, [Validators.required, Validators.min(0)]),
+    Protein: new FormControl(0, [Validators.required, Validators.min(0)]),
+    Sugars: new FormControl(0, [Validators.required, Validators.min(0)]),
   });
 
   constructor(private FoodDataService: FoodDataService) {}
@@ -93,11 +110,15 @@ export class AddNewFoodComponent implements OnInit {
     return this.editedFoodKey ? 'Edit Food Item' : 'Add New Food';
   }
 
+  // an invalid form is not sent, every field that is wrong is made to say so
+  // rather than the whole form being refused with one message
   onSubmit() {
     if (!this.formData.valid) {
-      alert('Data not valid');
+      this.formData.markAllAsTouched();
+      this.formError = 'Fix the fields marked below before saving';
       return;
     }
+    this.formError = '';
     this.editedFoodKey ? this.updateFood() : this.addNewFood(this.formData.value);
   }
 
@@ -111,12 +132,15 @@ export class AddNewFoodComponent implements OnInit {
       error: (err: any) => {
         console.log(err);
         this.loading = false;
+        // the server states which key it refused, that is more use than a
+        // message written here could be
+        this.formError = err?.error?.message || 'Could not save the food item';
       },
     });
   }
 
   // the whole row is written back, so the fields the form does not show
-  // (FoodID, the equivalent measure, ...) survive the edit
+  // (FoodID, the recipe items of a recipe, ...) survive the edit
   updateFood() {
     let food = { ...this.formDataCopy, ...this.formData.value, FoodID: this.editedFoodID };
     delete food.FoodKey;
@@ -129,13 +153,14 @@ export class AddNewFoodComponent implements OnInit {
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        alert('Could not save the food item');
+        this.formError = err?.error?.message || 'Could not save the food item';
       },
     });
   }
 
   // ------------------------------ edit ------------------------------
   editFood(food: any) {
+    this.formError = '';
     this.editedFoodKey = food.FoodKey;
     this.editedFoodID = food.FoodID || '';
     this.formDataCopy = { ...food };
@@ -149,6 +174,7 @@ export class AddNewFoodComponent implements OnInit {
       Carbohydrate: +food.Carbohydrate || 0,
       Fat: +food.Fat || 0,
       Protein: +food.Protein || 0,
+      Sugars: +food.Sugars || 0,
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -165,10 +191,12 @@ export class AddNewFoodComponent implements OnInit {
       Carbohydrate: 0,
       Fat: 0,
       Protein: 0,
+      Sugars: 0,
     });
     this.editedFoodKey = '';
     this.editedFoodID = '';
     this.formDataCopy = {};
+    this.formError = '';
   }
 
   // ------------------------------ delete ------------------------------
@@ -195,7 +223,7 @@ export class AddNewFoodComponent implements OnInit {
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        alert('Could not delete the food item');
+        this.formError = err?.error?.message || 'Could not delete the food item';
       },
     });
   }

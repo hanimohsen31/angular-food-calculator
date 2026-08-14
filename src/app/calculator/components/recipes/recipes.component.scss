@@ -142,12 +142,12 @@ tr {
   /* the rows are held to one set of columns, the header included, so every
      value sits under the word that names it */
   .itemsGrid {
-    min-width: 700px;
+    min-width: 780px;
   }
 
   .itemRow {
     display: grid;
-    grid-template-columns: 260px repeat(5, 1fr);
+    grid-template-columns: 260px repeat(6, 1fr);
     align-items: center;
     gap: 8px;
     padding: 4px 0;
@@ -177,7 +177,7 @@ tr {
     border-bottom: none;
   }
 
-  /* on a small screen the six columns are read as a stack instead, each value
+  /* on a small screen the seven columns are read as a stack instead, each value
      carrying its own label, so nothing has to scroll sideways */
   @media (max-width: 767px) {
     .itemsGrid {

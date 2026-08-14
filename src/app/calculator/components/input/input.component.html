@@ -1,5 +1,9 @@
 <div [class]="'mb-3 containerClass ' + containerClass">
-  <label [class]="'form-label ' + labelClass">{{label}}</label>
+  <label [class]="'form-label ' + labelClass">
+    {{ label }}
+    <!-- a required field says so, the rest are free to be left empty -->
+    <span class="text-danger" *ngIf="required" aria-hidden="true">*</span>
+  </label>
 
   <!-- a field given a list of options is picked from instead of typed in -->
   <select
@@ -8,19 +12,24 @@
     [disabled]="disabled"
     [(ngModel)]="data"
     (blur)="onBlur()"
-    [class]="'form-select ' + inputClass"
+    [class]="'form-select ' + inputClass + (showError ? ' is-invalid' : '')"
   >
     <option *ngFor="let option of selectOptions" [ngValue]="option">{{ option }}</option>
   </select>
 
   <ng-template #freeText>
     <input
-      [required] = 'required'
+      [required]="required"
       [disabled]="disabled"
       [(ngModel)]="data"
+      (blur)="onBlur()"
       [type]="type"
-      [class]="'form-control ' + inputClass"
-      id="ShortFoodName"
+      [attr.min]="min"
+      [attr.max]="max"
+      [class]="'form-control ' + inputClass + (showError ? ' is-invalid' : '')"
     />
   </ng-template>
+
+  <div class="invalid-feedback d-block" *ngIf="showError">{{ errorMessage }}</div>
+  <div class="form-text" *ngIf="hint && !showError">{{ hint }}</div>
 </div>

@@ -25,16 +25,14 @@
         <td class="nameCell">
           <span class="foodName">{{ row.ShortFoodName }}</span>
           <span class="foodNameAr" *ngIf="row.Translation">{{ row.Translation }}</span>
-          <span class="measure">
-            {{ row.Measure }} {{ row.MeasureUnit }}
-            <span class="equavlint">{{ wordBreaker(row.Equavlint) }}</span>
-          </span>
+          <span class="measure">{{ row.Measure }} {{ row.MeasureUnit }}</span>
         </td>
         <td class="macrosCell">
-          <div class="macro"><span class="macroLabel">Calories</span><span>{{ row.Energy }}</span></div>
-          <div class="macro"><span class="macroLabel">Fats</span><span>{{ row.Fat }}</span></div>
-          <div class="macro"><span class="macroLabel">Carbs</span><span>{{ row.Carbohydrate }}</span></div>
-          <div class="macro"><span class="macroLabel">Protein</span><span>{{ row.Protein }}</span></div>
+          <div class="macro"><span class="macroLabel">{{ columnLabels.Energy }}</span><span>{{ row.Energy }}</span></div>
+          <div class="macro"><span class="macroLabel">{{ columnLabels.Fat }}</span><span>{{ row.Fat }}</span></div>
+          <div class="macro"><span class="macroLabel">{{ columnLabels.Carbohydrate }}</span><span>{{ row.Carbohydrate }}</span></div>
+          <div class="macro"><span class="macroLabel">{{ columnLabels.Protein }}</span><span>{{ row.Protein }}</span></div>
+          <div class="macro"><span class="macroLabel">{{ columnLabels.Sugars }}</span><span>{{ row.Sugars }}</span></div>
         </td>
         <td class="actionCell">
           <button (click)="handleAdd(row)" class="btn btn-sm btn-outline-primary">Add</button>
@@ -56,49 +54,41 @@
     [dataSource]="dataSource"
     matSort
   >
-    <!-- Name Column -->
+    <!-- english name, what the server stores as englishName -->
     <ng-container matColumnDef="ShortFoodName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.ShortFoodName }}</th>
       <td mat-cell *matCellDef="let row">{{ row.ShortFoodName }}</td>
     </ng-container>
 
-    <!-- translated Column -->
+    <!-- arabic name, stored as arabicName -->
     <ng-container matColumnDef="Translation">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Translated</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.Translation }}</th>
       <td mat-cell *matCellDef="let row">{{ row.Translation }}</td>
     </ng-container>
 
-    <!-- quantity Column -->
+    <!-- the amount the values on the row are given for, and its unit -->
     <ng-container matColumnDef="MeasureUnit">
-      <th mat-header-cell *matHeaderCellDef>Measure</th>
+      <th mat-header-cell *matHeaderCellDef>{{ columnLabels.Measure }}</th>
       <td mat-cell *matCellDef="let row">
         {{ row.Measure }} {{ row.MeasureUnit }}
       </td>
     </ng-container>
 
-    <!-- quantity Column -->
-    <ng-container matColumnDef="Equavlint">
-      <th mat-header-cell *matHeaderCellDef>Equavlint</th>
-      <td mat-cell *matCellDef="let row">
-        {{ wordBreaker(row.Equavlint) }}
-      </td>
-    </ng-container>
-
-    <!-- calories Column -->
+    <!-- energy Column -->
     <ng-container matColumnDef="Energy">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Calories</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.Energy }}</th>
       <td mat-cell *matCellDef="let row">{{ row.Energy }}</td>
     </ng-container>
 
     <!-- fats Column -->
     <ng-container matColumnDef="Fat">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fats</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.Fat }}</th>
       <td mat-cell *matCellDef="let row">{{ row.Fat }}</td>
     </ng-container>
 
     <!-- carbs Column -->
     <ng-container matColumnDef="Carbohydrate">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Carbs</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.Carbohydrate }}</th>
       <td mat-cell *matCellDef="let row">
         {{ row.Carbohydrate }}
       </td>
@@ -106,8 +96,14 @@
 
     <!-- protein Column -->
     <ng-container matColumnDef="Protein">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Protein</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.Protein }}</th>
       <td mat-cell *matCellDef="let row">{{ row.Protein }}</td>
+    </ng-container>
+
+    <!-- sugars Column -->
+    <ng-container matColumnDef="Sugars">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels.Sugars }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.Sugars }}</td>
     </ng-container>
 
     <!-- menue Column -->

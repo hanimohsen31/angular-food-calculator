@@ -8,14 +8,15 @@
 
     <form class="row" [formGroup]="formData">
       <app-input label="Recipe Name" formControlName="ShortFoodName" class="col-12 col-md-3"></app-input>
-      <app-input label="Translation Arabic" formControlName="Translation" class="col-12 col-md-3"></app-input>
-      <app-input label="Unit" formControlName="MeasureUnit" [options]="measureUnits" class="col-12 col-md-3"></app-input>
+      <app-input [label]="labels.Translation" formControlName="Translation" class="col-12 col-md-3"></app-input>
+      <app-input [label]="labels.MeasureUnit" formControlName="MeasureUnit" [options]="measureUnits" class="col-12 col-md-3"></app-input>
       <!-- a recipe is one recipe, there is nothing to type, any other unit is
            counted and the quantity is asked for -->
       <app-input
         *ngIf="measureUnit !== 'recipe'"
-        label="Quantity"
+        [label]="labels.Quantity"
         type="number"
+        [min]="0"
         formControlName="Measure"
         class="col-12 col-md-3"
       ></app-input>
@@ -78,12 +79,13 @@
     <table class="table table-hover" *ngIf="recipeItems.length">
       <thead>
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Quantity</th>
-          <th scope="col" class="d-none d-md-table-cell">Calories</th>
-          <th scope="col" class="d-none d-md-table-cell">Fats</th>
-          <th scope="col" class="d-none d-md-table-cell">Carbs</th>
-          <th scope="col" class="d-none d-md-table-cell">Protein</th>
+          <th scope="col">{{ columnLabels.ShortFoodName }}</th>
+          <th scope="col">{{ columnLabels.Quantity }}</th>
+          <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Energy }}</th>
+          <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Fat }}</th>
+          <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Carbohydrate }}</th>
+          <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Protein }}</th>
+          <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Sugars }}</th>
           <th scope="col">Remove</th>
         </tr>
       </thead>
@@ -109,6 +111,7 @@
           <td class="d-none d-md-table-cell">{{ scale(item, 'Fat') | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ scale(item, 'Carbohydrate') | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ scale(item, 'Protein') | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ scale(item, 'Sugars') | ToFixed }}</td>
           <td><button type="button" (click)="handleRemoveItem(i)" class="btn btn-outline-danger">Remove</button></td>
         </tr>
       </tbody>
@@ -122,6 +125,7 @@
           <td class="d-none d-md-table-cell">{{ totals.Fat | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ totals.Carbohydrate | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ totals.Protein | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ totals.Sugars | ToFixed }}</td>
           <td></td>
         </tr>
       </tfoot>
@@ -130,6 +134,8 @@
     <p class="text-muted" *ngIf="!recipeItems.length">
       No items yet, search the menu above and add items to build the recipe.
     </p>
+
+    <p class="text-danger" *ngIf="formError">{{ formError }}</p>
 
     <div class="d-flex justify-content-end">
       <button type="button" class="btn btn-outline-secondary px-4 me-2" (click)="resetBuilder()">
@@ -151,14 +157,15 @@
   <table class="table table-hover savedRecipes">
     <thead>
       <tr>
-        <th scope="col">Name</th>
-        <th scope="col" class="d-none d-md-table-cell">Translation</th>
+        <th scope="col">{{ columnLabels.ShortFoodName }}</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Translation }}</th>
         <th scope="col">Items</th>
-        <th scope="col" class="d-none d-md-table-cell">Measure</th>
-        <th scope="col" class="d-none d-md-table-cell">Calories</th>
-        <th scope="col" class="d-none d-md-table-cell">Fats</th>
-        <th scope="col" class="d-none d-md-table-cell">Carbs</th>
-        <th scope="col" class="d-none d-md-table-cell">Protein</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.MeasureUnit }}</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Energy }}</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Fat }}</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Carbohydrate }}</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Protein }}</th>
+        <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Sugars }}</th>
         <th scope="col" class="text-center">Actions</th>
       </tr>
     </thead>
@@ -177,6 +184,7 @@
           <td class="d-none d-md-table-cell">{{ recipe?.Fat | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ recipe?.Carbohydrate | ToFixed }}</td>
           <td class="d-none d-md-table-cell">{{ recipe?.Protein | ToFixed }}</td>
+          <td class="d-none d-md-table-cell">{{ recipe?.Sugars | ToFixed }}</td>
           <td class="actions">
             <div class="d-flex gap-2 h-100">
               <button type="button" class="btn btn-sm btn-outline-primary" (click)="editRecipe(recipe)">Edit</button>
@@ -190,18 +198,19 @@
 
         <!-- expanded items -->
         <tr *ngIf="expandedKey === recipe.FoodKey">
-          <td colspan="9" class="itemsCell">
+          <td colspan="10" class="itemsCell">
             <!-- the items are read as their own little table, the panel scrolls
                  sideways on a small screen rather than squeezing the columns -->
             <div class="p-2 itemsPanel">
               <div class="itemsGrid">
                 <div class="itemRow itemHeader">
-                  <span>Name</span>
-                  <span>Quantity</span>
-                  <span>Calories</span>
-                  <span>Fats</span>
-                  <span>Carbs</span>
-                  <span>Protein</span>
+                  <span>{{ columnLabels.ShortFoodName }}</span>
+                  <span>{{ columnLabels.Quantity }}</span>
+                  <span>{{ columnLabels.Energy }}</span>
+                  <span>{{ columnLabels.Fat }}</span>
+                  <span>{{ columnLabels.Carbohydrate }}</span>
+                  <span>{{ columnLabels.Protein }}</span>
+                  <span>{{ columnLabels.Sugars }}</span>
                 </div>
 
                 <div class="itemRow" *ngFor="let item of recipe?.RecipeItems">
@@ -214,6 +223,7 @@
                   <span data-label="Fats">{{ scale(item, 'Fat') | ToFixed }} gm</span>
                   <span data-label="Carbs">{{ scale(item, 'Carbohydrate') | ToFixed }} gm</span>
                   <span data-label="Protein">{{ scale(item, 'Protein') | ToFixed }} gm</span>
+                  <span data-label="Sugars">{{ scale(item, 'Sugars') | ToFixed }} gm</span>
                 </div>
 
                 <!-- what the items add up to, which is what the recipe is saved as -->
@@ -224,6 +234,7 @@
                   <span data-label="Fats">{{ recipe?.Fat | ToFixed }} gm</span>
                   <span data-label="Carbs">{{ recipe?.Carbohydrate | ToFixed }} gm</span>
                   <span data-label="Protein">{{ recipe?.Protein | ToFixed }} gm</span>
+                  <span data-label="Sugars">{{ recipe?.Sugars | ToFixed }} gm</span>
                 </div>
               </div>
             </div>

@@ -11,6 +11,10 @@ import { LoginService } from 'src/app/auth/login.service';
 export class ProfileComponent implements OnInit {
   user: any = null;
   img: string = '';
+  initials: string = '';
+
+  showCurrentPassword: boolean = false;
+  showNewPassword: boolean = false;
 
   savingProfile: boolean = false;
   profileMessage: string = '';
@@ -45,6 +49,7 @@ export class ProfileComponent implements OnInit {
       next: (user: any) => {
         this.user = user;
         this.img = user?.photoURL || '';
+        this.initials = this.readInitials(user);
         this.profileForm.patchValue(
           {
             name: user?.name || '',
@@ -55,6 +60,19 @@ export class ProfileComponent implements OnInit {
         );
       },
     });
+  }
+
+  // the avatar falls back to the first letters of the name, so a user without a
+  // photo still gets something of their own rather than a blank circle
+  private readInitials(user: any): string {
+    const source: string = user?.name || user?.username || user?.email || '';
+    return source
+      .trim()
+      .split(/[\s._-]+/)
+      .filter((part: string) => part.length > 0)
+      .slice(0, 2)
+      .map((part: string) => part[0].toUpperCase())
+      .join('');
   }
 
   // ------------------------------ profile ------------------------------

@@ -234,6 +234,8 @@ export class OperationsService {
       Protein: 0,
       Fat: 0,
       Carbohydrate: 0,
+      // stored on the day beside the rest, so it is summed like the rest
+      Sugars: 0,
     };
     addedFoodListValue.map((elm: any) => {
       sumResult.ShortFoodName = 'Sum';
@@ -246,6 +248,7 @@ export class OperationsService {
       sumResult.Protein += this.scale(elm, 'Protein');
       sumResult.Fat += this.scale(elm, 'Fat');
       sumResult.Carbohydrate += this.scale(elm, 'Carbohydrate');
+      sumResult.Sugars += this.scale(elm, 'Sugars');
     });
     this.sumResult.next(sumResult);
     this.calculateTargetResult();
