@@ -1,6 +1,25 @@
 <div class="container Tracking pt-3 pb-4">
   <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Tracking History</h4>
+
+    <div class="exportButtons d-flex gap-2" *ngIf="dataArray.length">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        title="Export all tracked days as JSON"
+        (click)="exportJson()"
+      >
+        Export JSON
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        title="Export all tracked days as CSV"
+        (click)="exportCsv()"
+      >
+        Export CSV
+      </button>
+    </div>
   </div>
 
   <p class="text-muted" *ngIf="loading">Loading tracked days ...</p>
@@ -19,6 +38,33 @@
           <span class="badge dayBadge" [ngClass]="statusClass(item, macros[0])">
             {{ percent(item, macros[0]) | number: "1.0-0" }}% of target
           </span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary exportBtn"
+            title="Export this day as JSON"
+            aria-label="Export this day as JSON"
+            (click)="exportJson(item)"
+          >
+            <span class="material-icons">data_object</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary exportBtn"
+            title="Export this day as CSV"
+            aria-label="Export this day as CSV"
+            (click)="exportCsv(item)"
+          >
+            <span class="material-icons">table_view</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary exportBtn"
+            title="Export this day as AI Nutrition Analysis"
+            aria-label="Export this day as AI Nutrition Analysis"
+            (click)="exportAiNutrition(item)"
+          >
+            <span class="material-icons">smart_toy</span>
+          </button>
           <button
             type="button"
             class="btn btn-sm btn-outline-danger deleteBtn"

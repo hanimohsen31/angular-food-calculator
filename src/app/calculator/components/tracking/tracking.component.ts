@@ -2,6 +2,7 @@
 import { FoodDataService } from '../../services/food-data.service';
 import { OperationsService } from '../../services/operations.service';
 import { FOOD_COLUMN_LABELS } from '../../services/constants';
+import { aiExportFileName, toAiNutritionExport } from '../../services/ai-nutrition-export';
 
 interface Macro {
   label: string;
@@ -226,6 +227,87 @@ export class TrackingComponent implements OnInit {
         this.deleteError = 'Deleting this day failed, try again.';
       },
     });
+  }
+
+  // both files carry the day under the keys the server saved it with, nothing
+  // is renamed on the way out. the whole history is written oldest first
+  exportDays(item?: any): any[] {
+    return item ? [item] : this.dataArray.slice().reverse();
+  }
+
+  exportJson(item?: any) {
+    let days = this.exportDays(item);
+    this.downloadFile(
+      JSON.stringify(item ? days[0] : days, null, 2),
+      'application/json',
+      'json',
+      this.exportName(item)
+    );
+  }
+
+  // a csv row is flat, so the day's own columns are written and its list of
+  // foods is left to the json export
+  exportCsv(item?: any) {
+    let rows = this.exportDays(item).map((day: any) => {
+      let row: any = {};
+      for (let key of Object.keys(day || {})) {
+        if (!Array.isArray(day[key]) && (day[key] === null || typeof day[key] != 'object')) {
+          row[key] = day[key];
+        }
+      }
+      return row;
+    });
+    if (!rows.length) {
+      return;
+    }
+    // days saved at different times can carry different columns, take them all
+    let headers: string[] = [];
+    for (let row of rows) {
+      for (let key of Object.keys(row)) {
+        if (!headers.includes(key)) {
+          headers.push(key);
+        }
+      }
+    }
+    let lines = [headers.map((header) => this.csvCell(header)).join(',')];
+    for (let row of rows) {
+      lines.push(headers.map((header) => this.csvCell(row[header])).join(','));
+    }
+    this.downloadFile(lines.join('\r\n'), 'text/csv', 'csv', this.exportName(item));
+  }
+
+  // a day written for an AI to analyse, plain names and plain units, none of
+  // the keys the database holds the day under. it is one day at a time, the
+  // schema describes a single date
+  exportAiNutrition(item: any) {
+    let data = toAiNutritionExport(item);
+    this.downloadFile(
+      JSON.stringify(data, null, 2),
+      'application/json',
+      'json',
+      aiExportFileName(item)
+    );
+  }
+
+  // one day is filed under its own date, the whole history under one name
+  exportName(item?: any): string {
+    return item?.id ? 'tracking-' + item.id : 'tracking-history';
+  }
+
+  // a value carrying a comma, a quote or a line break has to be quoted, and any
+  // quote inside it doubled
+  csvCell(value: any): string {
+    let text = value === undefined || value === null ? '' : String(value);
+    return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+  }
+
+  downloadFile(content: string, type: string, extension: string, name: string) {
+    let url = URL.createObjectURL(new Blob([content], { type: type + ';charset=utf-8' }));
+    let link = document.createElement('a');
+    link.href = url;
+    link.download = name + '.' + extension;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   trackById(index: number, item: any) {
