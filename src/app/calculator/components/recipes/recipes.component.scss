@@ -73,25 +73,27 @@ tr {
     overflow-wrap: break-word;
   }
 
+  /* name, arabic name, items, unit, then the five nutrients, then the actions */
   th:nth-child(1) {
-    width: 18%;
+    width: 16%;
   }
   th:nth-child(2) {
-    width: 14%;
+    width: 12%;
   }
   th:nth-child(3) {
-    width: 9%;
+    width: 8%;
   }
   th:nth-child(4) {
-    width: 10%;
+    width: 8%;
   }
   th:nth-child(5),
   th:nth-child(6),
   th:nth-child(7),
-  th:nth-child(8) {
+  th:nth-child(8),
+  th:nth-child(9) {
     width: 7%;
   }
-  th:nth-child(9) {
+  th:nth-child(10) {
     width: 21%;
   }
 
@@ -105,7 +107,7 @@ tr {
     th:nth-child(3) {
       width: 22%;
     }
-    th:nth-child(9) {
+    th:nth-child(10) {
       width: 38%;
     }
   }
