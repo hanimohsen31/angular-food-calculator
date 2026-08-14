@@ -22,6 +22,10 @@
     </div>
   </div>
 
+  <p class="text-danger small" *ngIf="copyError">
+    Copying failed, use the AI export button to download the file instead.
+  </p>
+
   <p class="text-muted" *ngIf="loading">Loading tracked days ...</p>
 
   <p class="text-muted" *ngIf="!loading && !dataArray.length">
@@ -64,6 +68,22 @@
             (click)="exportAiNutrition(item)"
           >
             <span class="material-icons">smart_toy</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm exportBtn"
+            [ngClass]="copiedId == item?.id ? 'btn-success' : 'btn-outline-primary'"
+            [title]="
+              copiedId == item?.id
+                ? 'AI Nutrition Analysis copied'
+                : 'Copy AI Nutrition Analysis to clipboard'
+            "
+            aria-label="Copy AI Nutrition Analysis to clipboard"
+            (click)="copyAiNutrition(item)"
+          >
+            <span class="material-icons">
+              {{ copiedId == item?.id ? "check" : "content_copy" }}
+            </span>
           </button>
           <button
             type="button"

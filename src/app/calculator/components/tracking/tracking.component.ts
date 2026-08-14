@@ -289,6 +289,49 @@ export class TrackingComponent implements OnInit {
     );
   }
 
+  // the same day the AI export writes, handed straight to the clipboard so it
+  // can be pasted into a chat without a file in between
+  copyAiNutrition(item: any) {
+    let text = JSON.stringify(toAiNutritionExport(item), null, 2);
+    let done = () => this.markCopied(item?.id);
+    // an older browser, or a page that is not on a secure origin, has no
+    // clipboard to write to, so the text is put on the page and copied off it
+    if (!navigator?.clipboard?.writeText) {
+      this.copyThroughPage(text) ? done() : (this.copyError = true);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(done, () => (this.copyError = true));
+  }
+
+  copyThroughPage(text: string): boolean {
+    let field = document.createElement('textarea');
+    field.value = text;
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.appendChild(field);
+    field.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch (error) {
+      copied = false;
+    }
+    document.body.removeChild(field);
+    return copied;
+  }
+
+  // the copied day, held long enough for the button to say so
+  copiedId: string = '';
+  copyError: boolean = false;
+  private copiedTimer: any = null;
+
+  markCopied(id: string) {
+    this.copyError = false;
+    this.copiedId = id || '';
+    clearTimeout(this.copiedTimer);
+    this.copiedTimer = setTimeout(() => (this.copiedId = ''), 2000);
+  }
+
   // one day is filed under its own date, the whole history under one name
   exportName(item?: any): string {
     return item?.id ? 'tracking-' + item.id : 'tracking-history';
