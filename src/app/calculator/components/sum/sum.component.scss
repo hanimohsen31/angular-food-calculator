@@ -17,28 +17,29 @@ input {
   width: 100px;
 }
 
-/* the quantity input and its unit stay on one line */
-.quantityGroup {
-  width: 140px;
-  flex-wrap: nowrap;
-  .input-group-text {
-    padding: 0.375rem 0.5rem;
-  }
-  @media (max-width: 991.98px) {
-    width: 105px;
-    font-size: small;
-  }
-}
-
-/* the calorie target input and its unit stay on one line */
+/* the quantity input and its unit stay on one line, and the pair shrinks with
+   its column instead of overflowing it on a half width window */
+.quantityGroup,
 .targetGroup {
-  width: 140px;
+  width: 100%;
+  max-width: 140px;
+  min-width: 0;
   flex-wrap: nowrap;
+
+  /* the unit keeps its own width, the number field takes what is left */
+  .form-control {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 auto;
+    padding-inline: 0.5rem;
+  }
+
   .input-group-text {
+    flex: 0 0 auto;
     padding: 0.375rem 0.5rem;
   }
-  @media (max-width: 991.98px) {
-    width: 115px;
+
+  @media (max-width: 1399.98px) {
     font-size: small;
   }
 }
@@ -78,10 +79,11 @@ tr {
   table-layout: fixed;
 
   .colName {
-    width: 22%;
+    width: 20%;
   }
+  /* wide enough for a three digit amount and its unit on the narrowest desktop */
   .colQuantity {
-    width: 12%;
+    width: 14%;
   }
   .colMacro {
     width: 12%;
@@ -155,18 +157,6 @@ tr {
     color: #6c757d;
     line-height: 1.2;
     overflow-wrap: anywhere;
-  }
-
-  .quantityGroup,
-  .targetGroup {
-    width: 100%;
-    max-width: 140px;
-    font-size: small;
-
-    .form-control {
-      min-width: 0;
-      width: auto;
-    }
   }
 
   /* the four macros share two equal columns, so they line up card to card */
