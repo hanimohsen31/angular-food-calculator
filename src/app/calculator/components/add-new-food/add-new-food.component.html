@@ -65,9 +65,34 @@
     {{ searchTerm ? 'No food matching "' + searchTerm + '"' : "No food items yet." }}
   </p>
 
+  <div
+    class="d-flex flex-wrap align-items-center gap-2 mb-2"
+    *ngIf="selectedCount"
+  >
+    <span class="text-muted small">{{ selectedCount }} selected</span>
+    <button type="button" class="btn btn-sm btn-danger" (click)="toggleBulkDeletePopup()" [disabled]="loading">
+      Delete selected
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearSelection()">
+      Clear selection
+    </button>
+  </div>
+
+  <p class="text-danger" *ngIf="bulkError">{{ bulkError }}</p>
+
   <table class="table table-hover" *ngIf="filteredFoodList.length">
     <thead>
       <tr>
+        <th scope="col" class="text-center">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            aria-label="Select all rows on this page"
+            [checked]="allOnPageSelected"
+            [indeterminate]="someOnPageSelected"
+            (change)="toggleSelectAllOnPage()"
+          />
+        </th>
         <th scope="col">{{ columnLabels.ShortFoodName }}</th>
         <th scope="col" class="d-none d-md-table-cell">{{ columnLabels.Translation }}</th>
         <th scope="col">{{ columnLabels.Measure }}</th>
@@ -80,7 +105,16 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="bg-light" *ngFor="let food of pagedFoodList">
+      <tr class="bg-light" *ngFor="let food of pagedFoodList" [class.table-active]="isSelected(food)">
+        <td class="text-center">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [attr.aria-label]="'Select ' + food?.ShortFoodName"
+            [checked]="isSelected(food)"
+            (change)="toggleSelect(food)"
+          />
+        </td>
         <td>{{ food?.ShortFoodName }}</td>
         <td class="d-none d-md-table-cell">{{ food?.Translation }}</td>
         <td>{{ food?.Measure }} {{ food?.MeasureUnit }}</td>
@@ -160,6 +194,8 @@
           <option [ngValue]="5">5</option>
           <option [ngValue]="10">10</option>
           <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+          <option [ngValue]="100">100</option>
         </select>
       </div>
     </div>
@@ -170,10 +206,13 @@
 <!-- delete confirm pop up -->
 <div class="popupContainer deletePopup" [class.d-none]="!deletePopup">
   <div class="card">
-    <h4>Delete {{ foodToDelete?.ShortFoodName }} ?</h4>
+    <h4 *ngIf="!bulkDelete">Delete {{ foodToDelete?.ShortFoodName }} ?</h4>
+    <h4 *ngIf="bulkDelete">Delete {{ selectedCount }} selected food item(s) ?</h4>
     <div class="buttons">
-      <button class="btn btn-outline-primary" (click)="handleDelete()">Ok</button>
-      <button class="btn btn-outline-danger" (click)="toggleDeletePopup()">Cancel</button>
+      <button class="btn btn-outline-primary" (click)="handleDelete()" [disabled]="loading">Ok</button>
+      <button class="btn btn-outline-danger" (click)="bulkDelete ? toggleBulkDeletePopup() : toggleDeletePopup()">
+        Cancel
+      </button>
     </div>
   </div>
 </div>
