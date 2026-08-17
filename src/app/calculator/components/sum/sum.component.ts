@@ -129,7 +129,9 @@ export class SumComponent implements OnInit {
   toggleSavePopup() {
     this.savePopup = !this.savePopup;
     this.saveError = '';
-    let date = this.OperationsService.getNowDateString();
+    // the day the list itself points at, which is the one the save lands on and
+    // is not always today
+    let date = this.OperationsService.resolveTrackingDayId();
     this.curruntDate = this.OperationsService.dateFormater(date);
   }
 }

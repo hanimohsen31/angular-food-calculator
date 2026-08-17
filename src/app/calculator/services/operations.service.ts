@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FoodDataService } from './food-data.service';
 import { settingsFromApi, settingsToApi, trackingDayToApi } from './api-mapper';
+import { aiExportDate } from './ai-nutrition-export';
 import { storedToken, storedUserId } from 'src/app/auth/session';
 
 @Injectable({
@@ -149,6 +150,9 @@ export class OperationsService {
         ...element,
         QuantityBasis: 'unit',
         Quantity: +element?.Measure || 0,
+        // the day the row was put on the list. a save reads these back and is
+        // filed under the day most of the list was built on
+        AddedOn: this.getNowDateString(),
       });
       this.addedFoodList.next(overAllArray);
       this.handleChange();
@@ -520,12 +524,38 @@ export class OperationsService {
     if (this.isGuest) {
       return EMPTY;
     }
-    let id = this.getNowDateString();
+    let id = this.resolveTrackingDayId();
     const url = `${environment.baseUrl}${environment.apiPrefix}/tracking/${id}`;
     // the rows the day was made of are kept beside the totals, the tracking
     // page draws the totals and the history is what the rows are there for
     let items = this.addedFoodList.getValue();
     return this.HttpClient.put(url, trackingDayToApi({ ...data, items }, id));
+  }
+
+  // the day the whole list is filed under. a list is built over one sitting, so
+  // the day most of its rows were added on is the day it stands for, and one
+  // late row does not carry the rest of the list off its own day. rows added
+  // before the stamp existed have no day of their own and are left out of the
+  // count, a tie goes to the later day, and a list nothing can be read off is
+  // saved under today as it always was
+  resolveTrackingDayId() {
+    let counts = new Map<string, number>();
+    this.addedFoodList.getValue().forEach((elm: any) => {
+      let day = elm?.AddedOn;
+      if (day) {
+        counts.set(day, (counts.get(day) || 0) + 1);
+      }
+    });
+    let winner = '';
+    let winnerCount = 0;
+    counts.forEach((count: number, day: string) => {
+      let ties = count === winnerCount && aiExportDate(day) > aiExportDate(winner);
+      if (count > winnerCount || ties) {
+        winner = day;
+        winnerCount = count;
+      }
+    });
+    return winner || this.getNowDateString();
   }
 
   // helper function
