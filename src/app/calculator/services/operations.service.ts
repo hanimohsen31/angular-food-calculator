@@ -123,14 +123,32 @@ export class OperationsService {
   // rows saved before quantities moved to gm kept the quantity as a number of
   // measures, they are converted once on load so the whole app speaks in gm
   normalizeItem(item: any) {
-    if (item?.QuantityBasis === 'unit') {
-      return item;
+    let row = this.stampItem(item);
+    if (row?.QuantityBasis === 'unit') {
+      return row;
     }
     return {
-      ...item,
+      ...row,
       QuantityBasis: 'unit',
-      Quantity: (+item?.Quantity || 0) * (+item?.Measure || 0),
+      Quantity: (+row?.Quantity || 0) * (+row?.Measure || 0),
     };
+  }
+
+  // rows added before the moment was kept only carry the day they were filed
+  // under. the stamp is filled in from that day here, on the way in, because the
+  // server stamps whatever reaches it without one as of now, which would read
+  // an old row back as a row added today
+  stampItem(item: any) {
+    if (+item?.stamp > 0 || !item?.AddedOn) {
+      return item;
+    }
+    let day = aiExportDate(item.AddedOn);
+    // midday, so the hour is not one the day is shifted back off
+    let moment = day ? new Date(`${day}T12:00:00`) : null;
+    if (!moment || isNaN(moment.getTime())) {
+      return item;
+    }
+    return { ...item, stamp: moment.getTime() };
   }
 
   normalizeAddedFoodList(list: any[]) {
@@ -150,8 +168,10 @@ export class OperationsService {
         ...element,
         QuantityBasis: 'unit',
         Quantity: +element?.Measure || 0,
-        // the day the row was put on the list. a save reads these back and is
-        // filed under the day most of the list was built on
+        // the moment the row was put on the list, and the day that moment falls
+        // under. a save reads these back and is filed under the day most of the
+        // list was built on. the stamp is the field the server holds a row by
+        stamp: Date.now(),
         AddedOn: this.getNowDateString(),
       });
       this.addedFoodList.next(overAllArray);
@@ -541,7 +561,7 @@ export class OperationsService {
   resolveTrackingDayId() {
     let counts = new Map<string, number>();
     this.addedFoodList.getValue().forEach((elm: any) => {
-      let day = elm?.AddedOn;
+      let day = this.itemDayString(elm);
       if (day) {
         counts.set(day, (counts.get(day) || 0) + 1);
       }
@@ -558,17 +578,35 @@ export class OperationsService {
     return winner || this.getNowDateString();
   }
 
+  // the day a row counts towards. the moment it was added is what that is read
+  // off, so a row keeps the day it was really added on however long the list
+  // stays open. rows written before the moment was kept fall back to the day
+  // that was stored beside them
+  itemDayString(item: any) {
+    let stamp = +item?.stamp || 0;
+    let moment = stamp > 0 ? new Date(stamp) : null;
+    if (moment && !isNaN(moment.getTime())) {
+      return this.dayStringOf(moment);
+    }
+    return item?.AddedOn || '';
+  }
+
   // helper function
-  // the day a save belongs to, as "MonJul172023". A calculator still open
+  // the day a moment belongs to, as "MonJul172023". A calculator still open
   // before noon is counted against the day before, the list is filled through
   // the evening
-  getNowDateString() {
-    let date = new Date();
+  dayStringOf(moment: Date) {
+    let date = new Date(moment.getTime());
     let hour = date.toLocaleTimeString(); // "1:35:47 AM"
     if (hour.slice(-2) == 'AM') {
       date.setDate(date.getDate() - 1);
     }
     return date.toDateString().replaceAll(' ', ''); // "Mon Jul 17 2023"
+  }
+
+  // helper function
+  getNowDateString() {
+    return this.dayStringOf(new Date());
   }
 
   // helper function
